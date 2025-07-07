@@ -1,0 +1,120 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+command_timeout = 1500
+palette = "tokyonight_moon"
+
+format = """
+$username@$hostname\
+[:](bold)\
+$directory\
+$git_branch\
+$git_status\
+$docker_context\
+$package\
+$bun\
+$deno\
+$dotnet\
+$elixir\
+$erlang\
+$gleam\
+$golang\
+$lua\
+$nodejs\
+$pulumi\
+$python\
+$ruby\
+$swift\
+$terraform\
+$zig\
+$nix_shell\
+$conda\
+$line_break$character"""
+
+[username]
+show_always = true
+style_user = "fg:green"
+format = "[$user]($style)"
+
+[battery]
+disabled = true
+
+[character]
+success_symbol = "[❯](peach)"
+error_symbol = "[❯](peach)"
+vimcmd_symbol = "[❮](subtext1)"
+
+[cmd_duration]
+disabled = true
+
+[directory]
+truncation_length = 3
+style = "bold sky"
+disabled = false
+
+[git_branch]
+style = "bold mauve"
+format = '| [$symbol$branch(:$remote_branch)]($style) '
+
+[hostname]
+ssh_only = false
+style = "bold green"
+disabled = false
+ssh_symbol = '\(🌐\)'
+format = '[$hostname$ssh_symbol]($style)'
+
+[palettes.catppuccin_mocha]
+rosewater = "#f5e0dc"
+flamingo = "#f2cdcd"
+pink = "#f5c2e7"
+mauve = "#cba6f7"
+red = "#f38ba8"
+maroon = "#eba0ac"
+peach = "#fab387"
+yellow = "#f9e2af"
+green = "#a6e3a1"
+teal = "#94e2d5"
+sky = "#89dceb"
+sapphire = "#74c7ec"
+blue = "#89b4fa"
+lavender = "#b4befe"
+text = "#cdd6f4"
+subtext1 = "#bac2de"
+subtext0 = "#a6adc8"
+overlay2 = "#9399b2"
+overlay1 = "#7f849c"
+overlay0 = "#6c7086"
+surface2 = "#585b70"
+surface1 = "#45475a"
+surface0 = "#313244"
+base = "#1e1e2e"
+mantle = "#181825"
+crust = "#11111b"
+
+# 1:1 map to catppuccin_mocha for drop-in replacement support
+[palettes.tokyonight_moon]
+rosewater = "#fca7ea"
+flamingo  = "#ff757f"
+pink      = "#fca7ea"
+mauve     = "#c099ff"
+red       = "#ff757f"
+maroon    = "#ff966c"
+peach     = "#ff966c"
+yellow    = "#ffc777"
+green     = "#c3e88d"
+teal      = "#86e1fc"
+sky       = "#86e1fc"
+sapphire  = "#82aaff"
+blue      = "#82aaff"
+lavender  = "#c8d3f5"
+text      = "#c8d3f5"
+subtext1  = "#a9b8e8"
+subtext0  = "#7a88cf"
+overlay2  = "#444a73"
+overlay1  = "#3b4261"
+overlay0  = "#222436"
+surface2  = "#283457"
+surface1  = "#222436"
+surface0  = "#1b1d2b"
+base      = "#222436"
+mantle    = "#1b1d2b"
+crust     = "#1b1d2b"

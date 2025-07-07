@@ -1,0 +1,59 @@
+@theme "~/.config/rofi/theme.rasi"
+
+configuration {
+  modes: "drun,filebrowser,window,ssh";
+  case-sensitive: false;
+  cycle: true;
+  scroll-method: 1;
+  normalize-match: true;
+  show-icons: true;
+  steal-focus: false;
+
+  matching: "normal,fuzzy";
+  tokenize: true;
+
+  ssh-command: "{terminal} -e {ssh-client} {host} [-p {port}]";
+  parse-hosts: true;
+
+  drun-url-launcher: "xdg-open";
+  drun {
+    parse-user:   true;
+    parse-system: true;
+  }
+
+  run-list-command: "";
+
+  window-format: "{w} - {c} - {t:0}";
+  window-thumbnail: false;
+
+  disable-history: true;
+  sorting-method: "fzf";
+
+  /*---------- Display setting ----------*/
+  display-window: "Windows";
+  display-windowcd: "Window CD";
+  display-run: "Run";
+  display-ssh: "SSH";
+  display-drun: "Apps";
+  display-combi: "Combi";
+  display-keys: "Keys";
+  display-filebrowser: "Files";
+
+  /*---------- Misc setting ----------*/
+  terminal: "rofi-sensible-terminal";
+  font: "Mono 12";
+  sort: true;
+  threads: 0;
+
+  /*---------- File browser settings ----------*/
+  filebrowser {
+    directories-first: true;
+    sorting-method:    "name";
+  }
+
+  /*---------- Other settings ----------*/
+  timeout {
+    action: "kb-cancel";
+    delay:  0;
+  }
+}

@@ -1,0 +1,135 @@
+{
+  "layer": "top",
+  "margin": "4 4 0 4",
+  "modules-left": ["hyprland/workspaces", "custom/pacman", "hyprland/window"],
+  "modules-center": [],
+  "modules-right": [
+    "pulseaudio",
+    "backlight",
+    "hyprland/language",
+    "group/power-profile",
+    "battery",
+    "tray",
+    "clock"
+  ],
+
+  "group/power-profile": {
+    "orientation": "horizontal",
+    "modules": [ "power-profiles-daemon", "temperature" ],
+    "drawer": {
+      "transition-duration": 150,
+      "transition-left-to-right": false,
+      "click-to-reveal": false
+    }
+  },
+
+  "hyprland/workspaces": {
+    "on-click": "activate",
+    "persistent-workspaces": {
+      "*": 4
+    }
+  },
+  "hyprland/language": {
+    "format": "{short}",
+    "on-click": "hyprctl switchxkblayout current next"
+  },
+  "hyprland/window": {
+    "format": "{class}",
+    "icon": true,
+    "rewrite": {
+      "com.mitchellh.ghostty": "Ghostty",
+      "zen": "Zen Browser",
+      "chrome-t3.chat(.*)": "T3.chat",
+      "chrome-drive.proton.me(.*)": "Proton Drive",
+      "chrome-mail.proton.me(.*)": "Proton Mail",
+      "chrome-read.readwise.io(.*)": "Readwise Reader",
+      "com.yubico.yubioath": "Yubico Authenticator"
+    }
+  },
+  "custom/pacman": {
+    "interval": 3600,
+    "format": "{icon}{text}",
+    "return-type": "json",
+    "format-icons": {
+      "pending-updates": " ",
+      "updated": ""
+    },
+    "exec": "~/.config/waybar/custom/check-for-updates.sh",
+    "on-click": "ghostty --command='paru -Syu --devel; pkill -SIGRTMIN+8 waybar'",
+    "signal": 8
+  },
+  "clock": {
+    "timezone": "Europe/Vienna",
+    "tooltip": false,
+    "format": "{:%a %b %d  %H:%M}",
+    "return-type": "json",
+    "exec-if": "which swaync-client",
+    "exec": "swaync-client -swb",
+    "on-click": "swaync-client -t -sw",
+    "escape": true
+  },
+  "pulseaudio": {
+    "format": "{volume}% {icon}",
+    "format-bluetooth": "{icon}",
+    "format-muted": "",
+    "format-source": "",
+    "format-source-muted": "",
+    "format-icons": {
+      "alsa_output.pci-0000_00_1f.3.analog-stereo": "",
+      "alsa_output.pci-0000_00_1f.3.analog-stereo-muted": "",
+      "headphone": "",
+      "default": ["", "", " "]
+    },
+    "scroll-step": 1,
+    "on-click": "GTK_THEME=Adwaita-dark pavucontrol",
+    "ignored-sinks": ["Easy Effects Sink"],
+    "tooltip": false
+  },
+  "memory": {
+    "interval": 30,
+    "format": "{used:0.1f}GiB 󰍛",
+    "tooltip": false
+  },
+  "temperature": {
+    "critical-threshold": 80,
+    "format": "{temperatureC}°C {icon}",
+    "format-icons": ["", "", "", "", ""],
+    "tooltip": false
+  },
+  "backlight": {
+    "device": "intel_backlight",
+    "format": "{percent}% {icon}",
+    "format-icons": [""],
+    "tooltip": false
+  },
+  "battery": {
+    "interval": 10,
+    "states": {
+      "warning": 20,
+      "critical": 10
+    },
+    "format": "{capacity}% {icon}",
+    "format-charging": "{capacity}% 󰂄",
+    "format-plugged": "{capacity}% ",
+    "format-alt": "{time} {icon}",
+    "format-icons": {
+      "charging": [ "󰢜", "󰂆", "󰂇", "󰂈", "󰢝", "󰂉", "󰢞", "󰂊", "󰂋", "󰂅" ],
+      "default": [ "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹" ]
+    },
+  },
+  "power-profiles-daemon": {
+    "format": "{icon}",
+    "tooltip-format": "Power profile: {profile}",
+    "tooltip": true,
+    "format-icons": {
+      "power-saver": "󰡳",
+      "balanced":     "󰊚",
+      "performance":  "󰡴"
+    }
+  },
+  "tray": {
+    "icon-size": 16,
+    "spacing": 10,
+    "show-passive-items": true
+  }
+}
