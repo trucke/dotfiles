@@ -1,233 +1,232 @@
 #!/usr/bin/env bash
 
+# Exit on any error, undefined variables, and pipe failures
 set -euo pipefail
 
-if [[ -f ~/.bashrc ]]; then
-    mv ~/.bashrc ~/.bashrc.bak
-fi
+###############################################################################
+# UTILITY FUNCTIONS
+###############################################################################
+install_gum() {
+    if command -v gum &>/dev/null; then
+        return
+    fi
 
-##############################################################################################################
-# CONFIGURE PACMAN 
-##############################################################################################################
-sudo cp /etc/pacman.conf /etc/pacman.conf.bak
-sudo sed -i "/^#Color/c\Color\nILoveCandy" /etc/pacman.conf
-sudo sed -i "/^#VerbosePkgLists/c\VerbosePkgLists" /etc/pacman.conf
+    echo "Installing gum for enhanced UI..."
+    sudo pacman -Sy --noconfirm gum || {
+        echo "Error: Could not install gum, which is required for this script"
+        exit 1
+    }
+}
 
-##############################################################################################################
-# INSTALL YAY 
-##############################################################################################################
-sudo pacman -S --needed --noconfirm base-devel git
+log() {
+    gum log --time TimeOnly --level info --time.foreground="#50fa7b" "$*"
+}
 
-if ! command -v yay &>/dev/null; then
-    git clone https://aur.archlinux.org/yay-bin.git && cd yay-bin && makepkg -si --noconfirm
-    cd ~ && rm -rf yay-bin
-    # generate a development package database for *-git packages that were installed without yay
-    yay -Y --gendb
-fi
+error() {
+    gum log --time TimeOnly --level error --time.foreground="#ff5555" "$*"
+    exit 1
+}
 
-# system upgrade, but also check for development package updates
-yay -Syu --devel
+run() {
+    local title="$1"
+    shift
+    log "$title"
+    gum spin --spinner dot --title "$title" -- "$@"
+}
 
-##############################################################################################################
-# BASIC HYPRLAND INSTALLATION 
-##############################################################################################################
-yay -Sy --noconfirm --needed \
-    smartmontools inetutils networkmanager openssh \
-    wget curl unzip wl-clipboard man-db \
-    vim bat eza fd fzf jq ripgrep stow bash-completion
+###############################################################################
+###############################################################################
 
-# graphics drivers
-yay -Sy --noconfirm --needed \
-    libva-mesa-driver mesa radeontop vulkan-radeon \
-    xf86-video-amdgpu xf86-video-ati xorg-server xorg-xinit
+configure_pacman() {
+    run "Updating pacman configuration..." bash -c "
+        sudo cp /etc/pacman.conf /etc/pacman.conf.bak
+        sudo sed -i '/^#Color/c\Color\nILoveCandy' /etc/pacman.conf
+        sudo sed -i '/^#VerbosePkgLists/c\VerbosePkgLists' /etc/pacman.conf
+    "
+}
 
-yay -Sy --noconfirm --needed \
-    ghostty htop hyprland hyprland-qtutils hyprpolkitagent hyprshot iwd kitty nautilus networkmanager \
-    qt5-wayland qt6-wayland sddm smartmontools sof-firmware sushi swaync uwsm libnewt \
-    wget wireless_tools wireplumber wofi xdg-desktop-portal-gtk xdg-desktop-portal-hyprland xdg-utils \
-    chromium
+install_paru() {
+    if command -v paru &>/dev/null; then
+        return
+    fi
 
-##############################################################################################################
-# SYSTEM CONFIGURATION
-##############################################################################################################
-cd ~/.dotfiles
-# backup current hyprland config
-mv ~/.config/hypr ~/.config/hypr.origin
-# link configuration files
-stow zshrc btop fastfetch ghostty git hyprland kitty nvim rofi starship tmux waybar mise ripgrep #wofi
-# cleanup bash dotfiles
-rm .bash_history .bash_logout .bash_profile .bashrc
+    run "Installing base development tools..." sudo pacman -S --needed --noconfirm base-devel git
 
-##############################################################################################################
-# DEVELOPMENT 
-##############################################################################################################
-yay -S --noconfirm --needed wxwidgets-gtk3 glu unixodbc
+    local temp_dir=$(mktemp -d)
+    cd "$temp_dir"
+    
+    run "Building paru from AUR..." bash -c "
+        git clone https://aur.archlinux.org/paru-bin.git
+        cd paru-bin
+        makepkg -si --noconfirm
+    "
+    
+    cd ~ && rm -rf "$temp_dir" && paru --gendb
+    run "Upgrading system packages..." paru -Syu --devel --noconfirm
+}
 
-curl https://mise.run | sh
-eval "$(~/.local/bin/mise activate bash)"
-~/.local/bin/mise install
+install_base_packages() {
+    log "Installing base system packages..."
+    local BASE_PACKAGES=(
+        # System utilities
+        inetutils networkmanager iwd wpa_supplicant openssh wget curl unzip man-db nvtop
+        wireplumber sof-firmware 
+        # CLI tools
+        vim neovim bat eza fd fzf jq ripgrep stow rsync zsh zsh-completions starship 
+        rclone docker docker-compose jujutsu tmux
+        # Bluetooth tools
+        bluez bluez-utils bluetui
+        # printer support
+        cups cups-filters cups-pdf avahi
+    )
+    
+    run "Installing ${#BASE_PACKAGES[@]} base packages..." \
+        paru -Sy --noconfirm --needed "${BASE_PACKAGES[@]}"
 
-yay -Sy --noconfirm --needed \
-    git jujutsu just air-bin tailwindcss-bin bun-bin luarocks lazygit
+    sudo usermod -aG docker "${USER}"
+    sudo chsh -s "$(which zsh)" "$USER"
+}
 
-##############################################################################################################
-# ADDITIONNAL HYPRLAND PACKAGES
-##############################################################################################################
-# additional system tools
-yay -Sy --noconfirm --needed \
-    cups cups-filters cups-pdf poppler \
-    brightnessctl playerctl easyeffects \
-    bluez bluez-utils bluetui \
-    power-profiles-daemon yubikey-manager \
-    zsh zsh-completions
-# controls & applets
-yay -Sy --noconfirm --needed pavucontrol blueman network-manager-applet system-config-printer
-# additionnal hyprland applications
-yay -Sy --noconfirm --needed hypridle hyprlock hyprpaper rofi-wayland waybar
-# additional desktop applications
-yay -Sy --noconfirm --needed \
-    loupe evince nwg-bar \
-    zen-browser-bin obsidian \
-    proton-pass-bin proton-mail-bin proton-vpn-gtk-app \
-    libreoffice-fresh yubico-authenticator-bin \
-    mpv mpv-mpris celluloid
-# install system fonts
-yay -Sy --noconfirm --needed \
-    ttf-font-awesome ttf-jetbrains-mono-nerd ttf-ubuntu-nerd \
-    ttf-atkinson-hyperlegible-next ttf-atkinson-hyperlegible-nerd
+install_hyprland_packages() {
+    log "Installing Hyprland and desktop environment..."
+    local HYPRLAND_PACKAGES=(
+        # Hyprland
+        hypridle hyprland hyprlock hyprpaper hyprpolkitagent hyprshot swaync rofi-wayland waybar
+        wl-clipboard xdg-desktop-portal-gtk xdg-desktop-portal-hyprland xdg-utils qt6-wayland
+        gnome-themes-extra
+        # File manager & viewers
+        thunar thunar-volman gvfs tumbler loupe evince
+        ffmpegthumbnailer poppler-glib
+        # Desktop applications
+        ghostty zen-browser-bin chromium obsidian yubikey-manager proton-pass-bin
+        # System controls
+        brightnessctl playerctl easyeffects power-profiles-daemon pavucontrol
+        # Fonts and symbols
+        ttf-font-awesome ttf-jetbrains-mono-nerd ttf-atkinson-hyperlegible-next ttf-nerd-fonts-symbols
+        # AMD graphics driver
+        libva-mesa-driver mesa vulkan-radeon xf86-video-amdgpu xf86-video-ati xorg-server xorg-xinit
+        # display & color profiling
+        xiccd colord
+    )
+    
+    run "Installing ${#HYPRLAND_PACKAGES[@]} Hyprland packages..." \
+        paru -Sy --noconfirm --needed "${HYPRLAND_PACKAGES[@]}"
 
-sudo systemctl enable --now cups.service
-sudo systemctl enable --now bluetooth.service
 
-sudo chsh -s $(which zsh)
+    run "Configure GTK theme" bash -c "
+        gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark'
+        gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
+        gsettings set org.gnome.desktop.interface font-name 'Atkinson Hyperlegible Next 11'
+    "
 
-##############################################################################################################
-# CONFIGURE MIME TYPES & DEFAULTS
-##############################################################################################################
-update-desktop-database ~/.local/share/applications
-# Open all images with loupe
-xdg-mime default org.gnome.Loupe.desktop image/png image/jpeg image/gif image/bmp image/webp image/tiff
-# Open video files with mpv
-xdg-mime default mpv.desktop video/mp4 video/mpeg video/ogg video/webm video/quicktime application/ogg
-xdg-mime default org.gnome.Nautilus.desktop inode/directory
+    run "Configuring MIME types and default applications..." bash -c "
+        update-desktop-database ~/.local/share/applications &>/dev/null || true
+        xdg-mime default org.gnome.Loupe.desktop image/png image/jpeg image/gif image/bmp image/webp image/tiff
+        xdg-mime default mpv.desktop video/mp4 video/mpeg video/ogg video/webm video/quicktime application/ogg
+        xdg-mime default thunar.desktop inode/directory application/x-gnome-saved-search
+        xdg-settings set default-web-browser zen.desktop
+    " 
+}
 
-xdg-settings set default-web-browser zen.desktop
+install_development_packages() {
+    if command -v mise &>/dev/null; then
+        return
+    fi
 
-if ls /sys/class/power_supply/BAT* &>/dev/null; then
-  powerprofilesctl set balanced # This computer runs on a battery
-else
-  powerprofilesctl set performance # This computer runs on power outlet
-fi
+    run "Installing mise..." bash -c "
+        paru -S --noconfirm --needed wxwidgets-gtk3 glu unixodbc
+        curl -s https://mise.run | sh
+        eval \"\$(~/.local/bin/mise activate bash)\"
+        ~/.local/bin/mise install
+    "
 
-##############################################################################################################
-# DISPLAY CONFIGURATION
-##############################################################################################################
-color_profile='fw13-amd-color-profile.icm'
-yay -Sy --noconfirm --needed nwg-displays xiccd colord
-xiccd &
+    run "Install dev tools..." bash -c "
+        export GOBIN=\"~/.local/share/bin\"
+        export GOPATH=\"~/.local/share/go\"
+        go install github.com/air-verse/air@latest
+        go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest
+        go install github.com/pressly/goose/v3/cmd/goose@latest
+        paru -S --noconfirm just tailwindcss-bin
+    "
+}
 
-mkdir -p /usr/share/color/icc/colord
-sudo curl -o /usr/share/color/icc/colord/${color_profile} https://www.notebookcheck.net/uploads/tx_nbc2/BOE_CQ_______NE135FBM_N41_03.icm
+configure_dotfiles() {
+    mv ~/.config/hypr ~/.config/hypr.origin.$(date +%s) &>/dev/null || true
+    cd ~/.dotfiles
+    run "Linking dotfiles..." stow ghostty git hyprland mise nvim ripgrep rofi starship tmux waybar zshrc
+    cd -
+}
 
-sudo systemctl restart colord.service
-color_profile_id=$(colormgr find-profile-by-filename fw13-amd-color-profile.icm | grep Profile | awk '{print $3}')
-colormgr device-add-profile xrandr-eDP-1 ${color_profile_id}
-sudo systemctl restart colord.service
+enable_services() {
+    run "Enabling system services..." bash -c "
+        sudo systemctl daemon-reload
+        sudo systemctl enable cups.service
+        sudo systemctl enable bluetooth.service
+        sudo systemctl enable power-profiles-daemon.service
+        sudo systemctl enable docker.service
+        sudo systemctl enable avahi-daemon.service
+        systemctl --user daemon-reload
+        sleep 3
+    "
+}
 
-##############################################################################################################
-# KEYBOARD CONFIGURATION - HOME ROW MODS
-##############################################################################################################
-yay -Sy --noconfirm kanata-bin
 
-sudo groupadd uinput
-sudo usermod -aG input $USER
-sudo usermod -aG uinput $USER
+configure_web_apps() {
+    run "Creating web applications..." bash -c '
+        source ~/.dotfiles/shell/functions
+        web2app "T3 Chat" "https://t3.chat/" "https://t3.chat/icon.png"
+        web2app "Readwise Reader" "https://read.readwise.io/" "https://read.readwise.io/logo-dock-icon-with-padding/128x128@2x.png"
+        web2app "LinkedIn" "https://linkedin.com/" "https://cdn.jsdelivr.net/gh/selfhst/icons/png/linkedin.png"
+        web2app "Proton Drive" "https://drive.proton.me/u/0/" "https://cdn.jsdelivr.net/gh/selfhst/icons/png/proton-drive.png"
+        web2app "Proton Mail" "https://mail.proton.me/u/0/inbox" "https://cdn.jsdelivr.net/gh/selfhst/icons/png/proton-mail.png"
+        web2app "solidtime" "https://app.solidtime.io/" "https://cdn.jsdelivr.net/gh/selfhst/icons/png/solidtime.png"
+    '
+}
 
-sudo tee /etc/udev/rules.d/99-input.rules > /dev/null <<EOF
-KERNEL=="uinput", MODE="0660", GROUP="uinput", OPTIONS+="static_node=uinput"
-EOF
-sudo udevadm control --reload-rules && sudo udevadm trigger
+###############################################################################
+# MAIN EXECUTION
+###############################################################################
+    # Install gum first for better UI (required)
+    install_gum
+    
+    gum style \
+        --foreground="#ff79c6" \
+        --border="double" \
+        --align="center" \
+        --width=80 \
+        --margin="1 2" \
+        --padding="2 4" \
+        "Arch Linux Hyprland Setup" \
+        "" \
+        "Automated installation and configuration" \
+        "for a complete Hyprland desktop environment"
 
-cat > ~/.config/systemd/user/kanata.service <<EOF
-[Unit]
-Description=Kanata keyboard remapper
-Documentation=https://github.com/jtroo/kanata
+    gum confirm "Ready to start the setup? This will install and configure your system." || exit 0
 
-[Service]
-Environment=PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/bin:$HOME/.cargo/bin
-Environment=DISPLAY=:0
-Type=simple
-ExecStart=/usr/bin/sh -c 'exec $$(which kanata) --cfg $${HOME}/.config/kanata/config.kbd'
-Restart=no
+    # run setup
+    configure_pacman
+    install_paru
 
-[Install]
-WantedBy=default.target
-EOF
+    install_base_packages
+    install_hyprland_packages
+    configure_dotfiles
+    install_development_packages
+    configure_web_apps
+    enable_services
 
-mkdir -p ~/.config/kanata
-cat > ~/.config/kanata/config.kbd <<EOF
-;; defsrc is still necessary
-(defcfg
-  process-unmapped-keys yes
-)
+    # Final cleanup
+    run "Cleaning up bash dotfiles..." rm -rf ~/.bash{_history,_logout,_profile,rc}
+    run "Creating personal directories..." mkdir -p ~/development/ ~/Documents/
 
-(defsrc
-  caps a s d f j k l ;
-)
-(defvar
-  tap-time 150
-  hold-time 200
-)
-
-(defalias
-  escctrl (tap-hold 100 100 esc lctl)
-  a (multi f24 (tap-hold $tap-time $hold-time a lmet))
-  s (multi f24 (tap-hold $tap-time $hold-time s lalt))
-  d (multi f24 (tap-hold $tap-time $hold-time d lsft))
-  f (multi f24 (tap-hold $tap-time $hold-time f lctl))
-  j (multi f24 (tap-hold $tap-time $hold-time j rctl))
-  k (multi f24 (tap-hold $tap-time $hold-time k rsft))
-  l (multi f24 (tap-hold $tap-time $hold-time l ralt))
-  ; (multi f24 (tap-hold $tap-time $hold-time ; rmet))
-)
-
-(deflayer base
-  @escctrl @a @s @d @f @j @k @l @;
-)
-EOF
-
-systemctl --user daemon-reload
-systemctl --user enable kanata.service
-
-##############################################################################################################
-# THEMING
-##############################################################################################################
-yay -Sy --noconfirm gnome-themes-extra sddm-eucalyptus-drop
-# theme and configure SDDM
-sudo cp -f ~/.dotfiles/backgrounds/shaded-landscape.png /usr/share/sddm/themes/eucalyptus-drop/Backgrounds/
-sudo cp -bf ~/.dotfiles/sddm/theme.conf /usr/share/sddm/themes/eucalyptus-drop/
-sudo mkdir -p /etc/sddm.conf.d
-sudo tee /etc/sddm.conf.d/sddm.conf > /dev/null <<EOF
-[Theme]
-Current=eucalyptus-drop
-EOF
-# set gnome/gtk apps theme defaults
-gsettings set org.gnome.desktop.interface gtk-theme "Adwaita-dark"
-gsettings set org.gnome.desktop.interface color-scheme "prefer-dark"
-
-##############################################################################################################
-# CONFIGURE WEB APPS 
-##############################################################################################################
-source ~/.dotfiles/shell/functions
-
-web2app "T3 Chat" https://t3.chat/ https://t3.chat/icon.png
-web2app "Readwise Reader" https://read.readwise.io/ https://read.readwise.io/logo-dock-icon-with-padding/128x128@2x.png
-web2app "LinkedIn" https://linkedin.com/ https://cdn.jsdelivr.net/gh/selfhst/icons/png/linkedin.png
-web2app "Proton Drive" https://drive.proton.me/u/0/ https://cdn.jsdelivr.net/gh/selfhst/icons/png/proton-drive.png
-web2app "solidtime" https://app.solidtime.io/ https://cdn.jsdelivr.net/gh/selfhst/icons/png/solidtime.png
-
-# web2app "YouTrack" https://heylogix.youtrack.cloud/ https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/jetbrains-youtrack.png
-# web2app "Youtube" https://youtube.com/ https://cdn.jsdelivr.net/gh/selfhst/icons/png/youtube.png
-# web2app "Github" https://github.com/ https://cdn.jsdelivr.net/gh/selfhst/icons/png/github.png
-# web2app "Linkwarden" https://linkwarden.internal.kns.me https://cdn.jsdelivr.net/gh/selfhst/icons/png/linkwarden.png
-# web2app "Claude" https://claude.ai/ https://cdn.jsdelivr.net/gh/selfhst/icons/png/claude.png
+    gum style \
+        --foreground="#50fa7b" \
+        --border="double" \
+        --align="center" \
+        --width=70 \
+        --margin="1 2" \
+        --padding="1 2" \
+        "🎉 Setup completed successfully!" \
+        "" \
+        "Please reboot to ensure all changes take effect." \
+        "You may need to log out and back in for shell changes." \
+        ""
