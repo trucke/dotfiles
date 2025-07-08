@@ -85,5 +85,7 @@ fi
 
 configure_keyboard
 
-
-systemctl --user enable --now kanata.service
+systemctl --user enable kanata.service
+gum log --time TimeOnly --level info --time.foreground="#50fa7b" \
+    "Keyboard successfully configured. Changes will take effect after reboot or next login."
+gum confirm "Would you reboot the system?" && shutdown -r now
