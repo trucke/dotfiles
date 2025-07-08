@@ -1,11 +1,6 @@
 [[ -z $DISPLAY && $(tty) == /dev/tty1 ]] && exec Hyprland
 
-if [[ ! -d "${HOME}/.local/share/tmux" && $(command -v git) ]]; then
-  git clone https://github.com/tmux-plugins/tpm "${HOME}/.local/share/tmux/plugins/tpm"
-fi
-
 source "${HOME}/.dotfiles/shell/env"
-
 # --------------------------------------------------------------------
 # Download Zinit, if it's not there yet
 # --------------------------------------------------------------------

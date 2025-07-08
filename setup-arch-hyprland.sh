@@ -152,9 +152,11 @@ install_development_packages() {
 
 configure_dotfiles() {
     mv ~/.config/hypr ~/.config/hypr.origin.$(date +%s) &>/dev/null || true
+    pushd "${HOME}/.dotfiles"
     cd ~/.dotfiles
-    run "Linking dotfiles..." stow ghostty git hyprland mise nvim ripgrep rofi starship tmux waybar zshrc
-    cd -
+    run "Linking dotfiles..." \
+        stow ghostty git hyprland mise nvim ripgrep rofi scripts starship tmux waybar zshrc
+    popd
 }
 
 enable_services() {
@@ -181,6 +183,12 @@ configure_web_apps() {
         web2app "Proton Mail" "https://mail.proton.me/u/0/inbox" "https://cdn.jsdelivr.net/gh/selfhst/icons/png/proton-mail.png"
         web2app "solidtime" "https://app.solidtime.io/" "https://cdn.jsdelivr.net/gh/selfhst/icons/png/solidtime.png"
     '
+}
+
+install_tmux_plugin_manager() {
+    run "Clone Tmux Plugin Manager..." \
+        git clone https://github.com/tmux-plugins/tpm "${HOME}/.local/share/tmux/plugins/tpm"
+    run "Install Tmux plugins..." bash "${HOME}/.local/share/tmux/plugins/tpm/bin/install_plugins"
 }
 
 ###############################################################################
@@ -213,6 +221,8 @@ configure_web_apps() {
     install_development_packages
     configure_web_apps
     enable_services
+
+    install_tmux_plugin_manager
 
     # Final cleanup
     run "Cleaning up bash dotfiles..." rm -rf ~/.bash{_history,_logout,_profile,rc}
