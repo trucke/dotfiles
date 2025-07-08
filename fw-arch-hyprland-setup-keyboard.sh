@@ -4,15 +4,8 @@ log() {
     gum log --time TimeOnly --level info --time.foreground="#50fa7b" "$*"
 }
 
-error() {
-    gum log --time TimeOnly --level error --time.foreground="#ff5555" "$*"
-    exit 1
-}
-
 configure_keyboard() {
-    gum log --time TimeOnly --level info --time.foreground="#50fa7b" \
-        "Configuring keyboard remapping with Kanata..."
-
+    log "Configuring keyboard remapping with Kanata..."
     gum spin --spinner dot --title "Installing 'kanata'..." -- paru -S --noconfirm kanata-bin
 
     # Add user to required groups
@@ -80,12 +73,12 @@ EOF
 }
 
 if ! command -v paru >/dev/null 2>&1; then
-    error "AUR helper 'paru' not installed"
+    gum log --time TimeOnly --level error --time.foreground="#ff5555" "AUR helper 'paru' not installed"
+    exit 1
 fi
 
 configure_keyboard
 
 systemctl --user enable kanata.service &>/dev/null
-gum log --time TimeOnly --level info --time.foreground="#50fa7b" \
-    "Keyboard successfully configured. Changes will take effect after reboot or next login."
+log Keyboard successfully configured. Changes will take effect after reboot or next login."
 gum confirm "Would you reboot the system?" && shutdown -r now

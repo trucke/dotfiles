@@ -56,3 +56,5 @@ colormgr device-make-profile-default "xrandr-eDP-1" "$profile_id"
 killall xiccd &>/dev/null || true
 
 log "Display configuration completed"
+log "Changes will take effect after reboot"
+gum confirm "Do you want to reboot the system?" && shutdown -r now
