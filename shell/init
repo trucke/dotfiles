@@ -30,3 +30,7 @@ fi
 if command -v jj &> /dev/null; then
   source <(jj util completion ${shell})
 fi
+
+if command -v ssh-agent &> /dev/null; then
+  eval "$(ssh-agent -s)"
+fi

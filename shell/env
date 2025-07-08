@@ -20,8 +20,8 @@ export EZA_TREE_IGNORE=".git|node_modules"
 export EZA_ICONS_AUTO=1
 
 export FZF_DEFAULT_COMMAND="fd --type f --hidden --follow --exclude .git --exclude node_modules"
-export FZF_DEFAULT_OPTS="--height ~55% --tmux 80%,80% --cycle --no-unicode --info=right --highlight-line \
---bind ctrl-y:preview-up,ctrl-e:preview-down,ctrl-b:preview-page-up,ctrl-f:preview-page-down"
+export FZF_DEFAULT_OPTS="--height ~55% --tmux center,80%,90% --cycle --no-unicode --info=right \
+--highlight-line --bind ctrl-y:preview-up,ctrl-e:preview-down,ctrl-b:preview-page-up,ctrl-f:preview-page-down"
 export FZF_CTRL_T_COMMAND="${FZF_DEFAULT_COMMAND}"
 export FZF_COMPLETION_TRIGGER='::'
 

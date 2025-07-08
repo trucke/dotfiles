@@ -84,3 +84,6 @@ if ! command -v paru >/dev/null 2>&1; then
 fi
 
 configure_keyboard
+
+
+systemctl --user enable --now kanata.service

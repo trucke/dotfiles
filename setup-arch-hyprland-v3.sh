@@ -77,7 +77,7 @@ install_base_packages() {
         # Bluetooth tools
         bluez bluez-utils bluetui
         # printer support
-        cups cups-filters avahi
+        cups cups-filters cups-pdf avahi
     )
     
     run "Installing ${#BASE_PACKAGES[@]} base packages..." \
@@ -98,7 +98,7 @@ install_hyprland_packages() {
         thunar thunar-volman gvfs tumbler loupe evince
         ffmpegthumbnailer poppler-glib
         # Desktop applications
-        ghostty zen-browser-bin chromium obsidian yubikey-manager
+        ghostty zen-browser-bin chromium obsidian yubikey-manager proton-pass-bin
         # System controls
         brightnessctl playerctl easyeffects power-profiles-daemon pavucontrol
         # Fonts and symbols
