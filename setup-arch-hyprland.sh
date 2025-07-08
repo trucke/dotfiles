@@ -171,7 +171,6 @@ enable_services() {
     "
 }
 
-
 configure_web_apps() {
     run "Creating web applications..." bash -c '
         source ~/.dotfiles/shell/functions
@@ -188,6 +187,18 @@ install_tmux_plugin_manager() {
     run "Clone Tmux Plugin Manager..." \
         git clone https://github.com/tmux-plugins/tpm "${HOME}/.local/share/tmux/plugins/tpm"
     run "Install Tmux plugins..." bash "${HOME}/.local/share/tmux/plugins/tpm/bin/install_plugins"
+}
+
+configure_auto_login() {
+    # Login directly as user, rely on disk encryption + hyprlock for security
+    run "Configure auto-login..." bash -c "
+    sudo mkdir -p /etc/systemd/system/getty@tty1.service.d
+    sudo tee /etc/systemd/system/getty@tty1.service.d/override.conf >/dev/null <<EOF
+[Service]
+ExecStart=
+ExecStart=-/usr/bin/agetty --autologin $USER --noclear %I \$TERM
+EOF
+    "
 }
 
 ###############################################################################
@@ -217,6 +228,7 @@ install_tmux_plugin_manager() {
     install_base_packages
     install_hyprland_packages
     configure_dotfiles
+    configure_auto_login
     install_development_packages
     configure_web_apps
     enable_services
