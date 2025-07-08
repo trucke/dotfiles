@@ -1,5 +1,9 @@
 [[ -z $DISPLAY && $(tty) == /dev/tty1 ]] && exec Hyprland
 
+if [[ ! -d "${HOME}/.local/share/tmux" && $(command -v git) ]]; then
+  git clone https://github.com/tmux-plugins/tpm "${HOME}/.local/share/tmux/plugins/tpm"
+fi
+
 source "${HOME}/.dotfiles/shell/env"
 
 # --------------------------------------------------------------------
@@ -24,12 +28,6 @@ zinit light zsh-users/zsh-completions
 # Add in snippets
 # --------------------------------------------------------------------
 zinit snippet OMZP::command-not-found
-
-zstyle ":omz:plugins:eza" "dirs-first" yes
-zstyle ":omz:plugins:eza" "header" yes
-zstyle ":omz:plugins:eza" "size-prefix" binary
-zstyle ":omz:plugins:eza" "time-style" long-iso
-zinit snippet OMZP::eza
 
 # Load completions
 autoload -Uz compinit && compinit

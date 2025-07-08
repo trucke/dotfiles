@@ -7,7 +7,9 @@ set -euo pipefail
 # UTILITY FUNCTIONS
 ###############################################################################
 install_gum() {
-    command -v gum &>/dev/null && return
+    if command -v gum &>/dev/null; then
+        return
+    fi
 
     echo "Installing gum for enhanced UI..."
     sudo pacman -Sy --noconfirm gum || {
@@ -28,6 +30,7 @@ error() {
 run() {
     local title="$1"
     shift
+    log "$title"
     gum spin --spinner dot --title "$title" -- "$@"
 }
 
@@ -43,7 +46,9 @@ configure_pacman() {
 }
 
 install_paru() {
-    command -v paru &>/dev/null || return
+    if command -v paru &>/dev/null; then
+        return
+    fi
 
     run "Installing base development tools..." sudo pacman -S --needed --noconfirm base-devel git
 
@@ -88,6 +93,7 @@ install_hyprland_packages() {
         # Hyprland
         hypridle hyprland hyprlock hyprpaper hyprpolkitagent hyprshot swaync rofi-wayland waybar
         wl-clipboard xdg-desktop-portal-gtk xdg-desktop-portal-hyprland xdg-utils qt6-wayland
+        gnome-themes-extra
         # File manager & viewers
         thunar thunar-volman gvfs tumbler loupe evince
         ffmpegthumbnailer poppler-glib
@@ -99,7 +105,7 @@ install_hyprland_packages() {
         ttf-font-awesome ttf-jetbrains-mono-nerd ttf-atkinson-hyperlegible-next ttf-nerd-fonts-symbols
         # AMD graphics driver
         libva-mesa-driver mesa vulkan-radeon xf86-video-amdgpu xf86-video-ati xorg-server xorg-xinit
-        # display and color profiling
+        # display & color profiling
         xiccd colord
     )
     
@@ -123,7 +129,9 @@ install_hyprland_packages() {
 }
 
 install_development_packages() {
-    command -v mise &>/dev/null && return
+    if command -v mise &>/dev/null; then
+        return
+    fi
 
     run "Installing mise..." bash -c "
         paru -S --noconfirm --needed wxwidgets-gtk3 glu unixodbc
@@ -133,7 +141,6 @@ install_development_packages() {
     "
 
     run "Install dev tools..." bash -c "
-        eval \"\$(~/.local/bin/mise activate bash)\"
         export GOBIN=\"~/.local/share/bin\"
         export GOPATH=\"~/.local/share/go\"
         go install github.com/air-verse/air@latest
@@ -146,7 +153,7 @@ install_development_packages() {
 configure_dotfiles() {
     mv ~/.config/hypr ~/.config/hypr.origin.$(date +%s) &>/dev/null || true
     cd ~/.dotfiles
-    run "Linking dotfiles..." stow zshrc ghostty git hyprland nvim rofi starship tmux waybar mise ripgrep
+    run "Linking dotfiles..." stow ghostty git hyprland mise nvim ripgrep rofi starship tmux waybar zshrc
     cd -
 }
 
@@ -159,7 +166,6 @@ enable_services() {
         sudo systemctl enable docker.service
         sudo systemctl enable avahi-daemon.service
         systemctl --user daemon-reload
-        systemctl --user enable kanata.service
         sleep 3
     "
 }
@@ -209,8 +215,8 @@ configure_web_apps() {
     enable_services
 
     # Final cleanup
-    run "Cleaning up bash dotfiles..." rm -rf .bash{_history,_logout,_profile,rc}
-    run "Creating personal directories..." mkdir -p "~/development/" "~/Documents/"
+    run "Cleaning up bash dotfiles..." rm -rf ~/.bash{_history,_logout,_profile,rc}
+    run "Creating personal directories..." mkdir -p ~/development/ ~/Documents/
 
     gum style \
         --foreground="#50fa7b" \
