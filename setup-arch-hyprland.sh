@@ -152,11 +152,10 @@ install_development_packages() {
 
 configure_dotfiles() {
     mv ~/.config/hypr ~/.config/hypr.origin.$(date +%s) &>/dev/null || true
-    pushd "${HOME}/.dotfiles"
-    cd ~/.dotfiles
+    pushd "${HOME}/.dotfiles" &>/dev/null
     run "Linking dotfiles..." \
         stow ghostty git hyprland mise nvim ripgrep rofi scripts starship tmux waybar zshrc
-    popd
+    popd &>/dev/null
 }
 
 enable_services() {
