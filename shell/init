@@ -1,32 +1,36 @@
 shell=$(basename "${SHELL}")
 
 if command -v mise &> /dev/null; then
-  eval "$(~/.local/bin/mise activate ${shell})"
+    eval "$(~/.local/bin/mise activate ${shell})"
 fi
 
 if command -v starship &> /dev/null; then
-  eval "$(starship init ${shell})"
+    eval "$(starship init ${shell})"
 fi
 
 if command -v conda &> /dev/null; then
-  eval "$(conda "shell.${shell}" hook)"
+    eval "$(conda "shell.${shell}" hook)"
 fi
 
 if command -v starship &> /dev/null; then
-  eval "$(starship init ${shell})"
+    eval "$(starship init ${shell})"
 fi
 
 if command -v fzf &> /dev/null; then
-  eval "$(fzf --${shell})"
+    eval "$(fzf --${shell})"
 fi
 
 if command -v brew &> /dev/null; then
-  if [[ -f "/opt/homebrew/bin/brew" ]] then
-    # If you're using macOS, you'll want this enabled
-    eval "$(/opt/homebrew/bin/brew shellenv)"
-  fi
+    if [[ -f "/opt/homebrew/bin/brew" ]] then
+        # If you're using macOS, you'll want this enabled
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+    fi
 fi
 
 if command -v jj &> /dev/null; then
-  source <(jj util completion ${shell})
+    source <(jj util completion ${shell})
+fi
+
+if command -v agent-ssh &> /dev/null; then
+    eval "$(ssh-agent -s &>/dev/null)"
 fi
