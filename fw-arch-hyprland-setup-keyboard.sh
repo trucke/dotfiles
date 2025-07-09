@@ -81,4 +81,4 @@ configure_keyboard
 
 systemctl --user enable kanata.service &>/dev/null
 log "Keyboard successfully configured. Changes will take effect after reboot or next login."
-gum confirm "Would you reboot the system?" && shutdown -r now
+gum confirm "Would you like to reboot the system?" && sudo systemctl reboot
