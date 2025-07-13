@@ -14,7 +14,9 @@ if [ "$update_count" -eq 0 ]; then
 else
     # Updates available
     update_list=$(paru -Qu 2>/dev/null)
-    tooltip="${update_count} update(s) available:\n\n${update_list}"
+    tooltip="${update_count} update(s) available: 
+
+${update_list}"
     
     jq --unbuffered --compact-output --null-input \
         --arg text "$update_count" \

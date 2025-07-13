@@ -62,7 +62,7 @@ EOF
   f (multi f24 (tap-hold $tap-time $hold-time f lctl))
   j (multi f24 (tap-hold $tap-time $hold-time j rctl))
   k (multi f24 (tap-hold $tap-time $hold-time k rsft))
-  l (multi f24 (tap-hold $tap-time $hold-time l ralt))
+  l (multi f24 (tap-hold $tap-time $hold-time l lalt))
   ; (multi f24 (tap-hold $tap-time $hold-time ; rmet))
 )
 
