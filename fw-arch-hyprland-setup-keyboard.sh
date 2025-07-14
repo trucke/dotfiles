@@ -40,22 +40,17 @@ EOF
     # Create Kanata configuration
     mkdir -p ~/.config/kanata
     cat > ~/.config/kanata/config.kbd <<'EOF'
-;; Kanata configuration for home row mods
 (defcfg
   process-unmapped-keys yes
 )
-
 (defsrc
-  caps a s d f j k l ;
+  a s d f j k l ;
 )
-
 (defvar
-  tap-time 150
-  hold-time 200
+  tap-time 200
+  hold-time 150
 )
-
 (defalias
-  escctrl (tap-hold 100 100 esc lctl)
   a (multi f24 (tap-hold $tap-time $hold-time a lmet))
   s (multi f24 (tap-hold $tap-time $hold-time s lalt))
   d (multi f24 (tap-hold $tap-time $hold-time d lsft))
@@ -65,9 +60,8 @@ EOF
   l (multi f24 (tap-hold $tap-time $hold-time l lalt))
   ; (multi f24 (tap-hold $tap-time $hold-time ; rmet))
 )
-
 (deflayer base
-  @escctrl @a @s @d @f @j @k @l @;
+  @a @s @d @f @j @k @l @;
 )
 EOF
 }
