@@ -103,6 +103,7 @@ install_hyprland_packages() {
         brightnessctl playerctl easyeffects power-profiles-daemon pavucontrol
         # Fonts and symbols
         ttf-font-awesome ttf-jetbrains-mono-nerd ttf-atkinson-hyperlegible-next ttf-nerd-fonts-symbols
+        noto-fonts-emoj
         # AMD graphics driver
         libva-mesa-driver mesa vulkan-radeon xf86-video-amdgpu xf86-video-ati xorg-server xorg-xinit
         # display & color profiling
