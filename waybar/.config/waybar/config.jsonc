@@ -25,6 +25,12 @@
 
   "hyprland/workspaces": {
     "on-click": "activate",
+    "format": "{icon}",
+    "format-icons": {
+      "1": "",
+      "2": "",
+      "3": "",
+    },
     "persistent-workspaces": {
       "*": 4
     }
