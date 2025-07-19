@@ -19,3 +19,4 @@ alias dev='cd ${HOME}/development'
 alias docs='cd ${HOME}/Documents'
 
 alias waybar-reload='pkill waybar &>/dev/null && setsid waybar &>/dev/null &'
+alias net='iwctl station wlan0'

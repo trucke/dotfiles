@@ -70,7 +70,7 @@ install_base_packages() {
     local BASE_PACKAGES=(
         # System utilities
         inetutils networkmanager iwd wpa_supplicant openssh wget curl unzip man-db nvtop
-        wireplumber sof-firmware 
+        wireplumber sof-firmware fw-fanctrl
         # CLI tools
         vim neovim bat eza fd fzf jq ripgrep stow rsync zsh zsh-completions starship 
         rclone docker docker-compose jujutsu tmux
@@ -167,6 +167,7 @@ enable_services() {
         sudo systemctl enable power-profiles-daemon.service
         sudo systemctl enable docker.service
         sudo systemctl enable avahi-daemon.service
+        sudo systemctl enable fw-fanctrl.service
         systemctl --user daemon-reload
         sleep 3
     "
