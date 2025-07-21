@@ -1,5 +1,5 @@
 return {
-	{ "tpope/vim-sleuth" },
+	{ "NMAC427/guess-indent.nvim" },
 	{ "nvim-lua/plenary.nvim" },
 	{
 		"m4xshen/smartcolumn.nvim",
@@ -8,6 +8,14 @@ return {
 	{
 		"lewis6991/gitsigns.nvim",
 		opts = {},
+	},
+	{
+		"nvim-telescope/telescope.nvim",
+		tag = "0.1.8",
+    opts = {},
+		keys = {
+			{"<leader>ss", function() require("telescope.builtin").live_grep() end, desc = "Dismiss All Notifications" },
+		},
 	},
 }
 
