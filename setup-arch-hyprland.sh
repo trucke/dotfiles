@@ -100,7 +100,7 @@ install_hyprland_packages() {
         # Desktop applications
         ghostty zen-browser-bin chromium obsidian-bin yubikey-manager proton-pass-bin localsend-bin
         # System controls
-        brightnessctl playerctl easyeffects power-profiles-daemon pavucontrol
+        brightnessctl playerctl easyeffects power-profiles-daemon pavucontrol fwupd
         # Fonts and symbols
         ttf-font-awesome ttf-jetbrains-mono-nerd ttf-nerd-fonts-symbols noto-fonts noto-fonts-cjk
         noto-fonts-emoji
