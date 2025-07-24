@@ -1,5 +1,3 @@
-[[ -z $DISPLAY && $(tty) == /dev/tty1 ]] && exec Hyprland
-
 source "${HOME}/.dotfiles/shell/env"
 # --------------------------------------------------------------------
 # Download Zinit, if it's not there yet
