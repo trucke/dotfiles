@@ -91,19 +91,19 @@ install_hyprland_packages() {
     log "Installing Hyprland and desktop environment..."
     local HYPRLAND_PACKAGES=(
         # Hyprland
-        hypridle hyprland hyprlock hyprpaper hyprpolkitagent hyprshot swaync rofi-wayland waybar
+        uwsm hypridle hyprland hyprlock hyprpaper hyprpolkitagent hyprshot swaync rofi-wayland waybar
         wl-clipboard xdg-desktop-portal-gtk xdg-desktop-portal-hyprland xdg-utils qt6-wayland
         gnome-themes-extra
         # File manager & viewers
         thunar thunar-volman gvfs tumbler loupe evince
         ffmpegthumbnailer poppler-glib
         # Desktop applications
-        ghostty zen-browser-bin chromium obsidian yubikey-manager proton-pass-bin
+        ghostty zen-browser-bin chromium obsidian-bin yubikey-manager proton-pass-bin localsend-bin
         # System controls
         brightnessctl playerctl easyeffects power-profiles-daemon pavucontrol
         # Fonts and symbols
-        ttf-font-awesome ttf-jetbrains-mono-nerd ttf-atkinson-hyperlegible-next ttf-nerd-fonts-symbols
-        noto-fonts-emoj
+        ttf-font-awesome ttf-jetbrains-mono-nerd ttf-nerd-fonts-symbols noto-fonts noto-fonts-cjk
+        noto-fonts-emoji
         # AMD graphics driver
         libva-mesa-driver mesa vulkan-radeon xf86-video-amdgpu xf86-video-ati xorg-server xorg-xinit
         # display & color profiling
@@ -113,11 +113,10 @@ install_hyprland_packages() {
     run "Installing ${#HYPRLAND_PACKAGES[@]} Hyprland packages..." \
         paru -Sy --noconfirm --needed "${HYPRLAND_PACKAGES[@]}"
 
-
     run "Configure GTK theme" bash -c "
         gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark'
         gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
-        gsettings set org.gnome.desktop.interface font-name 'Atkinson Hyperlegible Next 11'
+        gsettings set org.gnome.desktop.interface font-name 'Noto Sans Regular 11'
     "
 
     run "Configuring MIME types and default applications..." bash -c "
@@ -157,6 +156,9 @@ configure_dotfiles() {
     run "Linking dotfiles..." \
         stow ghostty git hyprland mise nvim ripgrep rofi scripts starship tmux waybar zshrc
     popd &>/dev/null
+
+    [[ -f ~/.zprofile ]] && cp ~/.zprofile ~/.zprofile.bak
+    echo '[[ -z $DISPLAY && $(tty) = /dev/tty1 ]] && exec uwsm start -- hyprland.desktop' > ~/.zprofile
 }
 
 enable_services() {
@@ -182,6 +184,7 @@ configure_web_apps() {
         web2app "Proton Drive" "https://drive.proton.me/u/0/" "https://cdn.jsdelivr.net/gh/selfhst/icons/png/proton-drive.png"
         web2app "Proton Mail" "https://mail.proton.me/u/0/inbox" "https://cdn.jsdelivr.net/gh/selfhst/icons/png/proton-mail.png"
         web2app "solidtime" "https://app.solidtime.io/" "https://cdn.jsdelivr.net/gh/selfhst/icons/png/solidtime.png"
+        web2app "Github" "https://github.com/" "https://cdn.jsdelivr.net/gh/selfhst/icons/png/github.png"
     '
 }
 

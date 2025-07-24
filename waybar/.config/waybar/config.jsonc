@@ -6,7 +6,7 @@
   "modules-right": [
     "pulseaudio",
     "backlight",
-    "hyprland/language",
+    //"hyprland/language",
     "group/power-profile",
     "battery",
     "tray",
