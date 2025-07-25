@@ -67,6 +67,11 @@ type getconf > /dev/null 2>&1 && PATH=$($(command -v getconf) PATH)
 # prepend new items to path (if directory exists)
 prepend-path "/bin"
 prepend-path "/usr/bin"
+if [[ -f "/opt/homebrew/bin/brew" ]] then
+    brew_prefix=$(/opt/homebrew/bin/brew --prefix)
+    prepend-path "${brew_prefix}/sbin"
+    prepend-path "${brew_prefix}/bin"
+fi
 prepend-path "/usr/local/bin"
 prepend-path "${CARGO_HOME}/bin"
 prepend-path "${XDG_DATA_HOME}/bin"
