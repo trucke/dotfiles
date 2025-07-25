@@ -1,7 +1,11 @@
 shell=$(basename "${SHELL}")
 
 if command -v mise &> /dev/null; then
-    eval "$(~/.local/bin/mise activate ${shell})"
+    if [[ -f "/opt/homebrew/bin/mise" ]] then
+        eval "$(/opt/homebrew/bin/mise activate ${shell})"
+    else
+        eval "$(~/.local/bin/mise activate ${shell})"
+    fi
 fi
 
 if command -v starship &> /dev/null; then
