@@ -65,4 +65,13 @@ vim.api.nvim_create_autocmd({ "FileType" }, {
 	end,
 })
 
+vim.api.nvim_create_autocmd("VimEnter", {
+	group = augroup("autoupdate"),
+	callback = function()
+		if require("lazy.status").has_updates then
+			require("lazy").update({ show = false })
+		end
+	end,
+})
+
 -- vim: ts=2 sts=2 sw=2 et
