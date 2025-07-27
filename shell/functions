@@ -48,3 +48,22 @@ web2app-remove() {
   rm "$DESKTOP_FILE" "$ICON_PATH"
 }
 
+tarz() {
+    if [ "$#" -lt 2 ]; then
+        echo "Usage: tarz <archive_name> /path/to/directory_or_files..."
+        return 1
+    fi
+
+    local name="$1"
+    shift
+    tar --zstd --options zstd:compression-level=5,zstd:threads=2 -cf "${name}.tar.zst" "$@"
+}
+
+tarzu() {
+    if [ "$#" -ne 1 ]; then
+        echo "Usage: tarzu /path/to/archive"
+        return 1
+    fi
+
+    tar --use-compress-program=unzstd -xf "$1"
+}

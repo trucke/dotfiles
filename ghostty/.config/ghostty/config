@@ -12,6 +12,3 @@ gtk-single-instance = false
 macos-titlebar-style = hidden
 macos-option-as-alt = true
 quit-after-last-window-closed = true
-
-keybind = global:unconsumed:ctrl+shift+k=scroll_page_up
-keybind = global:unconsumed:ctrl+shift+j=scroll_page_down
