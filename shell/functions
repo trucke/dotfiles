@@ -56,7 +56,7 @@ tarz() {
 
     local name="$1"
     shift
-    tar --zstd --options zstd:compression-level=5,zstd:threads=2 -cf "${name}.tar.zst" "$@"
+    tar --use-compress-program="zstd -5 -T2" -cf "${name}.tar.zst" "$@"
 }
 
 tarzu() {
