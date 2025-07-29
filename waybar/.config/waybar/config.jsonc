@@ -51,7 +51,8 @@
       "chrome-mail.proton.me(.*)": "Proton Mail",
       "chrome-read.readwise.io(.*)": "Readwise Reader",
       "chrome-app.simplelogin.io(.*)": "SimpleLogin",
-      "com.yubico.yubioath": "Yubico Authenticator"
+      "com.yubico.yubioath": "Yubico Authenticator",
+      "org.gnome.Loupe": "Loupe - Image Viewer"
     }
   },
   "custom/pacman": {
