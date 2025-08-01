@@ -1,0 +1,26 @@
+{
+    "$schema": "https://opencode.ai/config.json",
+    "theme": "tokyonight",
+    "keybinds": {
+        "leader": "ctrl+x",
+        "messages_half_page_up": "ctrl+u",
+        "messages_half_page_down": "ctrl+d"
+    },
+    "mode": {
+        "build": {
+            "model": "openrouter/anthropic/claude-4-sonnet-20250522",
+            "temperature": 0.0
+        },
+        "plan": {
+            "model": "openrouter/openai/gpt-4.1-mini",
+            "temperature": 0.0
+        }
+    },
+    "mcp": {
+        "context7": {
+            "type": "remote",
+            "url": "https://mcp.context7.com/mcp",
+            "enabled": true
+        }
+    }
+}

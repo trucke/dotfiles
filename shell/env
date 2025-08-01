@@ -46,3 +46,5 @@ export TMS_CONFIG_FILE="${XDG_CONFIG_HOME}/tms/config.toml"
 export DOCKER_CONFIG="${XDG_DATA_HOME}/docker"
 
 export OLLAMA_MODELS="${XDG_DATA_HOME}/ollama"
+
+export DISABLE_TELEMETRY=1
