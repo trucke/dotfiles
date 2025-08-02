@@ -37,3 +37,4 @@ setup-arch-hyprland.sh
 setup-macos.sh
 shell
 tmux-fzf-url
+tmux-sessionizer
