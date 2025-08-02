@@ -57,6 +57,15 @@ zstyle ':fzf-tab:*' switch-group '<' '>'
 zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
 
 # --------------------------------------------------------------------
+# Keybindings
+# --------------------------------------------------------------------
+bindkey -s ^f "tmux-sessionizer\n"
+bindkey -s '\eh' "tmux-sessionizer -s 0\n"
+bindkey -s '\ej' "tmux-sessionizer -s 1\n"
+bindkey -s '\ek' "tmux-sessionizer -s 2\n"
+bindkey -s '\el' "tmux-sessionizer -s 3\n"
+
+# --------------------------------------------------------------------
 # Setup PATH
 # --------------------------------------------------------------------
 function prepend-path() {
@@ -79,6 +88,7 @@ prepend-path "/sbin"
 prepend-path "/usr/sbin"
 prepend-path "${HOME}/.local/scripts"
 prepend-path "${HOME}/.local/bin"
+prepend-path "${HOME}/.local/tmux-sessionizer"
 prepend-path "${GHOSTTY_BIN_DIR}"
 # Remove duplicates (preserving prepended items)
 # Source: http://unix.stackexchange.com/a/40755
