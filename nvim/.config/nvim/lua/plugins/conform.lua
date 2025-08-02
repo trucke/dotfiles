@@ -20,6 +20,9 @@ return {
 			lua = { "stylua" },
 			python = { "isort", "black" },
 			go = { "goimports", "gofumpt", lsp_format = "fallback" },
+			javascript = { "prettier" },
+			typescript = { "prettier" },
+			elixir = { "mix" },
 		},
 		default_format_opts = {
 			lsp_format = "fallback",
