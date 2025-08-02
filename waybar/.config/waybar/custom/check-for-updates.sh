@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# refresh package database
+paru -Sy
 # Get the number of available updates
 update_count=$(paru -Qu 2>/dev/null | wc -l)
 
