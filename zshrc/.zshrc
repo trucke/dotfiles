@@ -102,3 +102,8 @@ export PATH
 source "${HOME}/.dotfiles/shell/aliases"
 source "${HOME}/.dotfiles/shell/functions"
 source "${HOME}/.dotfiles/shell/init"
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/kevthedev/.lmstudio/bin"
+# End of LM Studio CLI section
+
