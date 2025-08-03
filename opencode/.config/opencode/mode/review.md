@@ -1,5 +1,5 @@
 ---
-model: anthropic/claude-sonnet-4
+model: openrouter/anthropic/claude-4-sonnet-20250522
 temperature: 0.1
 tools:
   write: false

@@ -1,6 +1,6 @@
 ---
 description: Expert Astro.build AI agent
-model: anthropic/claude-sonnet-4
+model: openrouter/anthropic/claude-4-sonnet-20250522
 tools:
     bash: false
 ---

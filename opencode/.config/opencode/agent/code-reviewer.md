@@ -1,6 +1,6 @@
 ---
 description: Reviews code for best practices and potential issues
-model: anthropic/claude-sonnet-4
+model: openrouter/anthropic/claude-4-sonnet-20250522
 tools:
     write: false
     edit: false

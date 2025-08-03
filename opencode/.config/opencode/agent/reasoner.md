@@ -1,6 +1,6 @@
 ---
 description: AI advisor that can plan, review, and provide expert guidance.
-model: google/gemini-2.5-pro
+model: openrouter/google/gemini-2.5-pro
 tools:
     write: false
     edit: false

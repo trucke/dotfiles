@@ -17,8 +17,8 @@
             "*": "ask"
         }
     },
-    "small_model": "google/gemini-2.5-flash-lite",
-    "model": "anthropic/claude-sonnet-4",
+    "small_model": "openrouter/google/gemini-2.5-flash-lite",
+    "model": "openrouter/anthropic/claude-4-sonnet-20250522",
     "provider": {
         "ollama": {
             "npm": "@ai-sdk/openai-compatible",
@@ -35,10 +35,10 @@
     "instructions": ["README.md", "README.*.md"],
     "mode": {
         "build": {
-            "model": "anthropic/claude-sonnet-4"
+            "model": "openrouter/anthropic/claude-4-sonnet-20250522"
         },
         "plan": {
-            "model": "openai/gpt-4.1-mini"
+            "model": "openrouter/openai/gpt-4.1-mini"
         }
     },
     "mcp": {
