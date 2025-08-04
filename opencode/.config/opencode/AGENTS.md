@@ -1,3 +1,7 @@
+At the start of each session, read:
+1. Any `**/README.md` docs across the project
+2. Any `**/README.*.md` docs across the project
+
 ## General
 
 - Use spaces for indentation.
