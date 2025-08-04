@@ -34,6 +34,7 @@ At the start of each session, read:
 - Prefer functional coding style.
 - Prefer interfaces over types for object definitions
 - Avoid using `any`, prefer `unknown` for unknown types
+- Prefer `const` over `let` when variables won't be reassigned
 - Use strict Typescript configuration
 - Keep type definitions close to where they're used
 - Leverage Typescript's built-in utility types
@@ -77,7 +78,6 @@ At the start of each session, read:
 
 ## Tailwind CSS (v4) Best Practices
 
-- Prefer `const` over `let` when variables won't be reassigned
 - Keep accessibility in mind
 - Use mobile-first approach
 - Handle different screen sizes properly
@@ -90,6 +90,6 @@ At the start of each session, read:
 - Use container queries when needed
 - Use Flexbox and Grid utilities effectively
 - Implement dark mode properly
-- Use utility classes over custom CSS
+- Use utility classes over custom CSS. Avoid using custom CSS. Before creating custom CSS ask for permission.
 - Optimize for production
 - Keep styles organized

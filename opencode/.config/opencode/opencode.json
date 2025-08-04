@@ -30,6 +30,11 @@
                 "qwen2.5-coder:7b": {},
                 "deepseek-r1:8b": {}
             }
+        },
+        "openrouter": {
+            "models": {
+                "google/gemini-2.5-flash-lite": {}
+            }
         }
     },
     "instructions": ["README.md", "README.*.md"],
