@@ -64,7 +64,7 @@
       "updated": ""
     },
     "exec": "~/.config/waybar/custom/check-for-updates.sh",
-    "on-click": "ghostty --command='paru -Syu --devel; pkill -SIGRTMIN+8 waybar'",
+    "on-click": "ghostty --command='paru -Syu --noconfirm --devel; pkill -SIGRTMIN+8 waybar'",
     "signal": 8
   },
   "clock": {
