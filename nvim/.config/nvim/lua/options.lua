@@ -14,8 +14,7 @@ vim.o.autowrite = true
 vim.o.backup = false
 vim.o.colorcolumn = "110"
 vim.o.completeopt = "menu,menuone,noselect"
--- hide * markup for bold and italic, but not markers w/ substitutions
-vim.o.conceallevel = 2
+-- vim.o.conceallevel = 2
 vim.o.confirm = true
 vim.o.cursorline = true
 vim.o.expandtab = true

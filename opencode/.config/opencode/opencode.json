@@ -10,15 +10,13 @@
         "messages_half_page_down": "ctrl+d"
     },
     "permission": {
-        "edit": "allow",
+        "edit": "ask",
         "bash": {
             "git add": "allow",
             "git commit": "allow",
             "*": "ask"
         }
     },
-    "small_model": "openrouter/google/gemini-2.5-flash-lite",
-    "model": "openrouter/anthropic/claude-4-sonnet-20250522",
     "provider": {
         "ollama": {
             "npm": "@ai-sdk/openai-compatible",
@@ -28,7 +26,8 @@
             },
             "models": {
                 "qwen2.5-coder:7b": {},
-                "deepseek-r1:8b": {}
+                "deepseek-r1:8b": {},
+                "gpt-oss:20b": {}
             }
         },
         "openrouter": {
@@ -43,7 +42,7 @@
             "model": "openrouter/anthropic/claude-4-sonnet-20250522"
         },
         "plan": {
-            "model": "openrouter/openai/gpt-4.1-mini"
+            "model": "openrouter/z-ai/glm-4.5-air"
         }
     },
     "mcp": {
