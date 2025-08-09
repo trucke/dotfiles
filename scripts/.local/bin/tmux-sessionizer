@@ -80,7 +80,7 @@ esac
 if ! is_tmux_running || ! has_session "$session_name"; then
     tmux new-session -d -s "$session_name" -c "$selected"
     tmux new-window -d -t "$session_name:2" -c "$selected" "nvim ."
-    tmux new-window -d -t "$session_name:3" -c "$selected" "opencode --mode plan"
+    tmux new-window -d -t "$session_name:3" -c "$selected" "opencode ."
 fi
 
 switch_to "$session_name"
