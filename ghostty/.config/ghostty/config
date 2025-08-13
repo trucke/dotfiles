@@ -13,5 +13,5 @@ macos-titlebar-style = hidden
 macos-option-as-alt = true
 quit-after-last-window-closed = true
 
-keybind = alt+u=scroll_page_up
-keybind = alt+d=scroll_page_down
+keybind = unconsumed:alt+u=scroll_page_up
+keybind = unconsumed:alt+d=scroll_page_down
