@@ -22,6 +22,7 @@ return {
 			go = { "goimports", "gofumpt", lsp_format = "fallback" },
 			javascript = { "prettier" },
 			typescript = { "prettier" },
+			astro = { "prettier" },
 			elixir = { "mix" },
 		},
 		default_format_opts = {

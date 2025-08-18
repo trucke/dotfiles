@@ -13,7 +13,7 @@ local servers = {
 			},
 		},
 	},
-	html = { filetypes = { "html", "templ" } },
+	html = { filetypes = { "html", "templ", "astro" } },
 	-- htmx = { filetypes = { "html", "templ" } },
 	lua_ls = {
 		settings = {
@@ -24,7 +24,7 @@ local servers = {
 		},
 	},
 	tailwindcss = {
-		filetypes = { "templ", "astro", "javascript", "typescript", "svelte" },
+		filetypes = { "html", "css", "templ", "astro", "javascript", "typescript", "svelte", "vue" },
 		settings = { includeLanguages = { templ = "html" } },
 	},
 	templ = {},
