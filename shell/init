@@ -34,3 +34,7 @@ fi
 if command -v agent-ssh &> /dev/null; then
     eval "$(ssh-agent -s &>/dev/null)"
 fi
+
+if command -v doppler &> /dev/null; then
+    eval "$(doppler completion)"
+fi

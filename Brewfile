@@ -28,6 +28,7 @@ brew "starship"
 brew "stow"
 brew "tmux"
 brew "wget"
+brew "dopplerhq/cli/doppler"
 
 cask "balenaetcher"
 cask "font-atkinson-hyperlegible"
