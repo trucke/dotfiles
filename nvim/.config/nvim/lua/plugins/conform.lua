@@ -24,6 +24,7 @@ return {
 			typescript = { "prettier" },
 			astro = { "prettier" },
 			elixir = { "mix" },
+      yaml = { "yamlfix" },
 		},
 		default_format_opts = {
 			lsp_format = "fallback",
