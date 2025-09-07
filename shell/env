@@ -36,6 +36,8 @@ export CARGO_HOME="${XDG_DATA_HOME}/rust/cargo"
 export MIX_HOME="$XDG_DATA_HOME/mix"
 export HEX_HOME="$XDG_DATA_HOME/hex"
 
+export DOTNET_CLI_TELEMETRY_OPTOUT=1
+
 export RIPGREP_CONFIG_PATH="${XDG_CONFIG_HOME}/.ripgreprc"
 
 export SQLITE_HISTORY="$XDG_STATE_HOME/sqlite_history"
