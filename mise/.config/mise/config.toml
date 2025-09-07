@@ -1,11 +1,11 @@
 [tools]
 bun = "latest"
 deno = "latest"
-elixir = "latest"
-erlang = "latest"
 go = "latest"
 node = "latest"
-zig = "latest"
+#elixir = "latest"
+#erlang = "latest"
+#zig = "latest"
 
 [tools.rust]
 version = "latest"

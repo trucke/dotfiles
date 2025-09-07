@@ -25,6 +25,7 @@ return {
 			astro = { "prettier" },
 			elixir = { "mix" },
       yaml = { "yamlfix" },
+      json = { "jq" },
 		},
 		default_format_opts = {
 			lsp_format = "fallback",

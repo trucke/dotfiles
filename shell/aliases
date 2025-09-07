@@ -11,6 +11,8 @@ alias gst='git status --short --branch'
 alias gll='git log --graph --all --pretty="%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ad)" --date=relative -n 20'
 alias devcommit='git add . && git commit -m "automated dev commit" && git push origin main'
 
+alias jjl='jj log -r ::'
+
 alias cat="bat -pp"
 alias grep="rg"
 alias tmux="tmux -2"
