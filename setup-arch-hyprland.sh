@@ -73,7 +73,7 @@ install_base_packages() {
         wireplumber sof-firmware fw-fanctrl
         # CLI tools
         vim neovim bat eza fd fzf jq ripgrep stow rsync zsh zsh-completions starship 
-        rclone docker docker-compose jujutsu tmux doppler-cli-bin
+        rclone docker docker-compose jujutsu tmux doppler-cli-bin impala
         # Bluetooth tools
         bluez bluez-utils bluetui
         # printer support
