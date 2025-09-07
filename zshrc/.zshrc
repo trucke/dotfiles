@@ -80,6 +80,7 @@ if [[ -f "/opt/homebrew/bin/brew" ]] then
     brew_prefix=$(/opt/homebrew/bin/brew --prefix)
     prepend-path "${brew_prefix}/sbin"
     prepend-path "${brew_prefix}/bin"
+    prepend-path "${brew_prefix}/opt/uutils-coreutils/libexec/uubin"
 fi
 prepend-path "/usr/local/bin"
 prepend-path "${CARGO_HOME}/bin"
