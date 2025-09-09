@@ -12,22 +12,6 @@ fi
 source "${ZINIT_HOME}/zinit.zsh"
 
 # --------------------------------------------------------------------
-# Add in zsh plugins
-# --------------------------------------------------------------------
-zinit light zsh-users/zsh-syntax-highlighting
-zinit light zsh-users/zsh-completions
-
-# --------------------------------------------------------------------
-# Add in snippets
-# --------------------------------------------------------------------
-zinit snippet OMZP::command-not-found
-
-# Load completions
-autoload -Uz compinit && compinit
-
-zinit cdreplay -q
-
-# --------------------------------------------------------------------
 # History
 # --------------------------------------------------------------------
 HISTSIZE=5000
@@ -47,14 +31,22 @@ if [[ ! -f "${HISTFILE}" ]]; then
 fi
 
 # --------------------------------------------------------------------
-# Completion styling
+# zinit configuration and setup
 # --------------------------------------------------------------------
+zinit light zsh-users/zsh-syntax-highlighting
+zinit light zsh-users/zsh-completions
+zinit snippet OMZP::command-not-found
+
+zstyle ':completion:*' dump-file "${XDG_CACHE_HOME}/zsh/.zcompdump"
 zstyle ":completion:*" matcher-list "m:{a-z}={A-Za-z}"
 zstyle ":completion:*" list-colors "${(s.:.)LS_COLORS}"
 zstyle ":completion:*" menu no
 zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
 zstyle ':fzf-tab:*' switch-group '<' '>'
 zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
+
+# Load completions
+autoload -Uz compinit && compinit -C -d "${ZSH_COMPDUMP}"
 
 # --------------------------------------------------------------------
 # Keybindings
@@ -105,6 +97,3 @@ source "${HOME}/.dotfiles/shell/aliases"
 source "${HOME}/.dotfiles/shell/functions"
 source "${HOME}/.dotfiles/shell/init"
 
-# Added by LM Studio CLI (lms)
-export PATH="$PATH:/Users/kevthedev/.lmstudio/bin"
-# End of LM Studio CLI section

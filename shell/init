@@ -12,10 +12,6 @@ if command -v starship &> /dev/null; then
     eval "$(starship init ${shell})"
 fi
 
-if command -v conda &> /dev/null; then
-    eval "$(conda "shell.${shell}" hook)"
-fi
-
 if command -v fzf &> /dev/null; then
     eval "$(fzf --${shell})"
 fi
@@ -36,5 +32,5 @@ if command -v ssh-agent &> /dev/null; then
 fi
 
 if command -v doppler &> /dev/null; then
-    eval "$(doppler completion)"
+    eval "$(doppler completion 2>/dev/null)"
 fi

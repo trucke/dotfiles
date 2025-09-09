@@ -4,6 +4,8 @@ export XDG_STATE_HOME="${XDG_STATE_HOME:-${HOME}/.local/state}"
 export XDG_CACHE_HOME="${XDG_CACHE_HOME:-${HOME}/.cache}"
 export XDG_BIN_DIR="${XDG_BIN_DIR:-${HOME}/.local/bin}"
 
+export ZSH_COMPDUMP="${XDG_CACHE_HOME}/zsh/.zcompdump-$ZSH_VERSION"
+
 export DOTFILES=${HOME}/.dotfiles
 
 export HOMEBREW_NO_ANALYTICS=1
@@ -33,10 +35,14 @@ export CARGO_INSTALL_ROOT="${XDG_DATA_HOME}"
 export RUSTUP_HOME="${XDG_DATA_HOME}/rust/rustup"
 export CARGO_HOME="${XDG_DATA_HOME}/rust/cargo"
 
-export MIX_HOME="$XDG_DATA_HOME/mix"
-export HEX_HOME="$XDG_DATA_HOME/hex"
+export MIX_HOME="${XDG_DATA_HOME}/mix"
+export HEX_HOME="${XDG_DATA_HOME}/hex"
+
+export DOPPLER_CONFIG_DIR="${XDG_CONFIG_HOME}/doppler"
 
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
+
+export ANSIBLE_HOME="${XDG_DATA_HOME}/ansible"
 
 export RIPGREP_CONFIG_PATH="${XDG_CONFIG_HOME}/.ripgreprc"
 
