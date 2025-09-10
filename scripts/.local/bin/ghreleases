@@ -1,0 +1,27 @@
+#!/bin/bash
+
+# Usage: ./script.sh <owner/repo> [count]
+REPO_PATH=$1
+COUNT=${2:-5}
+
+if [[ ! "$REPO_PATH" =~ ^[^/]+/[^/]+$ ]]; then
+    echo "Error: Please provide repo in format owner/repo" >&2
+    exit 1
+fi
+
+# Stream processing with optimized jq and improved sed HTML stripping
+curl -sf "https://api.github.com/repos/$REPO_PATH/releases" | \
+jq -r --argjson count "$COUNT" '
+    .[:$count] | .[] |
+    "\(.tag_name) - \(.published_at | strptime("%Y-%m-%dT%H:%M:%SZ") | strftime("%b %d, %Y"))\n\(.body // "No release notes")\n---"
+' | \
+sed '
+    /<details[^>]*>/,/<\/details>/d
+    s/<[^>]*>//g
+    s/&lt;/</g
+    s/&gt;/>/g
+    s/&amp;/\&/g
+    s/&quot;/"/g
+    /^[[:space:]]*$/d
+' | \
+glow

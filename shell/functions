@@ -71,3 +71,15 @@ tarzu() {
 kebab-files() {
     for f in *; do [[ -f "$f" ]] && mv "$f" "$(tr ' [:upper:]' '-[:lower:]' <<<"$f" | tr -s '-')"; done
 }
+
+kebab() {
+    [ $# -gt 0 ] || {
+        printf 'usage: kebab <string...>\n' >&2
+        return 2
+    }
+    s=$(printf '%s' "$*" | tr '[:upper:]' '[:lower:]' | tr ' _' '-' |
+        tr -cd 'a-z0-9-' | tr -s '-')
+    s=${s##-}
+    s=${s%%-}
+    printf '%s' "$s"
+}
