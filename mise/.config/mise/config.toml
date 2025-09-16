@@ -3,10 +3,4 @@ bun = "latest"
 deno = "latest"
 go = "latest"
 node = "latest"
-#elixir = "latest"
-#erlang = "latest"
-#zig = "latest"
-
-[tools.rust]
-version = "latest"
-profile = "minimal"
+rust= { version = "latest", profile = "minimal" }
