@@ -3,8 +3,10 @@ shell=$(basename "${SHELL}")
 if command -v mise &> /dev/null; then
     if [[ -f "/opt/homebrew/bin/mise" ]] then
         eval "$(/opt/homebrew/bin/mise activate ${shell})"
+        eval "$(/opt/homebrew/bin/mise completion ${shell})"
     else
         eval "$(~/.local/bin/mise activate ${shell})"
+        eval "$(~/.local/bin/mise completion ${shell})"
     fi
 fi
 
@@ -33,4 +35,8 @@ fi
 
 if command -v doppler &> /dev/null; then
     eval "$(doppler completion 2>/dev/null)"
+fi
+
+if command -v just &> /dev/null; then
+    eval "$(just --completions ${shell})"
 fi

@@ -1,7 +1,7 @@
 theme = TokyoNight Moon
 background-opacity = 0.98
 font-feature = -calt 
-shell-integration-features = no-cursor,ssh-env,ssh-terminfo
+shell-integration-features = no-cursor,ssh-env
 
 gtk-titlebar = false
 gtk-single-instance = false

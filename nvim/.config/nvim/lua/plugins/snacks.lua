@@ -37,7 +37,12 @@ return {
 		{ "<leader>su", function() Snacks.picker.undo() end, desc = "Search Undo History" },
 		{ "<leader>sc", function() Snacks.picker.colorschemes() end, desc = "Search Colorschemes" },
 		{ "<leader>sb", function() Snacks.picker.buffers() end, desc = "Search Buffers" },
-		{ "<leader>sf", function() Snacks.picker.files({ hidden = true }) end, desc = "Search Files" },
+		{ "<leader>sf",
+      function()
+        Snacks.picker.files({ hidden = true, exclude = { ".jj" } })
+      end,
+      desc = "Search Files"
+    },
 		{ "<leader>sgf", function() Snacks.picker.git_files() end, desc = "Search Git Files" },
 		{ "<leader>/", function() Snacks.picker.grep() end, desc = "Search string" },
 		{
