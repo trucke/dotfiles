@@ -10,6 +10,12 @@ fi
 
 # Source/Load zinit
 source "${ZINIT_HOME}/zinit.zsh"
+if command -v brew &> /dev/null; then
+    if [[ -f "/opt/homebrew/bin/brew" ]] then
+        # If you're using macOS, you'll want this enabled
+        eval "$(/opt/homebrew/bin/brew shellenv)"
+    fi
+fi
 
 # --------------------------------------------------------------------
 # History
@@ -72,7 +78,6 @@ if [[ -f "/opt/homebrew/bin/brew" ]] then
     brew_prefix=$(/opt/homebrew/bin/brew --prefix)
     prepend-path "${brew_prefix}/sbin"
     prepend-path "${brew_prefix}/bin"
-    prepend-path "${brew_prefix}/opt/uutils-coreutils/libexec/uubin"
 fi
 prepend-path "/usr/local/bin"
 prepend-path "${CARGO_HOME}/bin"
