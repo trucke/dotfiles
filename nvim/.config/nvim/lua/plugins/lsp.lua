@@ -70,7 +70,7 @@ return {
 
 			-- Diagnostic Config
 			vim.diagnostic.config({
-				virtual_lines = true,
+				virtual_lines = false,
 				severity_sort = true,
 				float = { border = "rounded", source = "if_many" },
 				underline = { severity = vim.diagnostic.severity.ERROR },
