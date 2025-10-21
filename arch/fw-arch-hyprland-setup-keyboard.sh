@@ -6,10 +6,10 @@ log() {
 
 configure_keyboard() {
     log "Configuring keyboard remapping with Kanata..."
-    gum spin --spinner dot --title "Installing 'kanata'..." -- paru -S --noconfirm kanata-bin
+    gum spin --spinner dot --title "Installing 'kanata'..." -- yay -S --noconfirm kanata-bin
 
     # Add user to required groups
-    sudo groupadd -f uinput
+    sudo groupadd -rf uinput
     sudo usermod -aG input "$USER"
     sudo usermod -aG uinput "$USER"
     
@@ -66,8 +66,8 @@ EOF
 EOF
 }
 
-if ! command -v paru >/dev/null 2>&1; then
-    gum log --time TimeOnly --level error --time.foreground="#ff5555" "AUR helper 'paru' not installed"
+if ! command -v yay >/dev/null 2>&1; then
+    gum log --time TimeOnly --level error --time.foreground="#ff5555" "AUR helper 'yay' not installed"
     exit 1
 fi
 

@@ -65,27 +65,26 @@ install_paru() {
     run "Upgrading system packages..." paru -Syu --devel --noconfirm
 }
 
-install_base_packages() {
-    log "Installing base system packages..."
-    local BASE_PACKAGES=(
-        # System utilities
-        inetutils networkmanager iwd wpa_supplicant openssh wget curl unzip man-db nvtop
-        wireplumber sof-firmware fw-fanctrl
-        # CLI tools
-        vim neovim bat eza fd fzf jq ripgrep stow rsync zsh zsh-completions starship 
-        rclone docker docker-compose jujutsu tmux doppler-cli-bin impala
-        # Bluetooth tools
-        bluez bluez-utils bluetui
-        # printer support
-        cups cups-filters cups-pdf avahi
-    )
-    
-    run "Installing ${#BASE_PACKAGES[@]} base packages..." \
-        paru -Sy --noconfirm --needed "${BASE_PACKAGES[@]}"
-
-    sudo usermod -aG docker "${USER}"
-    sudo chsh -s "$(which zsh)" "$USER"
-}
+# install_base_packages() {
+#     log "Installing base system packages..."
+#     local BASE_PACKAGES=(
+#         # System utilities
+#         inetutils networkmanager iwd wpa_supplicant openssh wget curl unzip man-db nvtop
+#         wireplumber sof-firmware fw-fanctrl
+#         # CLI tools
+#         vim neovim bat eza fd fzf jq ripgrep stow rsync zsh zsh-completions starship 
+#         rclone docker docker-compose jujutsu tmux doppler-cli-bin impala
+#         # Bluetooth tools
+#         # printer support
+#         cups cups-filters cups-pdf avahi
+#     )
+#     
+#     run "Installing ${#BASE_PACKAGES[@]} base packages..." \
+#         paru -Sy --noconfirm --needed "${BASE_PACKAGES[@]}"
+# 
+#     sudo usermod -aG docker "${USER}"
+#     sudo chsh -s "$(which zsh)" "$USER"
+# }
 
 install_hyprland_packages() {
     log "Installing Hyprland and desktop environment..."
