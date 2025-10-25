@@ -11,7 +11,7 @@ sudo sed -i 's|^\(auth\s\+required\s\+pam_faillock.so\)\s\+preauth.*$|\1 preauth
 sudo sed -i 's|^\(auth\s\+\[default=die\]\s\+pam_faillock.so\)\s\+authfail.*$|\1 authfail deny=10 unlock_time=120|' "/etc/pam.d/system-auth"
 ################################################################################
 log "Solve common flakiness with SSH..."
-echo "net.ipv4.tcp_mtu_probing=1" | sudo tee -a /etc/sysctl.d/99-sysctl.conf
+echo "net.ipv4.tcp_mtu_probing=1" | sudo tee -a /etc/sysctl.d/99-sysctl.conf >/dev/null
 ################################################################################
 log "Copy over the keyboard layout that's been set in Arch during install to Hyprland..."
 conf="/etc/vconsole.conf"
@@ -43,12 +43,12 @@ sudo mkdir -p /etc/systemd/resolved.conf.d
 echo -e '[Resolve]\nDNSStubListenerExtra=172.17.0.1' | sudo tee /etc/systemd/resolved.conf.d/20-docker-dns.conf >/dev/null
 sudo systemctl restart systemd-resolved
 # Start Docker automatically
-sudo systemctl enable docker
+sudo systemctl -q enable docker
 # Give this user privileged Docker access
 sudo usermod -aG docker ${USER}
 # Prevent Docker from preventing boot for network-online.target
 sudo mkdir -p /etc/systemd/system/docker.service.d
-sudo tee /etc/systemd/system/docker.service.d/no-block-boot.conf <<'EOF'
+sudo tee /etc/systemd/system/docker.service.d/no-block-boot.conf >/dev/null <<'EOF'
 [Unit]
 DefaultDependencies=no
 EOF
@@ -107,7 +107,7 @@ EOF
 ################################################################################
 log "Speed up shutdown process..."
 sudo mkdir -p /etc/systemd/system.conf.d
-cat <<EOF | sudo tee /etc/systemd/system.conf.d/10-faster-shutdown.conf
+cat <<EOF | sudo tee /etc/systemd/system.conf.d/10-faster-shutdown.conf >/dev/null
 [Manager]
 DefaultTimeoutStopSec=5s
 EOF
