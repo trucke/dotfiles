@@ -1,6 +1,6 @@
 log "Setup initial power profile and battery monitoring..."
 powerprofilesctl set balanced || true
-systemctl --user enable --now omarchy-battery-monitor.timer
+systemctl -q --user enable --now omarchy-battery-monitor.timer
 ################################################################################
 log "Setup firewall ..."
 # Allow nothing in, everything out
