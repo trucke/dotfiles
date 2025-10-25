@@ -1,5 +1,5 @@
 if command -v limine &>/dev/null; then
-    sudo pacman -S --noconfirm --needed limine-snapper-sync limine-mkinitcpio-hook
+    paru -S -q --noconfirm --needed limine-snapper-sync limine-mkinitcpio-hook
 
     sudo tee /etc/mkinitcpio.conf.d/omarchy_hooks.conf <<EOF >/dev/null
 HOOKS=(base udev plymouth keyboard autodetect microcode modconf kms keymap consolefont block encrypt filesystems fsck btrfs-overlayfs)
@@ -94,7 +94,7 @@ EOF
     sudo sed -i 's/^NUMBER_LIMIT="50"/NUMBER_LIMIT="5"/' /etc/snapper/configs/{root,home}
     sudo sed -i 's/^NUMBER_LIMIT_IMPORTANT="10"/NUMBER_LIMIT_IMPORTANT="5"/' /etc/snapper/configs/{root,home}
 
-    chrootable_systemctl_enable limine-snapper-sync.service
+    sudo systemctl -q enable limine-snapper-sync.service
 fi
 
 echo "Re-enabling mkinitcpio hooks..."

@@ -7,7 +7,7 @@ fi
 log "Configure SDDM autologin..."
 sudo mkdir -p /etc/sddm.conf.d
 if [ ! -f /etc/sddm.conf.d/autologin.conf ]; then
-    cat <<EOF | sudo tee /etc/sddm.conf.d/autologin.conf
+    cat <<EOF | sudo tee /etc/sddm.conf.d/autologin.conf >/dev/null
 [Autologin]
 User=$USER
 Session=hyprland-uwsm
@@ -16,7 +16,7 @@ Session=hyprland-uwsm
 Current=breeze
 EOF
 fi
-sudo systemctl enable sddm.service
+sudo systemctl -q enable sddm.service
 ################################################################################
 log "Install and setup Limine Snapper integration..."
 source "${DOTFILES_ARCH_INSTALL}/install-limine-snapper.sh"
