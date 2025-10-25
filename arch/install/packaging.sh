@@ -1,6 +1,6 @@
 ################################################################################
 log "Install base packages..."
-mapfile -t packages < <(/usr/bin/grep -v '^#' "${DOTFILES_INSTALL}/base.packages" | /usr/bin/grep -v '^$')
+mapfile -t packages < <(/usr/bin/grep -v '^#' "${DOTFILES_ARCH_INSTALL}/base.packages" | /usr/bin/grep -v '^$')
 sudo paru -S --noconfirm --needed "${packages[@]}"
 ################################################################################
 log "Install webapps..."
