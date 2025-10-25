@@ -1,4 +1,5 @@
 log "Deploy dotfiles configurations..."
+mkdir -p "${HOME}/.local/bin"
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}" zshrc
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.config" config
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.local/bin" bin
