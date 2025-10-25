@@ -1,4 +1,3 @@
-avahi
 bat
 bluetui
 bluez
@@ -77,6 +76,8 @@ noto-fonts-emoji
 noto-fonts-extra
 nss-mdns
 obsidian-bin
+opencode
+pamixer
 playerctl
 power-profiles-daemon
 proton-pass-bin
@@ -93,9 +94,9 @@ sushi
 swayosd
 system-config-printer
 tmux
-ttf-ubuntu-font-family
 ttf-jetbrains-mono-nerd
 ttf-nerd-fonts-symbols
+ttf-ubuntu-font-family
 typora
 ufw
 ufw-docker

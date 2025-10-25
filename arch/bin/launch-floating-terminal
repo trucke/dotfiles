@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+cmd="$*"
+exec setsid uwsm-app -- ghostty --font-size=9 --title=Heylogix -e bash -c "show-logo; $cmd; omarchy-show-done"

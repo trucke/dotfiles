@@ -27,14 +27,10 @@ _darcs
 ##########################################
 # custom
 ##########################################
-Brewfile
-backgrounds
-fw-arch-hyprland-setup-display.sh
-fw-arch-hyprland-setup-fingerprint.sh
-fw-arch-hyprland-setup-keyboard.sh
+
+\.jj
+\.gitmodules
+arch
 macos
-setup-arch-hyprland.sh
-setup-macos.sh
-shell
+share
 tmux-fzf-url
-tmux-sessionizer
