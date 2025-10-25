@@ -12,7 +12,7 @@ log "Setup and configure printer system services..."
 sudo systemctl -q enable cups.service
 # Disable multicast dns in resolved. Avahi will provide this for better network printer discovery
 sudo mkdir -p /etc/systemd/resolved.conf.d
-echo -e "[Resolve]\nMulticastDNS=no" | sudo tee /etc/systemd/resolved.conf.d/10-disable-multicast.conf
+echo -e "[Resolve]\nMulticastDNS=no" | sudo tee /etc/systemd/resolved.conf.d/10-disable-multicast.conf >/dev/null
 sudo systemctl -q enable avahi-daemon.service
 # Enable mDNS resolution for .local domains
 sudo sed -i 's/^hosts:.*/hosts: mymachines mdns_minimal [NOTFOUND=return] resolve files myhostname dns/' /etc/nsswitch.conf

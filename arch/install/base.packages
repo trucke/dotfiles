@@ -20,7 +20,6 @@ elephant-clipboard
 elephant-desktopapplications
 elephant-files
 elephant-menus
-nvtop
 elephant-providerlist
 elephant-runner
 elephant-symbols
@@ -76,9 +75,11 @@ noto-fonts-cjk
 noto-fonts-emoji
 noto-fonts-extra
 nss-mdns
+nvtop
 obsidian-bin
 pamixer
 playerctl
+plymouth
 power-profiles-daemon
 proton-pass-bin
 qt5-wayland
@@ -102,7 +103,6 @@ ufw
 ufw-docker
 unzip
 uwsm
-yubikey-manager
 vim
 walker
 waybar
@@ -115,6 +115,7 @@ xdg-desktop-portal-hyprland
 xdg-utils
 xournalpp
 yaru-icon-theme
+yubikey-manager
 zen-browser-bin
 zsh
 zsh-completions
