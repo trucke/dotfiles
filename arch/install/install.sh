@@ -61,9 +61,7 @@ source "${DOTFILES_ARCH_INSTALL}/post-install.sh"
 
 ################################################################################
 
-clear
 echo
-tte -i "${DOTFILES}/share/logo.txt" --canvas-width 0 --anchor-text c --frame-rate 920 laseretch
 echo
 
 # Exit gracefully if user chooses not to reboot
