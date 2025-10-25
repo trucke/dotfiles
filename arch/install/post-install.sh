@@ -1,6 +1,3 @@
-gnome_theme
-################################################################################
-################################################################################
 log "Setup initial power profile and battery monitoring..."
 powerprofilesctl set balanced || true
 systemctl --user enable --now omarchy-battery-monitor.timer
