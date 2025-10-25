@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+
+set -e
+echo -e "\e[32mUpdate Firmware\e[0m"
+
+command -v fwupdmgr &>/dev/null || paru -S --noconfirm fwupd
+fwupdmgr refresh
+sudo fwupdmgr update

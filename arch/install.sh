@@ -81,7 +81,7 @@ disable_mkinitcpio() {
 install_base_packages() {
     # Install all base packages
     mapfile -t packages < <(/usr/bin/grep -v '^#' "${DOTFILES_INSTALL}/base.packages" | /usr/bin/grep -v '^$')
-    run "Install base packages..." sudo pacman -S --noconfirm --needed "${packages[@]}"
+    run "Install base packages..." sudo paru -S --noconfirm --needed "${packages[@]}"
 }
 
 ################################################################################
