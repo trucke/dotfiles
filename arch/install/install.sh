@@ -62,6 +62,7 @@ source "${DOTFILES_ARCH_INSTALL}/post-install.sh"
 ################################################################################
 
 echo
+clear_logo
 echo
 
 # Exit gracefully if user chooses not to reboot

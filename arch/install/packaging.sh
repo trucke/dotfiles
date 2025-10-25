@@ -1,9 +1,9 @@
-sudo pacman -Syyy >/dev/null
-paru -Syy >/dev/null
+sudo pacman -Syyy &>/dev/null
+paru -Syy &>/dev/null
 ################################################################################
 log "Install base packages..."
 mapfile -t packages < <(/usr/bin/grep -v '^#' "${DOTFILES_ARCH_INSTALL}/base.packages" | /usr/bin/grep -v '^$')
-paru -S -q --noconfirm --needed "${packages[@]}"
+paru -S --noconfirm --needed "${packages[@]}" >/dev/null
 ################################################################################
 log "Install webapps..."
 mkdir -p "${HOME}/.local/share/applications/icons"

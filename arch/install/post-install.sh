@@ -23,7 +23,6 @@ sudo ufw reload
 ################################################################################
 # https://wiki.archlinux.org/title/Systemd-resolved
 log "Setup DNS resolver..."
-echo "Symlink resolved stub-resolv to /etc/resolv.conf"
 sudo ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
 ################################################################################
 log "Setup Gnome GTK theme..."

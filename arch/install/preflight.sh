@@ -1,6 +1,6 @@
 ################################################################################
 log "Setup pacman..."
-sudo pacman -S --quiet --needed --noconfirm base-devel git >/dev/null
+sudo pacman -S --quiet --needed --noconfirm base-devel git &>/dev/null
 sudo cp /etc/pacman.conf /etc/pacman.conf.bak
 sudo sed -i '/^#Color/c\Color\nILoveCandy' /etc/pacman.conf
 sudo sed -i '/^#VerbosePkgLists/c\VerbosePkgLists' /etc/pacman.conf
