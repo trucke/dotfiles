@@ -1,14 +1,3 @@
-#--- HARDWARE ---#
-network
-run "Enable bluetooth service..." sudo systemctl enable bluetooth.service
-printer
-usb_autosuspend
-# Disable shutting system down on power button to bind it to power menu afterwards
-run "Disable power button for remap..." \
-    sudo sed -i 's/.*HandlePowerKey=.*/HandlePowerKey=ignore/' /etc/systemd/logind.conf
-fix_f13_amd_audio_input
-################################################################################
-################################################################################
 log "Deploy dotfiles configurations..."
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}" zshrc
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.config" config

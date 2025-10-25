@@ -18,5 +18,5 @@ EOF
 fi
 sudo systemctl enable sddm.service
 ################################################################################
-log "Install and setup Limine Snapper integration..." 
+log "Install and setup Limine Snapper integration..."
 source "${DOTFILES_ARCH_INSTALL}/install-limine-snapper.sh"
