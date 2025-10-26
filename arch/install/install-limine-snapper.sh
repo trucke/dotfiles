@@ -108,7 +108,7 @@ fi
 
 echo "mkinitcpio hooks re-enabled"
 
-sudo limine-update
+sudo limine-update >/dev/null
 
 if [[ -n $EFI ]] && efibootmgr &>/dev/null; then
     # Remove the archinstall-created Limine entry
