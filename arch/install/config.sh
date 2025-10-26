@@ -13,18 +13,6 @@ sudo sed -i 's|^\(auth\s\+\[default=die\]\s\+pam_faillock.so\)\s\+authfail.*$|\1
 log "Solve common flakiness with SSH..."
 echo "net.ipv4.tcp_mtu_probing=1" | sudo tee -a /etc/sysctl.d/99-sysctl.conf >/dev/null
 ################################################################################
-log "Copy over the keyboard layout that's been set in Arch during install to Hyprland..."
-conf="/etc/vconsole.conf"
-hyprconf="${HOME}/.config/hypr/input.conf"
-if grep -q '^XKBLAYOUT=' "$conf"; then
-    layout=$(grep '^XKBLAYOUT=' "$conf" | cut -d= -f2 | tr -d '"')
-    sed -i "/^[[:space:]]*kb_options *=/i\  kb_layout = $layout" "$hyprconf"
-fi
-if grep -q '^XKBVARIANT=' "$conf"; then
-    variant=$(grep '^XKBVARIANT=' "$conf" | cut -d= -f2 | tr -d '"')
-    sed -i "/^[[:space:]]*kb_options *=/i\  kb_variant = $variant" "$hyprconf"
-fi
-################################################################################
 log "Fix powerprofilesctl SHEBANG: Ensure we use system python3 and not mise's python3..."
 sudo sed -i '/env python3/ c\#!/bin/python3' /usr/bin/powerprofilesctl
 ################################################################################
