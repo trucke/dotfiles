@@ -84,10 +84,7 @@ prepend-path "${CARGO_HOME}/bin"
 prepend-path "${XDG_DATA_HOME}/bin"
 prepend-path "/sbin"
 prepend-path "/usr/sbin"
-prepend-path "${HOME}/.opencode/bin"
-prepend-path "${HOME}/.local/scripts"
-prepend-path "${HOME}/.local/bin"
-prepend-path "${HOME}/.local/tmux-sessionizer"
+prepend-path "${DOTFILES}/share/bin"
 prepend-path "${GHOSTTY_BIN_DIR}"
 # Remove duplicates (preserving prepended items)
 # Source: http://unix.stackexchange.com/a/40755

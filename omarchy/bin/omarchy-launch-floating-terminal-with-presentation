@@ -1,0 +1,4 @@
+#!/bin/bash
+
+cmd="$*"
+exec setsid uwsm-app -- ghostty --font-size=9 --title=Omarchy -e bash -c "omarchy-show-logo; $cmd; omarchy-show-done"
