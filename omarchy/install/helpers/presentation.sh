@@ -1,3 +1,8 @@
+# Ensure we have gum available
+if ! command -v gum &>/dev/null; then
+  sudo pacman -S --needed --noconfirm gum
+fi
+
 # Get terminal size from /dev/tty (works in all scenarios: direct, sourced, or piped)
 if [ -e /dev/tty ]; then
   TERM_SIZE=$(stty size 2>/dev/null </dev/tty)
