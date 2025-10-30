@@ -45,7 +45,7 @@ stop_install_log() {
 }
 
 start_install_log() {
-    sudo rm "${OMARCHY_INSTALL_LOG_FILE}"
+    sudo rm -f "${OMARCHY_INSTALL_LOG_FILE}"
     sudo touch "$OMARCHY_INSTALL_LOG_FILE"
     sudo chmod 666 "$OMARCHY_INSTALL_LOG_FILE"
     export OMARCHY_START_TIME=$(date '+%Y-%m-%d %H:%M:%S')
