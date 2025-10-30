@@ -32,7 +32,7 @@
         "exec": "omarchy-update-available",
         "on-click": "omarchy-launch-floating-terminal-with-presentation omarchy-update",
         "signal": 7,
-        "interval": 3600
+        "interval": 21600
     },
     "clock": {
         "timezone": "Europe/Vienna",
