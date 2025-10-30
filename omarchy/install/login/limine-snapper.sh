@@ -1,5 +1,5 @@
 if command -v limine &>/dev/null; then
-  sudo pacman -S --noconfirm --needed limine-snapper-sync limine-mkinitcpio-hook
+  paru -S --noconfirm --needed limine-snapper-sync limine-mkinitcpio-hook > /dev/null
 
   sudo tee /etc/mkinitcpio.conf.d/omarchy_hooks.conf <<EOF >/dev/null
 HOOKS=(base udev plymouth keyboard autodetect microcode modconf kms keymap consolefont block encrypt filesystems fsck btrfs-overlayfs)
@@ -111,7 +111,7 @@ fi
 
 echo "mkinitcpio hooks re-enabled"
 
-sudo limine-update
+sudo limine-update > /dev/null
 
 if [[ -n $EFI ]] && efibootmgr &>/dev/null; then
     # Remove the archinstall-created Limine entry

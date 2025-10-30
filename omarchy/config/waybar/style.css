@@ -1,44 +1,52 @@
-
 * {
-    background: #1a1b26;
-    color: #cdd6f4;
-
     border: none;
     border-radius: 0;
     font-family: 'JetBrainsMono Nerd Font';
-    /* min-height: 20px; */
     min-height: 0px;
     font-size: 12px;
 }
 
-window#waybar.fullscreen #window {
-    color: #FFA500;
+window#waybar {
+    background: transparent;
+    color: #EDF1F2;
 }
 
-.modules-left {
-    margin-left: 8px;
+.modules-left,
+.modules-center,
+.modules-right {
+    border-radius: 10px;
+    background: #242037;
+    opacity: 0.85;
+}
+
+.modules-center {
+    padding: 0 20px;
 }
 
 .modules-right {
-    margin-right: 8px;
+    padding-left: 10px;
 }
 
 #workspaces button {
-    all: initial;
-    padding: 0 5px;
+    padding: 0 6px;
     margin: 0 1.5px;
     min-width: 9px;
 }
 
-#workspaces button.empty {
-    opacity: 0.5;
+#workspaces button.active,
+#workspaces button.focuse {
+    color: #75B39C;
+    font-weight: bold;
 }
 
-#backlight,
-#battery,
-#clock,
-#custom-update,
-#pulseaudio {
+#custom-update {
+    min-width: 12px;
+    margin-left: 8px;
+    color: #F79926;
+}
+
+#pulseaudio,
+#battery {
     min-width: 12px;
     margin: 0 7.5px;
 }
@@ -59,12 +67,12 @@ window#waybar.fullscreen #window {
     margin-right: 20px;
 }
 
-#custom-update {
-    font-size: 10px;
+#backlight {
+    margin-right: 16px;
 }
 
-#clock {
-    margin-left: 8.75px;
+#temperature {
+    margin-right: 13px;
 }
 
 .hidden {
@@ -92,13 +100,13 @@ window#waybar.fullscreen #window {
 
 @keyframes blink {
     to {
-	background-color: #ffffff;
-	color: #000000;
+        background-color: #ffffff;
+        color: #000000;
     }
 }
 
 @keyframes blink-update {
     to {
-	background-color: dodgerblue;
+        background-color: dodgerblue;
     }
 }

@@ -1,6 +1,6 @@
 # Configure pacman
-sudo cp -f ${OMARCHY_PATH}/config/pacman/pacman.conf /etc/pacman.conf
-sudo cp -f ${OMARCHY_PATH}/config/pacman/mirrorlist /etc/pacman.d/mirrorlist
+sudo cp -f $OMARCHY_PATH/config/pacman/pacman.conf /etc/pacman.conf
+sudo cp -f $OMARCHY_PATH/config/pacman/mirrorlist /etc/pacman.d/mirrorlist
 
 if lspci -nn | grep -q "106b:180[12]"; then
   cat <<EOF | sudo tee -a /etc/pacman.conf >/dev/null

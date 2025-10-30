@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Name=Impala
+Comment=Impala
+Exec=$TERMINAL --class=TUI.float -e impala
+Terminal=false
+Type=Application
+Icon=/home/hiyagni/.local/share/applications/icons/Omarchy.png
+StartupNotify=true

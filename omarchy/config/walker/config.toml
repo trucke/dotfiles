@@ -4,7 +4,9 @@ selection_wrap = true                                                       # wr
 click_to_close = true                                                       # closes walker if clicking outside of the main content area
 global_argument_delimiter = "#"                                             # query: firefox#https://benz.dev => part after delimiter will be ignored when querying. this should be the same as in the elephant config
 exact_search_prefix = "'"                                                   # disable fuzzy searching
+theme = "omarchy-default"                                                   # theme to use
 disable_mouse = false                                                       # disable mouse (on input and list only)
+additional_theme_location = "~/.dotfiles/omarchy/config/walker/themes/"
 
 [shell]
 anchor_top = true
@@ -55,30 +57,11 @@ provider = "calc"
 prefix = "@"
 provider = "websearch"
 
-[[providers.prefixes]]
-prefix = "$"
-provider = "clipboard"
-
 [providers.actions] # This will be MERGED/OVEWRITTEN with what the user specifies
 dmenu = [{ action = "select", default = true, bind = "Return" }]
 
 providerlist = [
   { action = "activate", default = true, bind = "Return", after = "ClearReload" },
-]
-
-bluetooth = [
-  { action = "find", global = true, bind = "ctrl f", after = "AsyncClearReload" },
-  { action = "trust", bind = "ctrl t", after = "AsyncReload" },
-  { action = "untrust", bind = "ctrl t", after = "AsyncReload" },
-  { action = "pair", bind = "Return", after = "AsyncReload" },
-  { action = "remove", bind = "ctrl d", after = "AsyncReload" },
-  { action = "connect", bind = "Return", after = "AsyncReload" },
-  { action = "disconnect", bind = "Return", after = "AsyncReload" },
-]
-
-archlinuxpkgs = [
-  { action = "install", bind = "Return", default = true },
-  { action = "remove", bind = "Return" },
 ]
 
 calc = [
@@ -109,15 +92,6 @@ files = [
   { action = "copyfile", label = "copy file", bind = "ctrl c" },
 ]
 
-todo = [
-  { action = "save", default = true, bind = "Return", after = "ClearReload" },
-  { action = "delete", bind = "ctrl d", after = "ClearReload" },
-  { action = "active", bind = "Return", after = "ClearReload" },
-  { action = "inactive", bind = "Return", after = "ClearReload" },
-  { action = "done", bind = "ctrl f", after = "ClearReload" },
-  { action = "clear", bind = "ctrl x", after = "ClearReload", global = true },
-]
-
 runner = [
   { action = "run", default = true, bind = "Return" },
   { action = "runterminal", label = "run in terminal", bind = "shift Return" },
@@ -127,17 +101,4 @@ runner = [
 symbols = [
   { action = "run_cmd", label = "select", default = true, bind = "Return" },
   { action = "erase_history", label = "clear hist", bind = "ctrl h", after = "Reload" },
-]
-
-unicode = [
-  { action = "run_cmd", label = "select", default = true, bind = "Return" },
-  { action = "erase_history", label = "clear hist", bind = "ctrl h", after = "Reload" },
-]
-
-clipboard = [
-  { action = "copy", default = true, bind = "Return" },
-  { action = "remove", bind = "ctrl d", after = "ClearReload" },
-  { action = "remove_all", global = true, label = "clear", bind = "ctrl shift d", after = "ClearReload" },
-  { action = "toggle_images", global = true, label = "toggle images", bind = "ctrl i", after = "ClearReload" },
-  { action = "edit", bind = "ctrl o" },
 ]

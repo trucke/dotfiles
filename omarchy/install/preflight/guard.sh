@@ -43,4 +43,4 @@ command -v limine &>/dev/null || abort "Limine bootloader"
 [ "$(findmnt -n -o FSTYPE /)" = "btrfs" ] || abort "Btrfs root filesystem" 
 
 # Cleared all guards
-echo "Guards: OK"
+gum style --padding "0 0 0 $PADDING_LEFT" --foreground 2 "Guards: [OK]"

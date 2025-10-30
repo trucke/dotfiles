@@ -28,6 +28,7 @@ _darcs
 # custom
 ##########################################
 
+.DS_Store
 \.jj
 \.gitmodules
 arch

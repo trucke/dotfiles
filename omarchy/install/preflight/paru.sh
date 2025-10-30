@@ -1,13 +1,15 @@
-if ! command -v paru &>/dev/null; then
-    echo "Install AUR helper: paru"
-    temp_dir=$(mktemp -d)
-    pushd "$temp_dir"
+if ! command -v git &>/dev/null; then
+    sudo pacman -S -q --needed --noconfirm git >/dev/null
+fi
 
-    git clone https://aur.archlinux.org/paru-bin.git
+if ! command -v paru &>/dev/null; then
+    temp_dir=$(mktemp -d)
+    trap "rm -rf \"$temp_dir\"" EXIT
+    cd "$temp_dir"
+    git clone --quiet https://aur.archlinux.org/paru-bin.git
     cd paru-bin
     makepkg -si --noconfirm
-
-    popd
-    rm -rf "$temp_dir" && paru --gendb
-    paru -Syu --devel --noconfirm
+    paru --gendb
+    paru -Syu --devel --noconfirm >/dev/null
+    echo "AUR helper 'paru' installed"
 fi
