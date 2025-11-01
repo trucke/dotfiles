@@ -5,3 +5,4 @@ omarchy-webapp-install "Proton Mail" https://mail.proton.me/u/0/ Proton-Mail.png
 omarchy-webapp-install "Proton Calendar" https://calendar.proton.me/u/0/ Proton-Calendar.png
 omarchy-webapp-install "Proton Drive" https://drive.proton.me/u/0/ Proton-Drive.png
 omarchy-webapp-install "Lumo" https://lumo.proton.me/u/0/ Lumo.png
+omarchy-webapp-install "SimpleLogin" https://app.simplelogin.io/ SimpleLogin.png
