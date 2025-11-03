@@ -23,8 +23,9 @@ local servers = {
 			},
 		},
 	},
+  svelte = {},
 	tailwindcss = {
-		filetypes = { "html", "css", "templ", "astro", "javascript", "typescript", "svelte", "vue" },
+		filetypes = { "html", "css", "templ", "astro", "javascript", "typescript", "svelte" },
 		settings = { includeLanguages = { templ = "html" } },
 	},
 	templ = {},
