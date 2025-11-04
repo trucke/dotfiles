@@ -43,23 +43,24 @@ rose = '#ea9a97'
 pine = '#3e8fb0'
 foam = '#9ccfd8'
 iris = '#c4a7e7'
+subtle = '#908caa'
 
 [username]
 format = "[](fg:overlay)[ 󰧱 $user ]($style)[](fg:overlay) "
 show_always = true
 style_root = "bg:overlay fg:iris"
-style_user = "bg:overlay fg:iris"
+style_user = "bg:overlay fg:subtle"
 
 [hostname]
 ssh_only = false
-style = "bg:overlay fg:iris"
+style = "bg:overlay fg:subtle"
 disabled = false
 ssh_symbol = '🌐'
 format = "[](fg:overlay)[   $hostname $ssh_symbol ]($style)[](fg:overlay) "
 
 [character]
-success_symbol = "[❯](iris)"
-error_symbol = "[❯](iris)"
+success_symbol = "[❯](gold)"
+error_symbol = "[❯](gold)"
 vimcmd_symbol = "[❮](overlay)"
 
 
