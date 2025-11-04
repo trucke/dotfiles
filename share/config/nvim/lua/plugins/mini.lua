@@ -21,14 +21,17 @@ return {
 			local statusline = require("mini.statusline")
 			local icons = require("mini.icons")
 			statusline.setup({ use_icons = true })
-			statusline.section_location = function() return "%2l:%-2v" end
+
 			statusline.section_filename = function()
 				local icon, _, _ = icons.get("filetype", vim.bo.filetype)
-				return icon .. " " .. "%f%m%r"
+				return icon .. " " .. "%t%m%r"
 			end
 			statusline.section_fileinfo = function()
 				local lazystatus = require("lazy.status")
 				return lazystatus.has_updates() and lazystatus.updates() .. " " or ""
+			end
+			statusline.section_location = function()
+				return "%2l:%-2v"
 			end
 		end,
 	},
