@@ -18,8 +18,8 @@ return {
 		},
 	},
 	keys = {
-		{ "<leader>e", function() require("oil").open(nil, { preview = {} }) end, desc = "Open file explorer" },
-		{ "<leader>o", function() require("oil").toggle_float() end, desc = "Open file explorer (floating)" },
+		{ "<leader>o", function() require("oil").open(nil, { preview = {} }) end, desc = "Open file explorer" },
+		{ "<leader><leader>", function() require("oil").toggle_float() end, desc = "Open file explorer (floating)" },
 	},
 }
 

@@ -28,7 +28,7 @@ return {
 		},
 		{ "<leader>nd", function() Snacks.notifier.hide() end, desc = "Dismiss All Notifications" },
 		-- explorer
-		{ "<leader><leader>", function() Snacks.explorer() end, desc = "File Explorer" },
+		{ "<leader>e", function() Snacks.explorer() end, desc = "File Explorer" },
 		{ "<leader>.", function() Snacks.scratch() end, desc = "Toggle Scratch Buffer" },
 		{ "<leader>S", function() Snacks.scratch.select() end, desc = "Select Scratch Buffer" },
 		-- search
@@ -37,13 +37,16 @@ return {
 		{ "<leader>su", function() Snacks.picker.undo() end, desc = "Search Undo History" },
 		{ "<leader>sc", function() Snacks.picker.colorschemes() end, desc = "Search Colorschemes" },
 		{ "<leader>sb", function() Snacks.picker.buffers() end, desc = "Search Buffers" },
-		{ "<leader>sf",
+    { "<leader>sf",
       function()
-        Snacks.picker.files({ hidden = true, exclude = { ".jj" } })
+        if vim.fn.finddir('.git', '.;') ~= '' then
+          Snacks.picker.git_files()
+        else
+          Snacks.picker.files({ hidden = true, exclude = { ".jj" } })
+        end
       end,
-      desc = "Search Files"
+      desc = "Search Files (Git-aware)"
     },
-		{ "<leader>sgf", function() Snacks.picker.git_files() end, desc = "Search Git Files" },
 		{ "<leader>/", function() Snacks.picker.grep() end, desc = "Search string" },
 		{
 			"<leader>sn",
@@ -52,11 +55,6 @@ return {
 			end,
 			desc = "Search Neovim config",
 		},
-		-- git
-		{ "<leader>gb", function() Snacks.picker.git_branches() end, desc = "Git Branches" },
-		{ "<leader>gs", function() Snacks.picker.git_status() end, desc = "Git Status" },
-		{ "<leader>gS", function() Snacks.picker.git_stash() end, desc = "Git Stash" },
-		{ "<leader>gL", function() Snacks.picker.git_log() end, desc = "Git Log" },
 		-- LSP
 		{ "cgd", function() Snacks.picker.lsp_definitions() end, desc = "Goto Definition" },
 		{ "cgD", function() Snacks.picker.lsp_declarations() end, desc = "Goto Declaration" },
@@ -64,8 +62,6 @@ return {
 		{ "cgi", function() Snacks.picker.lsp_implementations() end, desc = "Goto Implementation" },
 		{ "cgt", function() Snacks.picker.lsp_type_definitions() end, desc = "Goto Type Defenition" },
 		{ "cgO", function() Snacks.picker.lsp_symbols() end, desc = "Open Document Symbols" },
-		-- Zen mode
-		{ "<leader>z", function() Snacks.zen() end, desc = "Toggle Zen Mode" },
 	},
   init = function()
 	vim.api.nvim_create_autocmd("LspProgress", {
