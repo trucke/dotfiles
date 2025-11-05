@@ -3,6 +3,9 @@ background-opacity = 0.98
 font-feature = -calt 
 shell-integration-features = no-cursor,ssh-env
 
+window-padding-x = 4
+window-padding-balance = true
+
 gtk-titlebar = false
 gtk-single-instance = false
 
@@ -10,3 +13,4 @@ macos-titlebar-style = hidden
 macos-option-as-alt = left
 quit-after-last-window-closed = true
 macos-auto-secure-input = true
+
