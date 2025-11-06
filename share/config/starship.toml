@@ -46,7 +46,7 @@ iris = '#c4a7e7'
 subtle = '#908caa'
 
 [username]
-format = "[](fg:overlay)[ 󰧱 $user ]($style)[](fg:overlay) "
+format = "[](fg:overlay)[  $user ]($style)[](fg:overlay) "
 show_always = true
 style_root = "bg:overlay fg:iris"
 style_user = "bg:overlay fg:subtle"
