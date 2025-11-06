@@ -37,7 +37,8 @@ menu() {
 }
 
 terminal() {
-    ghostty --title=Omarchy -e "$@"
+    # xdg-terminal-exec --title=Omarchy -e "$@"
+    xdg-terminal-exec --app-id=com.omarchy.Omarchy "$@"
 }
 
 present_terminal() {

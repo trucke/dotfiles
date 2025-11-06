@@ -76,7 +76,7 @@
     },
     "pulseaudio": {
         "format": "{icon}",
-        "on-click": "$TERMINAL --title=Wiremix -e wiremix -v output",
+        "on-click": "xdg-terminal-exec --app-id=com.omarchy.Wiremix --title=Wiremix -e wiremix -v output",
         "on-click-right": "pamixer -t",
         "tooltip-format": "Playing at {volume}%",
         "scroll-step": 5,
