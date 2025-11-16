@@ -3,31 +3,37 @@
 command_timeout = 1500
 palette = "rose-pine-moon"
 
+#format = """
+#$hostname\
+#$directory\
+#$git_branch\
+#$git_status\
+#$docker_context\
+#$package\
+#$bun\
+#$deno\
+#$dotnet\
+#$elixir\
+#$erlang\
+#$gleam\
+#$golang\
+#$lua\
+#$nodejs\
+#$pulumi\
+#$python\
+#$ruby\
+#$swift\
+#$terraform\
+#$zig\
+#$nix_shell\
+#$conda\
+#$line_break$character"""
+
 format = """
-$username\
 $hostname\
 $directory\
 $git_branch\
 $git_status\
-$docker_context\
-$package\
-$bun\
-$deno\
-$dotnet\
-$elixir\
-$erlang\
-$gleam\
-$golang\
-$lua\
-$nodejs\
-$pulumi\
-$python\
-$ruby\
-$swift\
-$terraform\
-$zig\
-$nix_shell\
-$conda\
 $line_break$character"""
 
 [battery]
@@ -77,15 +83,11 @@ symbol = ""
 
 [git_status]
 disabled = false
-style = "bg:overlay fg:love"
-format = '[](fg:overlay)([$all_status$ahead_behind]($style))[](fg:overlay) '
-up_to_date = '[ ✓ ](bg:overlay fg:iris)'
-untracked = '[?\($count\)](bg:overlay fg:gold)'
-stashed = '[\$](bg:overlay fg:iris)'
-modified = '[!\($count\)](bg:overlay fg:gold)'
-renamed = '[»\($count\)](bg:overlay fg:iris)'
+style = "fg:love"
+format = '([$all_status]($style))'
+untracked = '[?\($count\)](fg:gold)'
+stashed = '[\$](fg:iris)'
+modified = '[!\($count\)](fg:gold)'
+renamed = '[»\($count\)](fg:iris)'
 deleted = '[✘\($count\)](style)'
-staged = '[++\($count\)](bg:overlay fg:gold)'
-ahead = '[⇡\(${count}\)](bg:overlay fg:foam)'
-diverged = '⇕[\[](bg:overlay fg:iris)[⇡\(${ahead_count}\)](bg:overlay fg:foam)[⇣\(${behind_count}\)](bg:overlay fg:rose)[\]](bg:overlay fg:iris)'
-behind = '[⇣\(${count}\)](bg:overlay fg:rose)'
+staged = '[++\($count\)](fg:gold)'
