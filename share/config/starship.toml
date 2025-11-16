@@ -3,37 +3,10 @@
 command_timeout = 1500
 palette = "rose-pine-moon"
 
-#format = """
-#$hostname\
-#$directory\
-#$git_branch\
-#$git_status\
-#$docker_context\
-#$package\
-#$bun\
-#$deno\
-#$dotnet\
-#$elixir\
-#$erlang\
-#$gleam\
-#$golang\
-#$lua\
-#$nodejs\
-#$pulumi\
-#$python\
-#$ruby\
-#$swift\
-#$terraform\
-#$zig\
-#$nix_shell\
-#$conda\
-#$line_break$character"""
-
 format = """
 $hostname\
 $directory\
-$git_branch\
-$git_status\
+[](fg:overlay)$git_branch$git_status[](fg:overlay)\
 $line_break$character"""
 
 [battery]
@@ -51,12 +24,6 @@ foam = '#9ccfd8'
 iris = '#c4a7e7'
 subtle = '#908caa'
 
-[username]
-format = "[](fg:overlay)[  $user ]($style)[](fg:overlay) "
-show_always = true
-style_root = "bg:overlay fg:iris"
-style_user = "bg:overlay fg:subtle"
-
 [hostname]
 ssh_only = false
 style = "bg:overlay fg:subtle"
@@ -69,7 +36,6 @@ success_symbol = "[❯](gold)"
 error_symbol = "[❯](gold)"
 vimcmd_symbol = "[❮](overlay)"
 
-
 [directory]
 format = "[](fg:overlay)[ $path ]($style)[](fg:overlay) "
 style = "bg:overlay fg:foam"
@@ -77,17 +43,11 @@ truncation_length = 2
 truncation_symbol = "…/"
 
 [git_branch]
-format = "[](fg:overlay)[ $symbol $branch ]($style)[](fg:overlay) "
+format = "[ $symbol $branch ]($style)"
 style = "bg:overlay fg:foam"
 symbol = ""
 
 [git_status]
 disabled = false
-style = "fg:love"
-format = '([$all_status]($style))'
-untracked = '[?\($count\)](fg:gold)'
-stashed = '[\$](fg:iris)'
-modified = '[!\($count\)](fg:gold)'
-renamed = '[»\($count\)](fg:iris)'
-deleted = '[✘\($count\)](style)'
-staged = '[++\($count\)](fg:gold)'
+style = "bg:overlay fg:subtle"
+format = '([$all_status$ahead_behind]($style))'
