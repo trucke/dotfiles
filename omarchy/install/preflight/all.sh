@@ -1,5 +1,0 @@
-source $OMARCHY_INSTALL/preflight/guard.sh
-source $OMARCHY_INSTALL/preflight/show-env.sh
-run_logged $OMARCHY_INSTALL/preflight/first-run-mode.sh
-run_logged $OMARCHY_INSTALL/preflight/paru.sh
-run_logged $OMARCHY_INSTALL/preflight/disable-mkinitcpio.sh

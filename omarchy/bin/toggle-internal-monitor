@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+count=$(hyprctl monitors all | grep Monitor | wc -l)
+[[ $count -lt 2 ]] && exit 0
+
+if hyprctl monitors | grep "eDP-1" > /dev/null; then
+  hyprctl keyword monitor "eDP-1, disable"
+else
+  hyprctl keyword monitor "eDP-1, 2880x1920@120, auto-down, 2"
+fi
