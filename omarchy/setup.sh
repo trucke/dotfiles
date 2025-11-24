@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-pushd "$HOME/.dotfiles/omarchy"
+pushd "$HOME/.dotfiles/omarchy" >/dev/null
 
 source ./install/install-packages.sh
 source ./install/install-dotfiles.sh
@@ -18,4 +18,4 @@ source ./install/update-logind.sh
 
 source ./cleanup.sh
 
-popd
+popd >/dev/null
