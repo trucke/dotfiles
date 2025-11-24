@@ -11,7 +11,7 @@ fi
 
 KANSHI_SERVICE="${HOME}/.config/systemd/user/kanshi.service"
 
-if [ ! -f "${KANSHI_SERVICE}"; then
+if [ ! -f "${KANSHI_SERVICE}" ]; then
     echo "Kanshi systemd service not found."
     echo "Install systemd service..."
     # Create systemd service
@@ -30,7 +30,7 @@ RestartSec=2
 WantedBy=graphical-session.target
 EOF
     systemctl --user daemon-reload
-    systemctl --user enable kanshi.service
+    systemctl --user enable --now kanshi.service
 
     echo "Systemd service installed successfully"
 fi

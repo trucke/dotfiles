@@ -96,3 +96,5 @@ install_hyprland_overrides
 install_hyprland_bindings_overrides
 install_hypridle_config
 install_hyprlock_config
+
+hyprctl reload >/dev/null

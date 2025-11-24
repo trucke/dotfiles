@@ -2,7 +2,7 @@
 
 ORIGINAL_DIR=$(pwd)
 REPO_URL="github.com:trucke/dotfiles-v2"
-DOTFILES=".dotfiles"
+DOTFILES="${HOME}/.dotfiles"
 
 is_stow_installed() {
     pacman -Qi "stow" &>/dev/null
@@ -13,34 +13,39 @@ if ! is_stow_installed; then
     exit 1
 fi
 
-pushd ~
+pushd ~ >/dev/null
 
 # Check if the repository already exists
-if [ -d "$DOTFILES" ]; then
-    echo "Repository '$DOTFILES' already exists. Skipping clone"
+if [ -d "${DOTFILES}" ]; then
+    echo "Repository '${DOTFILES}' already exists. Skipping clone."
 else
-    git clone "$REPO_URL" "$DOTFILES" || {
+    git clone "${REPO_URL}" "${DOTFILES}" || {
         echo "Failed to clone the repository."
         exit 1
     }
-    echo "removing old configs"
-    rm -rf ~/.config/nvim \
-        ~/.config/starship.toml \
-        ~/.local/share/nvim/ \
-        ~/.cache/nvim/ \
-        ~/.config/ghostty/config \
-        ~/.config/git \
-        ~/.config/mise \
-        ~/.config/kanshi \
-        ~/.config/kanata
 fi
 
+echo "Removing old configs"
+rm -rf ~/.config/nvim \
+    ~/.config/starship.toml \
+    ~/.local/share/nvim/ \
+    ~/.cache/nvim/ \
+    ~/.config/ghostty/config \
+    ~/.config/git \
+    ~/.config/mise \
+    ~/.config/kanshi \
+    ~/.config/kanata \
+    ~/.config/waybar
+
 echo "Link personal config files"
-cd "$HOME/${DOTFILES}"
+cd "${DOTFILES}"
 stow --restow --dir="${DOTFILES}/omarchy" --target="${HOME}/.config" config
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.config" config
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}" zshrc
 
-popd
+popd >/dev/null
 
 omarchy-restart-waybar
+omarchy-restart-terminal >/dev/null
+
+echo "Dotfiles successfully installed."

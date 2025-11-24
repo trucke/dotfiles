@@ -1,7 +1,5 @@
 * {
-    color: #EDF1F3;
     background: transparent;
-
     border: none;
     border-radius: 0;
     min-height: 0;
@@ -12,6 +10,7 @@
 .modules-left,
 .modules-right,
 .modules-center {
+    color: #EDF1F3;
     background-color: #242037;
     border-radius: 10px;
     opacity: 0.85;
@@ -42,6 +41,10 @@
     opacity: 0.5;
 }
 
+#workspaces button.active {
+    color: #75B39C;
+}
+
 #cpu,
 #battery,
 #pulseaudio,
@@ -52,6 +55,8 @@
     margin: 0 7.5px;
 }
 
+#backlight,
+#temperature,
 #tray {
     margin-right: 16px;
 }

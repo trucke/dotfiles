@@ -35,6 +35,8 @@ Restart=no
 WantedBy=default.target
 EOF
 
-systemctl --user enable kanata.service
+systemctl --user daemon-reload
+systemctl --user enable --now kanata.service
 
+echo ""
 echo "Keyboard remapping successfully configured. Changes will take effect after reboot or next login."

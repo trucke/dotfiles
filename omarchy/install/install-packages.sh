@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-mapfile -t packages < "$HOME/supplement/install.packages"
+mapfile -t packages < "$HOME/.dotfiles/omarchy/install/install.packages"
 
-yay -Syu
+yay -Syu --noconfirm
 for package in "${packages[@]}"; do
     yay -S --noconfirm --needed "$package"
 done
