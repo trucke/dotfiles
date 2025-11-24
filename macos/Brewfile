@@ -1,21 +1,17 @@
 # set arguments for all 'brew install --cask' commands
 cask_args appdir: "~/Applications", require_sha: false
 
-brew "ansible"
-brew "ansible-lint"
 brew "bash"
 brew "bat"
 brew "docker"
-brew "dopplerhq/cli/doppler"
 brew "dua-cli"
 brew "eza"
 brew "fd"
 brew "fzf"
 brew "git"
 brew "glow"
-brew "jj"
 brew "jq"
-brew "just"
+brew "mise"
 brew "neovim"
 brew "netbirdio/tap/netbird"
 brew "opencode"

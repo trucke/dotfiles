@@ -31,13 +31,13 @@ else
         ~/.config/ghostty/config \
         ~/.config/git \
         ~/.config/mise \
-        ~/.config/kanshi
+        ~/.config/kanshi \
+        ~/.config/kanata
 fi
 
 echo "Link personal config files"
 cd "$HOME/${DOTFILES}"
-stow --restow --dir="${DOTFILES}/omarchy/config" --target="${HOME}/.config" waybar
-stow --restow --dir="${DOTFILES}/omarchy/config" --target="${HOME}/.config" kanshi
+stow --restow --dir="${DOTFILES}/omarchy" --target="${HOME}/.config" config
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.config" config
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}" zshrc
 

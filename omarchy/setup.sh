@@ -13,6 +13,8 @@ source ./install/install-kanshi.sh
 source ./install/install-kanata.sh
 
 source ./install/set-shell.sh
+source ./install/set-background.sh
+source ./install/install-logo.sh
 
 source ./cleanup.sh
 

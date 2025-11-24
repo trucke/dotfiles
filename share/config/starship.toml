@@ -1,18 +1,6 @@
-"$schema" = 'https://starship.rs/config-schema.json'
-
-command_timeout = 1500
+command_timeout = 200
+format = "$directory$git_branch$git_status$line_break$character"
 palette = "rose-pine-moon"
-
-format = """
-$hostname\
-$directory\
-[](fg:overlay)$git_branch$git_status[](fg:overlay)\
-$line_break$character"""
-
-[battery]
-disabled = true
-[cmd_duration]
-disabled = true
 
 [palettes.rose-pine-moon]
 overlay = '#393552'
@@ -24,30 +12,33 @@ foam = '#9ccfd8'
 iris = '#c4a7e7'
 subtle = '#908caa'
 
-[hostname]
-ssh_only = false
-style = "bg:overlay fg:subtle"
-disabled = false
-ssh_symbol = '🌐'
-format = "[](fg:overlay)[   $hostname $ssh_symbol ]($style)[](fg:overlay) "
-
 [character]
-success_symbol = "[❯](gold)"
-error_symbol = "[❯](gold)"
-vimcmd_symbol = "[❮](overlay)"
+error_symbol = "[❯](bold pine)"
+success_symbol = "[❯](bold pine)"
+vimcmd_symbol = "[❮](bold pine)"
 
 [directory]
-format = "[](fg:overlay)[ $path ]($style)[](fg:overlay) "
-style = "bg:overlay fg:foam"
+style = "bold foam"
 truncation_length = 2
 truncation_symbol = "…/"
+repo_root_style = "bold foam"
+repo_root_format = "[$repo_root]($repo_root_style)[$path]($style)[$read_only]($read_only_style) "
 
 [git_branch]
-format = "[ $symbol $branch ]($style)"
-style = "bg:overlay fg:foam"
-symbol = ""
+format = "[$branch]($style) "
+style = "italic foam"
 
 [git_status]
-disabled = false
-style = "bg:overlay fg:subtle"
-format = '([$all_status$ahead_behind]($style))'
+format     = '[$all_status]($style)'
+style      = "foam"
+ahead      = "⇡${count} "
+diverged   = "⇕⇡${ahead_count}⇣${behind_count} "
+behind     = "⇣${count} "
+conflicted = " "
+up_to_date = " "
+untracked  = "? "
+modified   = " "
+stashed    = "$ "
+staged     = ""
+renamed    = ""
+deleted    = ""

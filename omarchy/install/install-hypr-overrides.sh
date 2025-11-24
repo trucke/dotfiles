@@ -3,6 +3,7 @@
 set -e
 
 HYPRLAND_CONFIG="$HOME/.config/hypr/hyprland.conf"
+HYPRLAND_BINDINGS="$HOME/.config/hypr/bindings.conf"
 HYPRIDLE_CONFIG="$HOME/.config/hypr/hypridle.conf"
 HYPRLOCK_CONFIG="$HOME/.config/hypr/hyprlock.conf"
 HYPRPAPER_CONFIG="$HOME/.config/hypr/hyprpaper.conf"
@@ -41,6 +42,22 @@ install_hyprland_overrides() {
     echo "Hyprland overrides setup complete!"
 }
 
+install_hyprland_bindings_overrides() {
+    local hyperland_overrides_bindings="${DOTFILES}/config/hypr/bindings.conf"
+    local backup_file="${HYPRLAND_BINDINGS}.bak.$(date +%s)"
+
+    if cmp -s "${hyperland_overrides_bindings}" "${HYPRLAND_BINDINGS}"; then
+        echo "Hyperland user bindings overrides already deployed."
+    else
+        echo "Deploy Hyperland user bindings overrides..."
+        mv -f "${HYPRLAND_BINDINGS}" "${backup_file}" 2>/dev/null
+        ln "${hyperland_overrides_bindings}" "${HYPRLAND_BINDINGS}"
+        echo "Hyprland user bindings overrides deployed successfully"
+    fi
+
+    echo "Hyprland user bindings overrides setup complete!"
+}
+
 install_hypridle_config() {
     local hypridle_config_override="${DOTFILES}/config/hypr/hypridle.conf"
     local backup_file="${HYPRIDLE_CONFIG}.bak.$(date +%s)"
@@ -49,7 +66,7 @@ install_hypridle_config() {
         echo "Hypridle already deployed."
     else
         echo "Deploy Hypridle overrides..."
-        mv -f "${HYPRIDLE_CONFIG}" "${backup_file}" 2>/dev/null 
+        mv -f "${HYPRIDLE_CONFIG}" "${backup_file}" 2>/dev/null
         ln "${hypridle_config_override}" "${HYPRIDLE_CONFIG}"
         echo "Hypridle config deployed successfully"
     fi
@@ -65,7 +82,7 @@ install_hyprlock_config() {
         echo "Hypridle already deployed."
     else
         echo "Deploy Hypridle overrides..."
-        mv -f "${HYPRLOCK_CONFIG}" "${backup_file}" 2>/dev/null 
+        mv -f "${HYPRLOCK_CONFIG}" "${backup_file}" 2>/dev/null
         ln "${hyprlock_config_override}" "${HYPRLOCK_CONFIG}"
         echo "Hypridle config deployed successfully"
     fi
@@ -76,5 +93,6 @@ install_hyprlock_config() {
 ################################################################################
 
 install_hyprland_overrides
-install_hypridle_config 
-install_hyprlock_config 
+install_hyprland_bindings_overrides
+install_hypridle_config
+install_hyprlock_config
