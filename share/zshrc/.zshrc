@@ -41,6 +41,8 @@ fi
 # --------------------------------------------------------------------
 zinit light zsh-users/zsh-syntax-highlighting
 zinit light zsh-users/zsh-completions
+zinit light Aloxaf/fzf-tab
+
 zinit snippet OMZP::command-not-found
 
 zstyle ':completion:*' dump-file "${XDG_CACHE_HOME}/zsh/.zcompdump"
@@ -53,6 +55,7 @@ zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
 
 # Load completions
 autoload -Uz compinit && compinit -C -d "${ZSH_COMPDUMP}"
+zinit cdreplay -q
 
 # --------------------------------------------------------------------
 # Keybindings
@@ -81,6 +84,7 @@ prepend-path "${CARGO_HOME}/bin"
 prepend-path "${XDG_DATA_HOME}/bin"
 prepend-path "${DOTFILES}/share/bin"
 prepend-path "${GHOSTTY_BIN_DIR}"
+prepend-path "${XDG_BIN_DIR}"
 # Remove duplicates (preserving prepended items)
 # Source: http://unix.stackexchange.com/a/40755
 PATH=$(echo -n "${PATH}" | awk -v RS=: '{ if (!arr[$0]++) {printf("%s%s",!ln++?"":":",$0)}}')

@@ -15,3 +15,4 @@ macos-option-as-alt = left
 quit-after-last-window-closed = true
 macos-auto-secure-input = true
 
+keybind = shift+enter=text:\x1b\r

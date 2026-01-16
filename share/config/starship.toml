@@ -1,5 +1,5 @@
 command_timeout = 200
-format = "$directory$git_branch$git_status$line_break$character"
+format = "$directory$git_branch$git_status${custom.jj}$line_break$character"
 palette = "rose-pine-moon"
 
 [palettes.rose-pine-moon]
@@ -42,3 +42,11 @@ stashed    = "$ "
 staged     = ""
 renamed    = ""
 deleted    = ""
+
+[custom.jj]
+command = "prompt"
+format = "$output"
+ignore_timeout = true
+shell = ["starship-jj", "--ignore-working-copy", "starship"]
+use_stdin = false
+when = true
