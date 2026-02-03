@@ -15,4 +15,8 @@ macos-option-as-alt = left
 quit-after-last-window-closed = true
 macos-auto-secure-input = true
 
+quick-terminal-position = right
+quick-terminal-size = 35%,85%
+
 keybind = shift+enter=text:\x1b\r
+keybind = global:cmd+slash=toggle_quick_terminal

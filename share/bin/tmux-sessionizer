@@ -85,19 +85,10 @@ esac
 
 if ! tmux has-session -t "$session_name" 2>/dev/null; then
     # Window 1: opencode as base, then build layout from it
-    tmux new-session -d -s "$session_name" -c "$selected" "opencode ."
-    
-    # Split horizontally from pane 0 → creates pane 1 to the right
-    tmux split-window -h -t "$session_name:1.0" -c "$selected"
-    
-    # Select the new right pane and split it vertically → creates pane 2 below it
-    tmux select-pane -t "$session_name:1.1"
-    tmux split-window -v -t "$session_name:1.1" -c "$selected"
-    
+    tmux new-session -d -s "$session_name" -n "opencode" -c "$selected" "opencode"
     # Window 2: left + right panes, right one runs nvim
     tmux new-window -t "$session_name:2" -c "$selected"
-    tmux split-window -h -t "$session_name:2" -c "$selected"
-    tmux send-keys -t "$session_name:2.1" "nvim ." Enter
+    tmux new-window -t "$session_name:69" -n "looping" -c "$selected"
 fi
 
 switch_to "$session_name:1"

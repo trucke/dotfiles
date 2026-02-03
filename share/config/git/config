@@ -44,3 +44,5 @@
     la = "!git l --all"
     lr = "!git l -30"
     lra = "!git lr --all"
+[include]
+    path = config.local

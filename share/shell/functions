@@ -36,29 +36,265 @@ kebab() {
 
 # Transcode a video to a good-balance 1080p that's great for sharing online
 transcode-video-1080p() {
-  ffmpeg -i $1 -vf scale=1920:1080 -c:v libx264 -preset fast -crf 23 -c:a copy ${1%.*}-1080p.mp4
+    ffmpeg -i $1 -vf scale=1920:1080 -c:v libx264 -preset fast -crf 23 -c:a copy ${1%.*}-1080p.mp4
 }
 
 # Transcode a video to a good-balance 4K that's great for sharing online
 transcode-video-4K() {
-  ffmpeg -i $1 -c:v libx265 -preset slow -crf 24 -c:a aac -b:a 192k ${1%.*}-optimized.mp4
+    ffmpeg -i $1 -c:v libx265 -preset slow -crf 24 -c:a aac -b:a 192k ${1%.*}-optimized.mp4
 }
 
 # Transcode any image to JPG image that's great for shrinking wallpapers
 img2jpg() {
-  magick $1 -quality 95 -strip ${1%.*}.jpg
+    magick $1 -quality 95 -strip ${1%.*}.jpg
 }
 
 # Transcode any image to JPG image that's great for sharing online without being too big
 img2jpg-small() {
-  magick $1 -resize 1080x\> -quality 95 -strip ${1%.*}.jpg
+    magick $1 -resize 1080x\> -quality 95 -strip ${1%.*}.jpg
 }
 
 # Transcode any image to compressed-but-lossless PNG
 img2png() {
-  magick "$1" -strip -define png:compression-filter=5 \
-    -define png:compression-level=9 \
-    -define png:compression-strategy=1 \
-    -define png:exclude-chunk=all \
-    "${1%.*}.png"
+    magick "$1" -strip -define png:compression-filter=5 \
+        -define png:compression-level=9 \
+        -define png:compression-strategy=1 \
+        -define png:exclude-chunk=all \
+        "${1%.*}.png"
+}
+
+# nw - Create new worktree (git) or workspace (jj) in .workspaces/ and open in tmux
+# Usage: nw [--no-tmux] <name> [revision]
+#
+# Workspaces are created in <repo-root>/.workspaces/<name>
+# Works from main repo or from within an existing workspace.
+# By default, opens a new tmux session (or attaches if session exists).
+# If workspace already exists, opens tmux session for it without recreating.
+#
+# Options:
+#   --no-tmux    Just cd into the workspace instead of creating a tmux session
+#
+# Examples:
+#   nw feature-auth           # Create workspace + tmux session "feature-auth"
+#   nw bugfix main            # Create from specific revision
+#   nw --no-tmux feature-x    # Create workspace, just cd into it
+nw() {
+    local use_tmux=1
+    local name revision
+
+    # Parse arguments
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --no-tmux) use_tmux=0; shift ;;
+            -*) echo "Unknown option: $1" >&2; return 1 ;;
+            *)
+                if [[ -z "$name" ]]; then
+                    name="$1"
+                else
+                    revision="$1"
+                fi
+                shift
+                ;;
+        esac
+    done
+
+    if [[ -z "$name" ]]; then
+        echo "Usage: nw [--no-tmux] <name> [revision]" >&2
+        return 1
+    fi
+
+    # Validate name: no slashes allowed
+    if [[ "$name" == */* ]]; then
+        echo "Error: Name cannot contain slashes" >&2
+        return 1
+    fi
+
+    local root vcs
+
+    # Detect VCS and find the main repo root (not workspace root)
+    if local jj_current_root=$(jj root 2>/dev/null); then
+        vcs="jj"
+        local jj_repo_file="$jj_current_root/.jj/repo"
+        if [[ -f "$jj_repo_file" ]]; then
+            # We're in a workspace - resolve to main repo
+            root=$(dirname "$(dirname "$(cat "$jj_repo_file")")")
+        else
+            root=$jj_current_root
+        fi
+    elif git rev-parse --show-toplevel &>/dev/null; then
+        vcs="git"
+        # First entry in worktree list is always the main worktree
+        # Use sed to handle paths with spaces (everything before the hash)
+        root=$(git worktree list | head -1 | sed 's/  *[0-9a-f].*//')
+    else
+        echo "Error: Not in a git or jj repository" >&2
+        return 1
+    fi
+
+    local dest="$root/.workspaces/$name"
+    local workspace_created=0
+
+    # Check if workspace already exists
+    if [[ -d "$dest" ]]; then
+        echo "Workspace exists: $dest"
+    else
+        # Ensure .workspaces directory exists and is gitignored
+        if [[ ! -d "$root/.workspaces" ]]; then
+            mkdir -p "$root/.workspaces"
+            if ! grep -qxF '.workspaces/' "$root/.gitignore" 2>/dev/null; then
+                echo '.workspaces/' >> "$root/.gitignore"
+                echo "Added .workspaces/ to .gitignore"
+            fi
+        fi
+
+        echo "Creating $vcs workspace: $dest"
+
+        # Create worktree/workspace
+        if [[ "$vcs" == "jj" ]]; then
+            if [[ -n "$revision" ]]; then
+                jj workspace add --name "$name" -r "$revision" "$dest" || return 1
+            else
+                jj workspace add --name "$name" "$dest" || return 1
+            fi
+        else
+            if [[ -n "$revision" ]]; then
+                git worktree add "$dest" "$revision" || return 1
+            else
+                git worktree add -b "$name" "$dest" || return 1
+            fi
+        fi
+        workspace_created=1
+
+        # Copy env files from root (N = nullglob, no error if no matches)
+        local copied=()
+        for f in "$root"/.env*(N) "$root"/*.config(N); do
+            [[ -f "$f" ]] && cp "$f" "$dest/" && copied+=("$(basename "$f")")
+        done
+        if [[ ${#copied[@]} -gt 0 ]]; then
+            echo "Copied: ${copied[*]}"
+        fi
+    fi
+
+    # Sanitize name for tmux session (replace problematic chars)
+    local session_name="${name//[.:]/-}"
+
+    # Enter the workspace
+    if [[ "$use_tmux" -eq 1 ]]; then
+        if ! command -v tmux &>/dev/null; then
+            echo "Warning: tmux not found, falling back to cd" >&2
+            cd "$dest" || return 1
+            echo "Now in: $dest"
+            return 0
+        fi
+
+        if tmux has-session -t "=$session_name" 2>/dev/null; then
+            echo "Attaching to tmux session: $session_name"
+            if [[ -n "$TMUX" ]]; then
+                tmux switch-client -t "=$session_name"
+            else
+                tmux attach-session -t "=$session_name"
+            fi
+        else
+            echo "Creating tmux session: $session_name"
+            if [[ -n "$TMUX" ]]; then
+                tmux new-session -d -s "$session_name" -c "$dest"
+                tmux switch-client -t "=$session_name"
+            else
+                tmux new-session -s "$session_name" -c "$dest"
+            fi
+        fi
+    else
+        cd "$dest" || return 1
+        echo "Now in: $dest"
+    fi
+}
+
+# nwd - Delete a workspace (worktree/workspace + directory + tmux session)
+# Usage: nwd <name>
+#
+# Removes:
+#   - The git worktree or jj workspace
+#   - The .workspaces/<name> directory
+#   - The tmux session (if exists)
+#
+# Examples:
+#   nwd feature-auth    # Delete workspace "feature-auth"
+nwd() {
+    local name="$1"
+
+    if [[ -z "$name" ]]; then
+        echo "Usage: nwd <name>" >&2
+        return 1
+    fi
+
+    local root vcs
+
+    # Detect VCS and find the main repo root
+    if local jj_current_root=$(jj root 2>/dev/null); then
+        vcs="jj"
+        local jj_repo_file="$jj_current_root/.jj/repo"
+        if [[ -f "$jj_repo_file" ]]; then
+            root=$(dirname "$(dirname "$(cat "$jj_repo_file")")")
+        else
+            root=$jj_current_root
+        fi
+    elif git rev-parse --show-toplevel &>/dev/null; then
+        vcs="git"
+        root=$(git worktree list | head -1 | sed 's/  *[0-9a-f].*//')
+    else
+        echo "Error: Not in a git or jj repository" >&2
+        return 1
+    fi
+
+    local dest="$root/.workspaces/$name"
+    local session_name="${name//[.:]/-}"
+
+    if [[ ! -d "$dest" ]]; then
+        echo "Error: Workspace does not exist: $dest" >&2
+        return 1
+    fi
+
+    # Show what will be deleted
+    echo "Will delete:"
+    echo "  Workspace: $dest"
+    [[ "$vcs" == "jj" ]] && echo "  jj workspace: $name"
+    [[ "$vcs" == "git" ]] && echo "  git worktree: $dest"
+    tmux has-session -t "=$session_name" 2>/dev/null && echo "  tmux session: $session_name"
+
+    # Confirm
+    echo -n "Continue? [y/N] "
+    read -r confirm
+    if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+        echo "Aborted"
+        return 1
+    fi
+
+    # If we're inside the workspace, move out first
+    if [[ "$PWD" == "$dest"* ]]; then
+        echo "Moving to main repo root..."
+        cd "$root" || return 1
+    fi
+
+    # Kill tmux session if exists
+    if tmux has-session -t "=$session_name" 2>/dev/null; then
+        echo "Killing tmux session: $session_name"
+        tmux kill-session -t "=$session_name"
+    fi
+
+    # Remove VCS tracking
+    if [[ "$vcs" == "jj" ]]; then
+        echo "Forgetting jj workspace: $name"
+        jj workspace forget "$name" || echo "Warning: Failed to forget jj workspace"
+    else
+        echo "Removing git worktree: $dest"
+        git worktree remove "$dest" --force || echo "Warning: Failed to remove git worktree"
+    fi
+
+    # Remove directory if still exists (git worktree remove should handle this)
+    if [[ -d "$dest" ]]; then
+        echo "Removing directory: $dest"
+        rm -rf "$dest"
+    fi
+
+    echo "Deleted workspace: $name"
 }

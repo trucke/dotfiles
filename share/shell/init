@@ -44,3 +44,7 @@ fi
 if command -v just &> /dev/null; then
     eval "$(just --completions ${shell})"
 fi
+
+if command -v opencode &> /dev/null; then
+    eval "$(opencode completion 2>/dev/null)"
+fi

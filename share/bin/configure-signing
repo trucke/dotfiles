@@ -1,0 +1,101 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+echo -e "${GREEN}=== Configure Commit Signing ===${NC}\n"
+
+# Check prerequisites
+command -v gpg >/dev/null || {
+	echo -e "${RED}gpg not found${NC}"
+	exit 1
+}
+
+# Get the key ID
+KEY_ID=$(gpg --list-secret-keys --keyid-format=long 2>/dev/null | awk -F'[/ ]' '/^sec/ {for(i=1;i<=NF;i++) if($i ~ /^[A-F0-9]{16}$/) print $i}' | head -1)
+
+if [[ -z "$KEY_ID" ]]; then
+	echo -e "${RED}No GPG key found. Run ./setup-yubikey-gpg.sh first.${NC}"
+	exit 1
+fi
+
+echo -e "Using key ID: ${GREEN}${KEY_ID}${NC}\n"
+
+# Determine scope
+echo "Configure signing for:"
+echo "  1) This repo only (local)"
+echo "  2) All repos (global)"
+read -p "Choice [1/2]: " -n 1 -r SCOPE_CHOICE
+echo
+
+if [[ "$SCOPE_CHOICE" == "2" ]]; then
+	SCOPE="--global"
+	SCOPE_NAME="global"
+else
+	SCOPE=""
+	SCOPE_NAME="local"
+	# Verify we're in a git repo
+	if ! git rev-parse --git-dir &>/dev/null; then
+		echo -e "${RED}Not in a git repository${NC}"
+		exit 1
+	fi
+fi
+
+# Configure git
+echo -e "\n${GREEN}=== Configure Git ===${NC}"
+CURRENT_GIT_KEY=$(git config $SCOPE user.signingkey 2>/dev/null || true)
+if [[ "$CURRENT_GIT_KEY" == "$KEY_ID" ]]; then
+	echo -e "${GREEN}Git already configured with this key ($SCOPE_NAME)${NC}"
+else
+	read -p "Configure git signing ($SCOPE_NAME)? (Y/n) " -n 1 -r
+	echo
+	if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+		git config $SCOPE user.signingkey "$KEY_ID"
+		git config $SCOPE commit.gpgsign true
+		git config $SCOPE tag.gpgsign true
+		echo -e "${GREEN}Git configured ($SCOPE_NAME)${NC}"
+	fi
+fi
+
+# Configure jj if available
+if command -v jj &>/dev/null; then
+	echo -e "\n${GREEN}=== Configure jj ===${NC}"
+
+	if [[ "$SCOPE_NAME" == "global" ]]; then
+		JJ_SCOPE="--user"
+	else
+		JJ_SCOPE="--repo"
+		# Verify we're in a jj repo
+		if ! jj root &>/dev/null; then
+			echo -e "${YELLOW}Not in a jj repository - skipping jj config${NC}"
+			JJ_SCOPE=""
+		fi
+	fi
+
+	if [[ -n "$JJ_SCOPE" ]]; then
+		CURRENT_JJ_KEY=$(jj config get signing.key 2>/dev/null || true)
+		if [[ "$CURRENT_JJ_KEY" == "$KEY_ID" ]]; then
+			echo -e "${GREEN}jj already configured with this key${NC}"
+		else
+			read -p "Configure jj signing ($SCOPE_NAME)? (Y/n) " -n 1 -r
+			echo
+			if [[ ! $REPLY =~ ^[Nn]$ ]]; then
+				jj config set $JJ_SCOPE signing.behavior "own"
+				jj config set $JJ_SCOPE signing.backend "gpg"
+				jj config set $JJ_SCOPE signing.key "$KEY_ID"
+				echo -e "${GREEN}jj configured ($SCOPE_NAME)${NC}"
+			fi
+		fi
+	fi
+fi
+
+echo -e "\n${GREEN}=== Done ===${NC}"
+echo -e "Test with:"
+echo -e "  git commit --allow-empty -m 'Test signed commit'"
+if command -v jj &>/dev/null; then
+	echo -e "  jj commit -m 'Test signed commit'"
+fi

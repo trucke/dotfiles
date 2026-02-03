@@ -22,3 +22,5 @@ alias dev='cd ${HOME}/development'
 alias docs='cd ${HOME}/Documents'
 
 alias net='iwctl station wlan0'
+
+alias oc='opencode'

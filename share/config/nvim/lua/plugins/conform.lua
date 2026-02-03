@@ -27,6 +27,7 @@ return {
       yaml = { "yamlfix" },
       json = { "jq" },
       jsonc = { "jq" },
+      toml = { "tombi" },
 		},
 		default_format_opts = {
 			lsp_format = "fallback",
