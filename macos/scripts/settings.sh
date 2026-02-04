@@ -3,7 +3,6 @@
 # CONFIGURE THE DOCK
 defaults write com.apple.dock persistent-apps -array
 defaults write com.apple.dock persistent-others -array
-defaults write com.apple.dock show-recents -bool false
 defaults write com.apple.dock tilesize -int 32
 defaults write com.apple.dock launchanim -bool false
 defaults write com.apple.dock mru-spaces -bool false
@@ -14,9 +13,6 @@ defaults write com.apple.dock wvous-br-corner -int 13
 defaults write com.apple.dock wvous-br-modifier -int 0
 
 # DISABLE SYSTEM TIPS AND SUGGESTIONS
-defaults write com.apple.SystemUIServer AttentionPrefBundleIDs 0
-defaults write com.apple.lookup.shared LookupSuggestionsDisabled -bool true
-defaults write com.apple.Siri SiriSuggestionsEnabled -bool false
 defaults write com.apple.helpviewer DevMode -bool true
 defaults write com.apple.SetupAssistant DidSeeCloudSetup -bool true
 defaults write com.apple.SetupAssistant GestureMovieSeen none
@@ -39,7 +35,13 @@ defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
 defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
 defaults write com.apple.finder QuitMenuItem -bool true
 # Show the ~/Library folder
-chflags nohidden ~/Library && xattr -d com.apple.FinderInfo ~/Library
+chflags nohidden ~/Library && xattr -d com.apple.FinderInfo ~/Library 2>/dev/null
+
+# CONFIGURE MOUSE
+defaults write NSGlobalDomain com.apple.mouse.scaling -float 1.5
+defaults write NSGlobalDomain com.apple.scrollwheel.scaling -float 0.75
+defaults write NSGlobalDomain com.apple.swipescrolldirection -bool false
+defaults write com.apple.AppleMultitouchMouse MouseButtonMode -string "TwoButton"
 
 # CONFIGURE TRACKPAD + KEYBOARD
 defaults write NSGlobalDomain com.apple.trackpad.scaling -float 1.5
@@ -51,16 +53,16 @@ defaults write NSGlobalDomain KeyRepeat -int 1
 defaults write NSGlobalDomain InitialKeyRepeat -int 10
 defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
 
-# CONFIGURE SCREEN SETTINGS
-defaults write com.apple.screensaver askForPassword -int 1
-defaults write com.apple.screensaver askForPasswordDelay -int 0
+# CONFIGURE SCREEN LOCK (requires password input)
+sysadminctl -screenLock immediate -password -
+sysadminctl -automaticTime on
+sysadminctl -autologin off
 
 # CONFIGURE CONTROL CENTER
 defaults write com.apple.controlcenter "NSStatusItem Visible Bluetooth" -bool true
 defaults write com.apple.controlcenter "NSStatusItem Visible Sound" -bool true
 
 # MISC
-defaults write com.apple.LaunchServices LSQuarantine -bool false
 defaults write NSGlobalDomain NSAutomaticCapitalizationEnabled -bool false
 defaults write NSGlobalDomain NSAutomaticDashSubstitutionEnabled -bool false
 defaults write NSGlobalDomain NSAutomaticPeriodSubstitutionEnabled -bool false
@@ -76,5 +78,5 @@ for app in \
 	"Dock" \
 	"Finder" \
 	"SystemUIServer"; do
-	killall "${app}" &> /dev/null
+	killall "${app}" &>/dev/null
 done

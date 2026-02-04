@@ -1,8 +1,11 @@
 [tools]
-jj = "latest"
+air = "latest"
 bun = "latest"
 deno = "latest"
+docker-cli = "latest"
 go = "latest"
+gum = "latest"
+jj = "latest"
 node = "latest"
 shfmt = "latest"
-doppler = "latest"
+sqlc = "latest"
