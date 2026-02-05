@@ -1,4 +1,4 @@
-"$schema" = "https://jj-vcs.github.io/jj/latest/config-schema.json"
+#:schema https://jj-vcs.github.io/jj/latest/config-schema.json
 
 [user]
 name = "hiyagni"
@@ -6,6 +6,3 @@ email = "kt.code@pm.me"
 
 [ui]
 default-command = "st"
-
-[git]
-auto-export = true
