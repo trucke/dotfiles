@@ -16,6 +16,12 @@ rm -f ~/.bash_history ~/.bash_logout ~/.bash_profile
 
 rm -rf ~/.config/{Typora,xournalpp,lazygit}
 
+# Remove Omarchy defaults that conflict with stowed dotfiles
+rm -f ~/.config/opencode/opencode.json
+rm -rf ~/.config/ghostty
+rm -rf ~/.config/git
+rm -f ~/.config/starship.toml
+
 ################################################################################
 
 echo "Cleanup finished."

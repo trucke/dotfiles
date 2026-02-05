@@ -6,5 +6,11 @@ set -euo pipefail
 
 DOTFILES="${HOME}/.dotfiles/omarchy"
 
+# Remove Omarchy defaults that conflict with stowed dotfiles
+rm -f "${HOME}/.config/opencode/opencode.json"
+rm -rf "${HOME}/.config/ghostty"
+rm -rf "${HOME}/.config/git"
+rm -f "${HOME}/.config/starship.toml"
+
 bash "${DOTFILES}/install/install-hypr-overrides.sh"
 bash "${DOTFILES}/install/install-logo.sh"
