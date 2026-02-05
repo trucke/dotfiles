@@ -1,30 +1,35 @@
+-- Load colorscheme from ~/.config/theme/current/nvim-theme.lua
+local function get_colorscheme()
+  local theme_file = vim.fn.expand("~/.config/theme/current/nvim-theme.lua")
+  local ok, colorscheme = pcall(dofile, theme_file)
+  if ok and colorscheme then
+    return colorscheme
+  end
+  return "rose-pine-moon" -- fallback
+end
+
 return {
   {
     "catppuccin/nvim",
     name = "catppuccin",
     lazy = false,
     priority = 1001,
-    opts = {},
-  },
-  {
-    "folke/tokyonight.nvim",
-    lazy = false,
-    priority = 1001,
-    opts = {},
-  },
-  {
-    "rebelot/kanagawa.nvim",
-    lazy = false,
-    priority = 1001,
-    opts = {},
+    opts = {
+      flavour = "mocha",
+    },
   },
   {
     "rose-pine/neovim",
-    name = 'rose-pine',
+    name = "rose-pine",
     lazy = false,
     priority = 1001,
-    opts = {},
-    config = function() vim.cmd.colorscheme 'rose-pine-moon' end,
+    opts = {
+      variant = "moon",
+    },
+    config = function(_, opts)
+      require("rose-pine").setup(opts)
+      vim.cmd.colorscheme(get_colorscheme())
+    end,
   },
 }
 

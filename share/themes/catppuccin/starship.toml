@@ -1,0 +1,54 @@
+# Starship prompt config - Catppuccin Mocha theme
+
+command_timeout = 200
+format = "$directory$git_branch$git_status${custom.jj}$line_break$character"
+palette = "catppuccin-mocha"
+
+[palettes.catppuccin-mocha]
+overlay = '#6c7086'
+love = '#f38ba8'
+gold = '#f9e2af'
+rose = '#f5c2e7'
+pine = '#89b4fa'
+foam = '#94e2d5'
+iris = '#cba6f7'
+subtle = '#7f849c'
+
+[character]
+error_symbol = "[❯](bold pine)"
+success_symbol = "[❯](bold pine)"
+vimcmd_symbol = "[❮](bold pine)"
+
+[directory]
+style = "bold foam"
+truncation_length = 2
+truncation_symbol = "…/"
+repo_root_style = "bold foam"
+repo_root_format = "[$repo_root]($repo_root_style)[$path]($style)[$read_only]($read_only_style) "
+
+[git_branch]
+format = "[$branch]($style) "
+style = "italic foam"
+
+[git_status]
+format     = '[$all_status]($style)'
+style      = "foam"
+ahead      = "⇡${count} "
+diverged   = "⇕⇡${ahead_count}⇣${behind_count} "
+behind     = "⇣${count} "
+conflicted = " "
+up_to_date = " "
+untracked  = "? "
+modified   = " "
+stashed    = "\\$ "
+staged     = ""
+renamed    = ""
+deleted    = ""
+
+[custom.jj]
+command = "prompt"
+format = "$output"
+ignore_timeout = true
+shell = ["starship-jj", "--ignore-working-copy", "starship"]
+use_stdin = false
+when = true

@@ -1,0 +1,128 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Theme switcher for dotfiles
+# Switches symlink at ~/.config/theme/current to point to selected theme
+# Usage: theme-switch [catppuccin|rosepine]
+
+DOTFILES="${DOTFILES:-$HOME/.dotfiles}"
+THEMES_DIR="$DOTFILES/share/themes"
+THEME_CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}/theme"
+CURRENT_LINK="$THEME_CONFIG/current"
+
+# Available themes
+THEMES=("rosepine" "catppuccin")
+
+show_usage() {
+  echo "Usage: theme-switch [catppuccin|rosepine]"
+  echo ""
+  echo "Switch theme across all configured tools:"
+  echo "  - Ghostty (terminal)"
+  echo "  - Neovim (editor)"
+  echo "  - tmux (multiplexer)"
+  echo "  - Starship (prompt)"
+  echo "  - Waybar (Linux only)"
+  echo "  - Hyprland/Hyprlock (Linux only)"
+  echo ""
+  echo "Current theme: $(get_current_theme)"
+  echo ""
+  echo "Available themes: ${THEMES[*]}"
+}
+
+get_current_theme() {
+  if [[ -L "$CURRENT_LINK" ]]; then
+    basename "$(readlink "$CURRENT_LINK")"
+  else
+    echo "none"
+  fi
+}
+
+reload_tools() {
+  echo ""
+  echo "Reloading tools..."
+
+  # tmux - reload config if running
+  if command -v tmux &>/dev/null && tmux list-sessions &>/dev/null; then
+    tmux source-file ~/.config/tmux/tmux.conf 2>/dev/null && echo "  tmux: reloaded" || echo "  tmux: reload failed"
+  fi
+
+  # Ghostty hot-reloads automatically when config changes
+
+  # Linux-only reloads
+  if [[ "$(uname)" == "Linux" ]]; then
+    # Waybar
+    if command -v pkill &>/dev/null && pgrep -x waybar &>/dev/null; then
+      pkill -SIGUSR2 waybar 2>/dev/null && echo "  Waybar: reloaded" || true
+    fi
+
+    # Hyprland
+    if command -v hyprctl &>/dev/null; then
+      hyprctl reload &>/dev/null && echo "  Hyprland: reloaded" || true
+    fi
+  fi
+
+  echo ""
+  echo "Note: Restart Neovim to apply theme changes."
+}
+
+switch_theme() {
+  local theme="$1"
+
+  # Validate theme exists
+  if [[ ! -d "$THEMES_DIR/$theme" ]]; then
+    echo "Error: Theme '$theme' not found in $THEMES_DIR"
+    exit 1
+  fi
+
+  # Ensure theme config directory exists
+  mkdir -p "$THEME_CONFIG"
+
+  # Update main symlink (atomic operation)
+  ln -sfn "$THEMES_DIR/$theme" "$CURRENT_LINK"
+
+  echo "Switched to theme: $theme"
+
+  # Handle starship - needs symlink to its full config
+  local starship_config="${XDG_CONFIG_HOME:-$HOME/.config}/starship.toml"
+  local starship_theme="$THEMES_DIR/$theme/starship.toml"
+  if [[ -f "$starship_theme" ]]; then
+    ln -sf "$starship_theme" "$starship_config"
+    echo "  Starship: symlinked"
+  fi
+
+  # Handle waybar - needs local theme.css symlink (Linux only)
+  if [[ "$(uname)" == "Linux" ]]; then
+    local waybar_dir="${XDG_CONFIG_HOME:-$HOME/.config}/waybar"
+    local waybar_theme="$THEMES_DIR/$theme/waybar-colors.css"
+    if [[ -d "$waybar_dir" ]] && [[ -f "$waybar_theme" ]]; then
+      ln -sf "$waybar_theme" "$waybar_dir/theme.css"
+      echo "  Waybar: symlinked"
+    fi
+  fi
+
+  reload_tools
+}
+
+main() {
+  local theme="${1:-}"
+
+  if [[ -z "$theme" ]]; then
+    show_usage
+    exit 0
+  fi
+
+  # Normalize theme name
+  case "$theme" in
+    catppuccin|mocha|cat) theme="catppuccin" ;;
+    rosepine|rose-pine|rose|rp) theme="rosepine" ;;
+    *)
+      echo "Unknown theme: $theme"
+      echo "Valid themes: ${THEMES[*]}"
+      exit 1
+      ;;
+  esac
+
+  switch_theme "$theme"
+}
+
+main "$@"

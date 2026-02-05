@@ -1,3 +1,6 @@
+/* Theme colors - symlinked by theme-switch */
+@import "theme.css";
+
 * {
     background: transparent;
     border: none;
@@ -10,8 +13,8 @@
 .modules-left,
 .modules-right,
 .modules-center {
-    color: #EDF1F3;
-    background-color: #242037;
+    color: var(--text);
+    background-color: var(--base);
     border-radius: 10px;
     opacity: 0.85;
     margin-top: 4px;
@@ -42,7 +45,7 @@
 }
 
 #workspaces button.active {
-    color: #75B39C;
+    color: var(--accent);
 }
 
 #cpu,
@@ -96,21 +99,21 @@ tooltip {
 }
 
 #custom-screenrecording-indicator.active {
-    color: #A55555;
+    color: var(--critical);
 }
 
 #temperature.critical {
-    background-color: #EB4D4B;
+    background-color: var(--critical);
 }
 
 #battery.warning:not(.charging) {
-    background-color: #FFBE61;
-    color: black;
+    background-color: var(--warning);
+    color: var(--base);
 }
 
 #battery.critical:not(.charging) {
-    background-color: #F53C3C;
-    color: #FFFFFF;
+    background-color: var(--critical);
+    color: var(--text);
     animation-name: blink;
     animation-duration: 0.5s;
     animation-timing-function: linear;
@@ -120,8 +123,8 @@ tooltip {
 
 @keyframes blink {
     to {
-        background-color: #FFFFFF;
-        color: #000000;
+        background-color: var(--text);
+        color: var(--base);
     }
 }
 

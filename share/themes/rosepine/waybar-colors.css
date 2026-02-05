@@ -1,0 +1,7 @@
+/* Rose Pine Moon theme for Waybar */
+
+@define-color base #232136;
+@define-color text #e0def4;
+@define-color accent #9ccfd8;
+@define-color warning #f6c177;
+@define-color critical #eb6f92;

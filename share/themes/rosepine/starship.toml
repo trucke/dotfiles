@@ -1,3 +1,5 @@
+# Starship prompt config - Rose Pine Moon theme
+
 command_timeout = 200
 format = "$directory$git_branch$git_status${custom.jj}$line_break$character"
 palette = "rose-pine-moon"
@@ -34,10 +36,10 @@ style      = "foam"
 ahead      = "⇡${count} "
 diverged   = "⇕⇡${ahead_count}⇣${behind_count} "
 behind     = "⇣${count} "
-conflicted = " "
-up_to_date = " "
+conflicted = " "
+up_to_date = " "
 untracked  = "? "
-modified   = " "
+modified   = " "
 stashed    = "\\$ "
 staged     = ""
 renamed    = ""
