@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+# Re-apply custom configs after Omarchy upgrade
+
+set -euo pipefail
+
+DOTFILES="${HOME}/.dotfiles/omarchy"
+
+bash "${DOTFILES}/install/install-hypr-overrides.sh"
+bash "${DOTFILES}/install/install-logo.sh"

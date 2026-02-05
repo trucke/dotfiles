@@ -3,8 +3,8 @@
 yay -S --noconfirm --needed kanata-bin
 
 if ! command -v kanata &>/dev/null; then
-    echo "Kanshi installation failed."
-    exit 1
+	echo "Kanata installation failed."
+	exit 1
 fi
 
 # Add user to required groups

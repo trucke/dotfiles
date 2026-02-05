@@ -1,22 +1,20 @@
 theme = Rose Pine Moon
-background-opacity = 0.98
-font-feature = -calt 
+
 font-size = 10
+font-feature = -calt 
+
 shell-integration-features = no-cursor,ssh-env
 
-window-padding-x = 4
+window-padding-x = 12
+window-padding-y = 6
 window-padding-balance = true
-
-gtk-titlebar = false
-gtk-single-instance = false
-
-macos-titlebar-style = hidden
-macos-option-as-alt = left
+confirm-close-surface=false
 quit-after-last-window-closed = true
-macos-auto-secure-input = true
+macos-titlebar-style = hidden
 
 quick-terminal-position = right
 quick-terminal-size = 35%,85%
 
-keybind = shift+enter=text:\x1b\r
 keybind = global:cmd+slash=toggle_quick_terminal
+
+mouse-scroll-multiplier = 0.95

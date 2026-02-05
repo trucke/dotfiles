@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
+DOTFILES="${HOME}/.dotfiles/omarchy"
 PLYMOUTH_THEME_PATH="/usr/share/plymouth/themes/omarchy"
-LOGO_PATH="$HOME/.dotfiles/omarchy/logo.png"
 
-sudo cp -f "${LOGO_PATH}" "${PLYMOUTH_THEME_PATH}"
-
+# Plymouth boot logo
+sudo cp -f "${DOTFILES}/logo.png" "${PLYMOUTH_THEME_PATH}/logo.png"
 sudo plymouth reload
 sudo limine-update >/dev/null
 
