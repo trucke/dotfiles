@@ -1,21 +1,24 @@
 #!/usr/bin/env bash
 
-pushd "$HOME/.dotfiles/omarchy" >/dev/null
+set -euo pipefail
 
-source ./install/install-packages.sh
-source ./install/install-dotfiles.sh
-source ./install/install-dev-tools.sh
-source ./install/install-applications.sh
-source ./install/install-hypr-overrides.sh
-source ./install/install-kanata.sh
-source ./install/install-kanshi.sh
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "${SCRIPT_DIR}"
 
-source ./install/set-shell.sh
-source ./install/set-default-apps.sh
-source ./install/set-background.sh
-source ./install/install-logo.sh
-source ./install/update-logind.sh
+bash ./install/install-packages.sh
+bash ./install/install-dotfiles.sh
+bash ./install/install-dev-tools.sh
+bash ./install/install-applications.sh
+bash ./install/install-hypr-overrides.sh
+bash ./install/install-kanata.sh
+bash ./install/install-kanshi.sh
 
-source ./cleanup.sh
+bash ./install/set-shell.sh
+bash ./install/set-default-apps.sh
+bash ./install/set-background.sh
+bash ./install/install-logo.sh
+bash ./install/update-logind.sh
 
-popd >/dev/null
+bash ./cleanup.sh
+
+echo "Setup complete."
