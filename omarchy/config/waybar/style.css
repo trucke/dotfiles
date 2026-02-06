@@ -13,8 +13,8 @@
 .modules-left,
 .modules-right,
 .modules-center {
-    color: var(--text);
-    background-color: var(--base);
+    color: @text;
+    background-color: @base;
     border-radius: 10px;
     opacity: 0.85;
     margin-top: 4px;
@@ -45,7 +45,7 @@
 }
 
 #workspaces button.active {
-    color: var(--accent);
+    color: @accent;
 }
 
 #cpu,
@@ -99,21 +99,21 @@ tooltip {
 }
 
 #custom-screenrecording-indicator.active {
-    color: var(--critical);
+    color: @critical;
 }
 
 #temperature.critical {
-    background-color: var(--critical);
+    background-color: @critical;
 }
 
 #battery.warning:not(.charging) {
-    background-color: var(--warning);
-    color: var(--base);
+    background-color: @warning;
+    color: @base;
 }
 
 #battery.critical:not(.charging) {
-    background-color: var(--critical);
-    color: var(--text);
+    background-color: @critical;
+    color: @text;
     animation-name: blink;
     animation-duration: 0.5s;
     animation-timing-function: linear;
@@ -123,8 +123,8 @@ tooltip {
 
 @keyframes blink {
     to {
-        background-color: var(--text);
-        color: var(--base);
+        background-color: @text;
+        color: @base;
     }
 }
 
