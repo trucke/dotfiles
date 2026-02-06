@@ -9,7 +9,7 @@ done
 
 ################################################################################
 
-rm -rf ~/Work ~/go ~/.cargo ~/.npm
+sudo rm -rf ~/Work ~/go ~/.cargo ~/.npm
 
 rm -f ~/.XCompose
 rm -f ~/.bash_history ~/.bash_logout ~/.bash_profile
