@@ -148,6 +148,7 @@ There are no tests to run. Validation is manual: source the shell config or rest
 ## Workflow
 
 - **Verify before assuming**: Read the config before guessing how it works.
+- **Cross-check Hyprland wiki**: When analyzing, reviewing, or changing any Hyprland/Waybar/hyprlock/hypridle config in `omarchy/`, always verify syntax against the official wiki source at https://github.com/hyprwm/hyprland-wiki (use `content/Configuring/*.md` for raw markdown). Hyprland breaks config compatibility frequently.
 - **Research, then ask**: For ambiguous requests, explore the codebase first.
 - **Remove debug code**: No leftover print statements or commented-out code.
 - **Commit only when asked**: Stage changes but don't commit unless explicitly requested.
