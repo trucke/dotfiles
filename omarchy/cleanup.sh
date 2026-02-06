@@ -18,7 +18,7 @@ rm -rf ~/.config/{Typora,xournalpp,lazygit,fcitx5}
 rm -f ~/.config/environment.d/fcitx.conf
 
 # Remove fcitx5 autostart from upstream Omarchy config
-sed -i '/fcitx5/d' ~/.local/share/omarchy/default/hypr/autostart.conf 2>/dev/null
+sed -i '/exec-once = uwsm-app -- fcitx5/d' "${HOME}/.local/share/omarchy/default/hypr/autostart.conf"
 
 ################################################################################
 
