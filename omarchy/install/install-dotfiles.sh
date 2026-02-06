@@ -29,12 +29,18 @@ rm -rf ~/.config/nvim \
 	~/.config/starship.toml \
 	~/.local/share/nvim/ \
 	~/.cache/nvim/ \
-	~/.config/ghostty/config \
+	~/.config/ghostty \
 	~/.config/git \
 	~/.config/mise \
 	~/.config/kanshi \
 	~/.config/kanata \
 	~/.config/waybar
+
+# Remove Omarchy defaults that conflict with stowed dotfiles
+rm -f ~/.config/opencode/opencode.json
+rm -f ~/.config/starship.toml
+
+mkdir -p "${HOME}/.local/bin"
 
 echo "Link personal config files"
 stow --restow --dir="${DOTFILES}/omarchy" --target="${HOME}/.config" config
