@@ -14,7 +14,11 @@ sudo rm -rf ~/Work ~/go ~/.cargo ~/.npm
 rm -f ~/.XCompose
 rm -f ~/.bash_history ~/.bash_logout ~/.bash_profile
 
-rm -rf ~/.config/{Typora,xournalpp,lazygit}
+rm -rf ~/.config/{Typora,xournalpp,lazygit,fcitx5}
+rm -f ~/.config/environment.d/fcitx.conf
+
+# Remove fcitx5 autostart from upstream Omarchy config
+sudo sed -i '/fcitx5/d' /usr/share/omarchy/default/hypr/autostart.conf 2>/dev/null
 
 ################################################################################
 
