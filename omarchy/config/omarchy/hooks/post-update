@@ -4,7 +4,7 @@
 
 set -euo pipefail
 
-DOTFILES="${HOME}/.dotfiles/omarchy"
+DOTFILES="${HOME}/.dotfiles"
 
 # Remove Omarchy defaults that conflict with stowed dotfiles
 rm -f "${HOME}/.config/opencode/opencode.json"
@@ -12,5 +12,11 @@ rm -rf "${HOME}/.config/ghostty"
 rm -rf "${HOME}/.config/git"
 rm -f "${HOME}/.config/starship.toml"
 
-bash "${DOTFILES}/install/install-hypr-overrides.sh"
-bash "${DOTFILES}/install/install-logo.sh"
+# Re-stow dotfiles and re-apply theme
+stow --restow --dir="${DOTFILES}/omarchy" --target="${HOME}/.config" config
+stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.config" config
+current_theme="$(basename "$(readlink "${HOME}/.config/theme/current")" 2>/dev/null || echo rosepine)"
+bash "${DOTFILES}/share/bin/theme-switch" "${current_theme}"
+
+bash "${DOTFILES}/omarchy/install/install-hypr-overrides.sh"
+bash "${DOTFILES}/omarchy/install/install-logo.sh"

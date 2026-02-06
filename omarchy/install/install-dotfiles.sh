@@ -40,6 +40,7 @@ echo "Link personal config files"
 stow --restow --dir="${DOTFILES}/omarchy" --target="${HOME}/.config" config
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.config" config
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}" zshrc
+stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.local/bin" bin
 
 popd >/dev/null
 

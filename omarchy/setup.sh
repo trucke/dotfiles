@@ -21,4 +21,7 @@ bash ./install/update-logind.sh
 
 bash ./cleanup.sh
 
+# Initialize theme (creates symlinks for ghostty, tmux, starship, waybar, etc.)
+bash "${HOME}/.dotfiles/share/bin/theme-switch" rosepine
+
 echo "Setup complete."

@@ -15,7 +15,7 @@ sudo softwareupdate --install-rosetta --agree-to-license
 
 # install homebrew if not present
 if ! command -v /opt/homebrew/bin/brew &>/dev/null; then
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+	/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 fi
 
 # make environment settings available for brew
@@ -26,6 +26,9 @@ source "${DOTFILES}/share/shell/env"
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}" zshrc
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.config" config
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.local/bin" bin
+
+# Initialize theme (creates symlinks for ghostty, tmux, starship, etc.)
+bash "${DOTFILES}/share/bin/theme-switch" rosepine
 
 # install dev tools via mise
 mise install
