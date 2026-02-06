@@ -6,6 +6,11 @@ set -euo pipefail
 
 DOTFILES="${HOME}/.dotfiles"
 
+# Remove packages that upstream migrations may have reinstalled
+while IFS= read -r pkg; do
+  pacman -Qi "${pkg}" &>/dev/null && yay -Rnsu --noconfirm "${pkg}" &>/dev/null || true
+done < "${DOTFILES}/omarchy/install/cleanup.packages"
+
 # Remove Omarchy defaults that conflict with stowed dotfiles
 rm -f "${HOME}/.config/opencode/opencode.json"
 rm -rf "${HOME}/.config/ghostty"
@@ -19,4 +24,3 @@ current_theme="$(basename "$(readlink "${HOME}/.config/theme/current")" 2>/dev/n
 bash "${DOTFILES}/share/bin/theme-switch" "${current_theme}"
 
 bash "${DOTFILES}/omarchy/install/install-hypr-overrides.sh"
-bash "${DOTFILES}/omarchy/install/install-logo.sh"

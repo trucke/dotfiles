@@ -85,7 +85,7 @@ bindings.conf   # Keybinding overrides
 looknfeel.conf  # Appearance settings
 ```
 
-These files are deployed via hard-link from `omarchy/config/hypr/`.
+These files are deployed via symlink from `omarchy/config/hypr/`.
 
 ### Key customizations
 
@@ -97,16 +97,30 @@ These files are deployed via hard-link from `omarchy/config/hypr/`.
 | Lock | hyprlock directly (not omarchy-lock-screen) |
 | Apps | T3Chat, Proton Mail, Proton Pass |
 | Branding | Custom Plymouth boot logo |
+| Dev tools | Managed via mise (go, node, bun, etc.) and platform packages (opencode) |
 
 ### Post-upgrade hook
 
-After `omarchy-update`, the hook at `~/.config/omarchy/hooks/post-update` automatically re-applies:
-- Hyprland override files
-- Plymouth logo
+After `omarchy-update`, the hook at `~/.config/omarchy/hooks/post-update` automatically:
+- Removes packages listed in `cleanup.packages` (if upstream migrations reinstalled them)
+- Removes conflicting Omarchy default configs (ghostty, git, starship, opencode)
+- Re-stows dotfiles from both `omarchy/config/` and `share/config/`
+- Re-applies the current theme
+- Re-deploys Hyprland override symlinks
+
+### Theme system
+
+Two themes available: **Rose Pine Moon** (default) and **Catppuccin Mocha**. Switch with:
+
+```bash
+theme-switch rosepine    # or: catppuccin
+```
+
+Theme files live in `share/themes/` and are symlinked to `~/.config/theme/current/`. This is independent of Omarchy's built-in template theme system.
 
 ### Packages removed
 
-See `omarchy/install/cleanup.packages` for the full list (46 packages including docker, libreoffice, fcitx5, etc.).
+See `omarchy/install/cleanup.packages` for the full list (49 packages including docker, libreoffice, fcitx5, etc.).
 
 ---
 
