@@ -1,8 +1,14 @@
 #!/usr/bin/env bash
 
-mapfile -t packages < "$HOME/.dotfiles/omarchy/install/install.packages"
+# Remove packages that conflict with ones we're about to install
+mapfile -t cleanup_packages <"$HOME/.dotfiles/omarchy/install/cleanup.packages"
+for package in "${cleanup_packages[@]}"; do
+	yay -Rnsu --noconfirm "$package" &>/dev/null
+done
+
+mapfile -t packages <"$HOME/.dotfiles/omarchy/install/install.packages"
 
 yay -Syu --noconfirm
 for package in "${packages[@]}"; do
-    yay -S --noconfirm --needed "$package"
+	yay -S --noconfirm --needed "$package"
 done
