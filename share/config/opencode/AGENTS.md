@@ -30,12 +30,14 @@ Guidelines for AI coding agents.
 - **No background processes**: Don't start daemons, watchers, or long-running processes unless requested.
 - **No config changes**: Don't modify lint, format, build, or CI configs unless requested.
 - **Do what was asked**: Complete the task as specified. No gold-plating or unrequested improvements.
+- **Stick to defined schemas**: When specs, PRDs, or other docs define a data model (fields, types, values), use exactly those fields. Do not invent, rename, or extend fields that aren't in the source of truth.
 
 ## Workflow
 
 - **Verify before assuming**: Read the code before guessing how it works.
 - **Research, then ask**: For ambiguous requests, explore the codebase first. Ask if still unclear.
 - **Web search for tools/tech**: When comparing or choosing tools and technologies, always search the web.
+- **No unverified technical claims**: Don't state specific capabilities, limits, or specs of external tools, APIs, or services as fact. Research first, then cite what you found.
 - **Prefer idempotent operations**: Safe to retry is safer to run.
 - **Run checks before finishing**: Run tests, linter, and type-checker if they exist.
 - **Fix errors when they occur**: Attempt to fix build/test failures. Ask if the fix requires architectural changes.

@@ -1,5 +1,6 @@
 ---
 description: Create a lookup table for project and feature specifications
+subtask: true
 ---
 
 Create a new file in the current project - `./specs/README.md`.
