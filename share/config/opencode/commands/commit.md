@@ -1,6 +1,6 @@
 ---
 description: Generate and apply a commit message from current changes
-model: opencode/gpt-5-nano
+model: opencode/gpt-5.1-codex-mini
 temperature: 0.1
 subtask: true
 agent: commit
@@ -9,9 +9,11 @@ agent: commit
 Generate a commit message from current changes and commit them. Prefer jj over git when available.
 
 Detection:
-- Use bash to check if `jj` is available and if `.jj/` directory exists in the repo.
-- If jj is available and repo has `.jj/`, use jj workflow below.
-- Otherwise, use git workflow below.
+- Run `jj root` to check if the current repo is a jj repo.
+- If it succeeds (exit 0), use jj workflow below.
+- If it fails, run `git rev-parse --show-toplevel` to check for a git repo.
+- If it succeeds, use git workflow below.
+- If both fail, reply exactly: `No jj or git repository found.`
 
 For jj workflow:
 - Use bash to run `jj diff` to get the diff of current changes.

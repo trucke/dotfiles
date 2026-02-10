@@ -81,6 +81,7 @@ prepend-path "${XDG_DATA_HOME}/bin"
 prepend-path "${DOTFILES}/share/bin"
 prepend-path "${GHOSTTY_BIN_DIR}"
 prepend-path "${XDG_BIN_DIR}"
+prepend-path "${XDG_CACHE_HOME}/.bun/bin"
 # Remove duplicates (preserving prepended items)
 # Source: http://unix.stackexchange.com/a/40755
 PATH=$(echo -n "${PATH}" | awk -v RS=: '{ if (!arr[$0]++) {printf("%s%s",!ln++?"":":",$0)}}')

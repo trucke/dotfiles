@@ -11,12 +11,14 @@ permission:
   bash:
     "*": deny
     # jj commands
+    "jj root*": allow
     "jj status*": allow
     "jj diff*": allow
     "jj log*": allow
     "jj commit*": allow
     "jj describe*": allow
     # git commands
+    "git rev-parse*": allow
     "git status*": allow
     "git diff*": allow
     "git log*": allow
