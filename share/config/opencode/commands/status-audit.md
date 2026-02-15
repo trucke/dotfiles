@@ -1,16 +1,16 @@
 ---
 name: status-audit
-description: Strict audit of STATUS.md against tests, spec, plan, and implementation
-model: opencode/kimi-k2.5
+description: Strict audit of ocl/status.md against tests, spec, plan, and implementation
+model: opencode/claude-sonnet-4-5
 temperature: 0.1
 subtask: true
 agent: audit
 ---
 
-Audit project progress from `${1:-STATUS.md}`.
+Audit project progress from `${1:-.ocl/status.md}`.
 
 Workflow (strict, in order):
-1) Read and understand `${1:-STATUS.md}` fully.
+1) Read and understand `${1:-.ocl/status.md}` fully.
 2) Run tests as sanity check **only if a test command is clearly discoverable**.
    - If no test command is discoverable, skip tests silently (no output line, no warning).
 3) Parse spec + implementation plan paths from STATUS file list (example: `Files: specs/x.md specs/plan-x.md`).
