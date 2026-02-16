@@ -1,7 +1,7 @@
 ---
 name: status-audit
 description: Strict audit of ocl/status.md against tests, spec, plan, and implementation
-model: opencode/claude-sonnet-4-5
+model: anthropic/claude-sonnet-4-5
 temperature: 0.1
 subtask: true
 agent: audit
