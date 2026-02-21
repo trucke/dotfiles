@@ -5,24 +5,12 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "${SCRIPT_DIR}"
 
+bash ./cleanup.sh
 bash ./install/install-packages.sh
 bash ./install/install-dotfiles.sh
-
-# Initialize theme early (before Hyprland configs are loaded via source)
-bash "${HOME}/.dotfiles/share/bin/theme-switch" rosepine
-
-bash ./install/install-dev-tools.sh
 bash ./install/install-applications.sh
 bash ./install/install-hypr-overrides.sh
-bash ./install/install-kanata.sh
-bash ./install/install-kanshi.sh
-
-bash ./install/set-shell.sh
-bash ./install/set-default-apps.sh
-bash ./install/set-background.sh
-bash ./install/install-logo.sh
-bash ./install/update-logind.sh
-
-bash ./cleanup.sh
+bash ./install/install-services.sh
+bash ./install/configure.sh
 
 echo "Setup complete."

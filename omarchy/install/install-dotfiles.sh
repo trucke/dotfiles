@@ -1,20 +1,17 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 REPO_URL="git@github.com:trucke/dotfiles-v2.git"
 DOTFILES="${HOME}/.dotfiles"
 
-is_stow_installed() {
-	pacman -Qi "stow" &>/dev/null
-}
-
-if ! is_stow_installed; then
+if ! pacman -Qi "stow" &>/dev/null; then
 	echo "Install stow first"
 	exit 1
 fi
 
 pushd ~ >/dev/null
 
-# Check if the repository already exists
 if [ -d "${DOTFILES}" ]; then
 	echo "Repository '${DOTFILES}' already exists. Skipping clone."
 else
@@ -25,20 +22,20 @@ else
 fi
 
 echo "Removing old configs"
-rm -rf ~/.config/nvim \
-	~/.config/starship.toml \
-	~/.local/share/nvim/ \
-	~/.cache/nvim/ \
-	~/.config/ghostty \
-	~/.config/git \
-	~/.config/mise \
-	~/.config/kanshi \
-	~/.config/kanata \
-	~/.config/waybar
+rm -rf "${HOME}/.config/nvim" \
+	"${HOME}/.config/starship.toml" \
+	"${HOME}/.local/share/nvim/" \
+	"${HOME}/.cache/nvim/" \
+	"${HOME}/.config/ghostty" \
+	"${HOME}/.config/git" \
+	"${HOME}/.config/mise" \
+	"${HOME}/.config/kanshi" \
+	"${HOME}/.config/kanata" \
+	"${HOME}/.config/waybar"
 
 # Remove Omarchy defaults that conflict with stowed dotfiles
-rm -f ~/.config/opencode/opencode.json
-rm -f ~/.config/starship.toml
+rm -f "${HOME}/.config/opencode/opencode.json"
+rm -f "${HOME}/.config/starship.toml"
 
 mkdir -p "${HOME}/.local/bin"
 

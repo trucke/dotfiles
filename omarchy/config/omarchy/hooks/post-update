@@ -7,9 +7,42 @@ set -euo pipefail
 DOTFILES="${HOME}/.dotfiles"
 
 # Remove packages that upstream migrations may have reinstalled
-while IFS= read -r pkg; do
-  pacman -Qi "${pkg}" &>/dev/null && yay -Rnsu --noconfirm "${pkg}" &>/dev/null || true
-done < "${DOTFILES}/omarchy/install/cleanup.packages"
+omarchy-pkg-drop \
+  aether \
+  typora \
+  spotify \
+  libreoffice-fresh \
+  1password-beta \
+  1password-cli \
+  xournalpp \
+  signal-desktop \
+  pinta \
+  obsidian \
+  obs-studio \
+  kdenlive \
+  lazydocker \
+  asdcontrol \
+  clang \
+  dotnet-runtime-9.0 \
+  dust \
+  fcitx5 \
+  fcitx5-gtk \
+  fcitx5-qt \
+  github-cli \
+  lazygit \
+  llvm \
+  luarocks \
+  mariadb-libs \
+  opencode \
+  postgresql-libs \
+  python-poetry-core \
+  ruby \
+  slurp \
+  tldr \
+  tree-sitter-cli \
+  wayfreeze \
+  whois \
+  zoxide
 
 # Remove Omarchy defaults that conflict with stowed dotfiles
 rm -f "${HOME}/.config/opencode/opencode.json"
