@@ -21,7 +21,6 @@ show_usage() {
   echo "  - Neovim (editor)"
   echo "  - tmux (multiplexer)"
   echo "  - Starship (prompt)"
-  echo "  - Waybar (Linux only)"
   echo "  - Hyprland/Hyprlock (Linux only)"
   echo ""
   echo "Current theme: $(get_current_theme)"
@@ -50,11 +49,6 @@ reload_tools() {
 
   # Linux-only reloads
   if [[ "$(uname)" == "Linux" ]]; then
-    # Waybar
-    if command -v pkill &>/dev/null && pgrep -x waybar &>/dev/null; then
-      pkill -SIGUSR2 waybar 2>/dev/null && echo "  Waybar: reloaded" || true
-    fi
-
     # Hyprland
     if command -v hyprctl &>/dev/null; then
       hyprctl reload &>/dev/null && echo "  Hyprland: reloaded" || true
@@ -88,16 +82,6 @@ switch_theme() {
   if [[ -f "$starship_theme" ]]; then
     ln -sf "$starship_theme" "$starship_config"
     echo "  Starship: symlinked"
-  fi
-
-  # Handle waybar - needs local theme.css symlink (Linux only)
-  if [[ "$(uname)" == "Linux" ]]; then
-    local waybar_dir="${XDG_CONFIG_HOME:-$HOME/.config}/waybar"
-    local waybar_theme="$THEMES_DIR/$theme/waybar-colors.css"
-    if [[ -d "$waybar_dir" ]] && [[ -f "$waybar_theme" ]]; then
-      ln -sf "$waybar_theme" "$waybar_dir/theme.css"
-      echo "  Waybar: symlinked"
-    fi
   fi
 
   reload_tools

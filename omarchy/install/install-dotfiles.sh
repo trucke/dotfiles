@@ -21,8 +21,7 @@ rm -rf "${HOME}/.config/nvim" \
 	"${HOME}/.config/mise" \
 	"${HOME}/.config/tmux" \
 	"${HOME}/.config/kanshi" \
-	"${HOME}/.config/kanata" \
-	"${HOME}/.config/waybar"
+	"${HOME}/.config/kanata"
 
 # Remove Omarchy defaults that conflict with stowed dotfiles
 rm -f "${HOME}/.config/opencode/opencode.json"
@@ -37,7 +36,5 @@ stow --restow --dir="${DOTFILES}/share" --target="${HOME}" zshrc
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.local/bin" bin
 
 popd >/dev/null
-
-omarchy-restart-waybar
 
 echo "Dotfiles successfully installed."

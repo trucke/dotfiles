@@ -19,8 +19,7 @@ Personal dotfiles managed with GNU Stow. Supports macOS (Homebrew) and Arch Linu
 │   │   ├── hypr/           # Hyprland overrides (monitors, input, bindings, etc.)
 │   │   ├── kanata/         # Home-row mods
 │   │   ├── kanshi/         # Dynamic monitor profiles
-│   │   ├── omarchy/hooks/  # Post-update hook
-│   │   └── waybar/         # Custom waybar config
+│   │   └── omarchy/hooks/  # Post-update hook
 │   ├── icons/              # Web app icons
 │   ├── install/            # Install scripts and package lists
 │   ├── logo.png            # Custom Plymouth/hyprlock logo
