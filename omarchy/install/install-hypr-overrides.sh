@@ -17,16 +17,10 @@ deploy_config() {
 		exit 1
 	fi
 
-	# Already a symlink pointing to the right place
-	if [ -L "${target_file}" ] && [ "$(readlink -f "${target_file}")" = "$(readlink -f "${source_file}")" ]; then
-		echo "${name} already deployed."
-	else
-		local backup_file="${target_file}.bak.$(date +%s)"
-		echo "Deploy ${name}..."
-		mv -f "${target_file}" "${backup_file}" 2>/dev/null || true
-		ln -sfn "${source_file}" "${target_file}"
-		echo "${name} deployed successfully."
-	fi
+	echo "Deploy ${name}..."
+	rm -f "${target_file}"
+	ln -sfn "${source_file}" "${target_file}"
+	echo "${name} deployed successfully."
 }
 
 ################################################################################

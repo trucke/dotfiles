@@ -8,9 +8,11 @@ echo "Run system cleanup..."
 omarchy-webapp-remove-all
 omarchy-tui-remove-all
 
-cp "${HOME}/.config/hypr/bindings.conf" "${HOME}/.config/hypr/bindings.conf.bak"
+# Remove any symlink first to avoid overwriting dotfiles source through it
+cp "${HOME}/.config/hypr/bindings.conf" "${HOME}/.config/hypr/bindings.conf.bak" 2>/dev/null || true
+rm -f "${HOME}/.config/hypr/bindings.conf"
 cp "${HOME}/.local/share/omarchy/default/hypr/plain-bindings.conf" "${HOME}/.config/hypr/bindings.conf"
-hyprctl reload
+hyprctl reload >/dev/null 2>&1 || true
 
 # Drop preinstalled packages (covered by omarchy-remove-preinstalls) and extras
 omarchy-pkg-drop \

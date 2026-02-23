@@ -41,7 +41,8 @@ WantedBy=default.target
 EOF
 
 systemctl --user daemon-reload
-systemctl --user enable --now kanata.service
+systemctl --user enable kanata.service
+systemctl --user restart kanata.service || true
 
 echo "Kanata configured."
 
@@ -75,7 +76,8 @@ WantedBy=graphical-session.target
 EOF
 
 	systemctl --user daemon-reload
-	systemctl --user enable --now kanshi.service
+	systemctl --user enable kanshi.service
+	systemctl --user restart kanshi.service || true
 fi
 
 echo "Kanshi configured."
