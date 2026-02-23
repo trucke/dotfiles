@@ -39,13 +39,7 @@ xdg-mime default proton-mail.desktop x-scheme-handler/mailto
 # Background
 ################################################################################
 
-NEW_BACKGROUND="${HOME}/.dotfiles/share/backgrounds/rose-pine.png"
-CURRENT_BACKGROUND_LINK="${HOME}/.config/omarchy/current/background"
-
-ln -nsf "${NEW_BACKGROUND}" "${CURRENT_BACKGROUND_LINK}"
-
-pkill -x swaybg || true
-setsid uwsm-app -- swaybg -i "${CURRENT_BACKGROUND_LINK}" -m fill >/dev/null 2>&1 &
+omarchy-theme-bg-set "${HOME}/.dotfiles/share/backgrounds/rose-pine.png"
 
 ################################################################################
 # Boot logo
