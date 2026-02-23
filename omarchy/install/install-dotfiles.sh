@@ -2,7 +2,6 @@
 
 set -euo pipefail
 
-REPO_URL="git@github.com:trucke/dotfiles-v2.git"
 DOTFILES="${HOME}/.dotfiles"
 
 if ! pacman -Qi "stow" &>/dev/null; then
@@ -12,15 +11,6 @@ fi
 
 pushd ~ >/dev/null
 
-if [ -d "${DOTFILES}" ]; then
-	echo "Repository '${DOTFILES}' already exists. Skipping clone."
-else
-	git clone "${REPO_URL}" "${DOTFILES}" || {
-		echo "Failed to clone the repository."
-		exit 1
-	}
-fi
-
 echo "Removing old configs"
 rm -rf "${HOME}/.config/nvim" \
 	"${HOME}/.config/starship.toml" \
@@ -29,6 +19,7 @@ rm -rf "${HOME}/.config/nvim" \
 	"${HOME}/.config/ghostty" \
 	"${HOME}/.config/git" \
 	"${HOME}/.config/mise" \
+	"${HOME}/.config/tmux" \
 	"${HOME}/.config/kanshi" \
 	"${HOME}/.config/kanata" \
 	"${HOME}/.config/waybar"
