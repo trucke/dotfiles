@@ -39,6 +39,5 @@ stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.local/bin" bin
 popd >/dev/null
 
 omarchy-restart-waybar
-omarchy-restart-terminal >/dev/null
 
 echo "Dotfiles successfully installed."

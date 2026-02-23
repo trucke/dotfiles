@@ -13,4 +13,6 @@ bash ./install/install-hypr-overrides.sh
 bash ./install/install-services.sh
 bash ./install/configure.sh
 
+omarchy-restart-terminal >/dev/null
+
 echo "Setup complete."
