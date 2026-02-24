@@ -29,10 +29,6 @@ fi
 omarchy-refresh-applications
 update-desktop-database "${HOME}/.local/share/applications"
 
-xdg-settings set default-web-browser helium-browser.desktop
-xdg-mime default helium-browser.desktop x-scheme-handler/http
-xdg-mime default helium-browser.desktop x-scheme-handler/https
-
 xdg-mime default proton-mail.desktop x-scheme-handler/mailto
 
 ################################################################################
