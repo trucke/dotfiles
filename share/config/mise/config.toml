@@ -2,6 +2,7 @@
 air = "latest"
 bun = "latest"
 deno = "latest"
+glow = "latest"
 go = "latest"
 jj = "latest"
 node = "latest"

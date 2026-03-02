@@ -18,6 +18,7 @@ Guidelines for AI coding agents.
 
 ## Guardrails
 
+- Do not use Python for any repository task, script, test, migration or build helper ever. Under no circumstances.
 - **No dependencies without approval**: Ask before adding any new dependency.
 - **No secrets or credential access**: Never commit, log, or transmit credentials, API keys, or other sensitive data. Avoid requesting/accessing secrets; if required for debugging, minimize exposure and redact in outputs.
 - **No auth/billing changes**: Never modify authentication or payment settings without explicit approval.

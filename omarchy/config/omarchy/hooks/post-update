@@ -10,14 +10,11 @@ DOTFILES="${HOME}/.dotfiles"
 omarchy-pkg-drop \
   aether \
   typora \
-  spotify \
   libreoffice-fresh \
   1password-beta \
   1password-cli \
   xournalpp \
-  signal-desktop \
   pinta \
-  obsidian \
   obs-studio \
   kdenlive \
   lazydocker \
@@ -44,15 +41,8 @@ omarchy-pkg-drop \
   whois \
   zoxide
 
-# Remove Omarchy defaults that conflict with stowed dotfiles
-rm -f "${HOME}/.config/opencode/opencode.json"
-rm -rf "${HOME}/.config/ghostty"
-rm -rf "${HOME}/.config/git"
-rm -f "${HOME}/.config/starship.toml"
-
 # Re-stow dotfiles and re-apply theme
 stow --restow --dir="${DOTFILES}/omarchy" --target="${HOME}/.config" config
-stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.config" config
 current_theme="$(basename "$(readlink "${HOME}/.config/theme/current")" 2>/dev/null || echo rosepine)"
 bash "${DOTFILES}/share/bin/theme-switch" "${current_theme}"
 

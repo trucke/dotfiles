@@ -19,3 +19,5 @@ quick-terminal-size = 35%,85%
 keybind = global:cmd+slash=toggle_quick_terminal
 
 mouse-scroll-multiplier = 0.95
+
+async-backend = epoll

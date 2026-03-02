@@ -23,9 +23,7 @@ omarchy-pkg-drop \
 	1password-beta \
 	1password-cli \
 	xournalpp \
-	signal-desktop \
 	pinta \
-	obsidian \
 	obs-studio \
 	kdenlive \
 	lazydocker \
