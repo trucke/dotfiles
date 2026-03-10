@@ -5,10 +5,7 @@ SEARCH_PATHS=(~/ ~/development ~/development/heylogix ~/development/classio ~/de
 show_help() {
     echo "Usage: $0 <session-name>"
     echo
-    echo "Create a new tmux session with 3 windows."
-    echo "Window 1: default shell"
-    echo "Window 2: runs 'nvim .'"
-    echo "Window 3: runs 'opencode .'"
+    echo "Create or attach to a tmux session."
     echo
     echo "If no session name is provided, select one interactively from directories"
     echo "under the search paths: ${SEARCH_PATHS[*]}"
@@ -84,11 +81,7 @@ esac
 # fi
 
 if ! tmux has-session -t "$session_name" 2>/dev/null; then
-    # Window 1: opencode as base, then build layout from it
-    tmux new-session -d -s "$session_name" -n "opencode" -c "$selected" "opencode"
-    # Window 2: left + right panes, right one runs nvim
-    tmux new-window -t "$session_name:2" -c "$selected"
-    tmux new-window -t "$session_name:69" -n "looping" -c "$selected"
+    tmux new-session -d -s "$session_name" -c "$selected"
 fi
 
-switch_to "$session_name:1"
+switch_to "$session_name"
