@@ -4,11 +4,10 @@
   "resources": [
     {
       "type": "git",
-      "name": "svelte",
+      "name": "svelte-docs",
       "url": "https://github.com/sveltejs/svelte.dev",
       "branch": "main",
-      "searchPath": "apps/svelte.dev",
-      "specialNotes": "This is the svelte docs website repo, not the actual svelte repo. Focus on the content directory, it has all the markdown files for the docs."
+      "searchPath": "apps/svelte.dev"
     },
     {
       "type": "git",
@@ -23,8 +22,15 @@
       "name": "go",
       "url": "https://github.com/golang/go",
       "branch": "master"
+    },
+    {
+      "type": "git",
+      "name": "netbird-docs",
+      "url": "https://github.com/netbirdio/docs",
+      "branch": "main",
+      "searchPath": "src/pages"
     }
   ],
-  "model": "claude-haiku-4-5",
+  "model": "gpt-5.4-mini",
   "provider": "opencode"
 }

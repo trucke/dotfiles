@@ -1,6 +1,6 @@
 ---
 description: Generate and apply a commit message from current changes
-model: opencode/gpt-5.1-codex-mini
+model: opencode/gpt-5.4-mini
 temperature: 0.1
 subtask: true
 agent: commit

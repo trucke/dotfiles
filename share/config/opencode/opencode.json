@@ -8,5 +8,13 @@
         "external_directory": {
             "/tmp/**": "allow"
         }
-    }
+    },
+	"mcp": {
+		"btca-local": {
+			"type": "local",
+			"command": ["bunx", "btca", "mcp"],
+			"enabled": true
+		}
+	},
+    "plugin": ["opencode-anthropic-oauth"]
 }
