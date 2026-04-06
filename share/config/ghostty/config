@@ -21,3 +21,7 @@ keybind = global:cmd+slash=toggle_quick_terminal
 mouse-scroll-multiplier = 0.95
 
 async-backend = epoll
+
+notify-on-command-finish = always
+notify-on-command-finish-action = no-bell,notify
+notify-on-command-finish-after = 60s

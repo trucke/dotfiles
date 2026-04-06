@@ -31,6 +31,7 @@ Guidelines for AI coding agents.
 - **Do what was asked**: Stay focused on the task. No drive-by refactors, gold-plating, or unrequested improvements.
 - **Call out behavior changes**: If a change affects public APIs, user-facing behavior, or operational characteristics, explicitly note it.
 - **No VCS operations unless asked**: Don't stage, commit, or push changes unless explicitly told to.
+- **Verify before recommending packages**: Never suggest a specific package, library, or dependency without first checking it exists, is the official/canonical choice, and is actively maintained. Always check the registry (npm, GitHub, etc.) before naming a package
 
 ## Workflow
 

@@ -22,7 +22,7 @@ return {
 			go = { "goimports", "gofumpt", lsp_format = "fallback" },
 			javascript = { "prettier" },
 			lua = { "stylua" },
-			markdown = { "deno_fmt" },
+			markdown = { "oxfmt" },
 			python = { "isort", "black" },
 			typescript = { "prettier" },
 			json = { "jq" },

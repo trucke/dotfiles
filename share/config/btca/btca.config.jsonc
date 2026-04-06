@@ -29,6 +29,12 @@
       "url": "https://github.com/netbirdio/docs",
       "branch": "main",
       "searchPath": "src/pages"
+    },
+    {
+      "type": "git",
+      "name": "linkwarden-docs",
+      "url": "https://github.com/linkwarden/docs",
+      "branch": "main"
     }
   ],
   "model": "gpt-5.4-mini",
