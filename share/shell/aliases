@@ -13,9 +13,10 @@ alias devcommit='git add . && git commit -m "automated dev commit" && git push o
 
 alias jjl='jj log -r ::'
 
-alias cat="bat -pp"
-alias grep="rg"
-alias tmux="tmux -2"
+alias cat='bat -pp'
+alias grep='rg'
+alias tmux='tmux -2'
+alias pp='pnpm'
 
 alias dot='cd ${HOME}/.dotfiles'
 alias dev='cd ${HOME}/development'
