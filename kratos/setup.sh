@@ -35,6 +35,9 @@ fi
 
 echo "=== kratos fresh-box setup ==="
 
+# Prime sudo once so the run doesn't prompt repeatedly.
+sudo -v
+
 # --- hostname --------------------------------------------------------------
 echo "--- hostname -> ${HOST_NAME}"
 sudo scutil --set ComputerName "${HOST_NAME}"
