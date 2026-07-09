@@ -22,7 +22,5 @@ alias dot='cd ${HOME}/.dotfiles'
 alias dev='cd ${HOME}/development'
 alias docs='cd ${HOME}/Documents'
 
-alias net='iwctl station wlan0'
-
 alias oc='OPENCODE_EXPERIMENTAL_EXA=true OPENCODE_EXPERIMENTAL_MARKDOWN=true opencode'
 alias occ='opencode run --command commit'

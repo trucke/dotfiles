@@ -26,12 +26,16 @@ rm -rf "${HOME}/.config/nvim" \
 # Remove Omarchy defaults that conflict with stowed dotfiles
 rm -f "${HOME}/.config/opencode/opencode.json"
 rm -f "${HOME}/.config/starship.toml"
+rm -f "${HOME}/.local/bin/"{codex,gemini,copilot,opencode,playwright-cli,pi}
 
 mkdir -p "${HOME}/.local/bin"
+
+git -C "${DOTFILES}" submodule update --init --recursive
 
 echo "Link personal config files"
 stow --restow --dir="${DOTFILES}/omarchy" --target="${HOME}/.config" config
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.config" config
+stow --restow --dir="${DOTFILES}/share" --target="${HOME}" zshenv
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}" zshrc
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.local/bin" bin
 

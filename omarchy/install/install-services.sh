@@ -34,7 +34,7 @@ Documentation=https://github.com/jtroo/kanata
 Environment=DISPLAY=:0
 Type=simple
 ExecStart=/usr/bin/sh -c 'exec /usr/bin/kanata --cfg ${HOME}/.config/kanata/config.kbd'
-Restart=no
+Restart=on-failure
 
 [Install]
 WantedBy=default.target
@@ -59,8 +59,7 @@ fi
 
 KANSHI_SERVICE="${HOME}/.config/systemd/user/kanshi.service"
 
-if [ ! -f "${KANSHI_SERVICE}" ]; then
-	cat >"${KANSHI_SERVICE}" <<'EOF'
+cat >"${KANSHI_SERVICE}" <<'EOF'
 [Unit]
 Description=Kanshi output manager
 Documentation=man:kanshi(1)
@@ -75,9 +74,8 @@ RestartSec=2
 WantedBy=graphical-session.target
 EOF
 
-	systemctl --user daemon-reload
-	systemctl --user enable kanshi.service
-	systemctl --user restart kanshi.service || true
-fi
+systemctl --user daemon-reload
+systemctl --user enable kanshi.service
+systemctl --user restart kanshi.service || true
 
 echo "Kanshi configured."

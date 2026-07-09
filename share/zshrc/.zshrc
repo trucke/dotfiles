@@ -60,7 +60,9 @@ zinit cdreplay -q
 # --------------------------------------------------------------------
 # Keybindings
 # --------------------------------------------------------------------
-bindkey -s ^f "tmux-sessionizer\n"
+if [[ -o interactive && -t 0 ]]; then
+    bindkey -s ^f "tmux-sessionizer\n"
+fi
 
 # --------------------------------------------------------------------
 # Setup PATH
@@ -94,3 +96,8 @@ export PATH
 source "${HOME}/.dotfiles/share/shell/aliases"
 source "${HOME}/.dotfiles/share/shell/functions"
 source "${HOME}/.dotfiles/share/shell/init"
+
+case "$(uname -s)" in
+  Darwin) source "${HOME}/.dotfiles/share/shell/macos" ;;
+  Linux) source "${HOME}/.dotfiles/share/shell/linux" ;;
+esac

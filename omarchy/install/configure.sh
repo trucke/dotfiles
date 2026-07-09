@@ -41,16 +41,7 @@ omarchy-theme-bg-set "${HOME}/.dotfiles/share/backgrounds/rose-pine.png"
 # Boot logo
 ################################################################################
 
-PLYMOUTH_THEME_PATH="/usr/share/plymouth/themes/omarchy"
-
-sudo cp -f "${HOME}/.dotfiles/omarchy/logo.png" "${PLYMOUTH_THEME_PATH}/logo.png"
-sudo plymouth-set-default-theme omarchy
-
-if command -v limine-mkinitcpio &>/dev/null; then
-	sudo limine-mkinitcpio
-else
-	sudo mkinitcpio -P
-fi
+omarchy-plymouth-set "#232136" "#e0def4" "${HOME}/.dotfiles/omarchy/logo.png"
 
 ################################################################################
 # Logind (lid switch behavior)
@@ -58,7 +49,7 @@ fi
 
 sudo cp /etc/systemd/logind.conf{,.backup-"$(date +%s)"}
 sudo sed -i 's/^#\?HandleLidSwitch=/HandleLidSwitch=/' /etc/systemd/logind.conf
-sudo sed -i 's/^#\?HandleLidSwitchExternalPower=suspend/HandleLidSwitchExternalPower=ignore/' /etc/systemd/logind.conf
+sudo sed -i 's/^#\?HandleLidSwitchExternalPower=.*/HandleLidSwitchExternalPower=suspend/' /etc/systemd/logind.conf
 sudo sed -i 's/^#\?HandleLidSwitchDocked=/HandleLidSwitchDocked=/' /etc/systemd/logind.conf
 sudo sed -i 's/^#\?LidSwitchIgnoreInhibited=/LidSwitchIgnoreInhibited=/' /etc/systemd/logind.conf
 

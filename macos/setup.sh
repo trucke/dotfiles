@@ -23,6 +23,9 @@ source "${DOTFILES}/share/shell/env"
 
 /opt/homebrew/bin/brew bundle --file "${DOTFILES}/macos/Brewfile" --no-lock
 
+git -C "${DOTFILES}" submodule update --init --recursive
+
+stow --restow --dir="${DOTFILES}/share" --target="${HOME}" zshenv
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}" zshrc
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.config" config
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.local/bin" bin

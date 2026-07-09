@@ -8,6 +8,11 @@ profile docked-home-office {
     output eDP-1 disable
 }
 
+profile portable-dual {
+    output eDP-1 enable mode 2880x1920@120Hz scale 2 position 240,1080
+    output "Raspberry PI RPI MON156 81005586360" mode 1920x1080@60Hz scale 1 position 0,0
+}
+
 profile mobile {
     output eDP-1 enable mode 2880x1920@120Hz scale 2
 }

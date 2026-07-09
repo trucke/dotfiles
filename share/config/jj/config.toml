@@ -6,3 +6,5 @@ email = "kt.code@pm.me"
 
 [ui]
 default-command = "st"
+pager = "delta"
+diff-formatter = ":git"

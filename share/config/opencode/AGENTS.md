@@ -1,44 +1,59 @@
 # AGENTS.md
 
-Guidelines for AI coding agents.
+Global guidelines for AI coding agents across all repositories.
+
+## Scope and Priority
+
+- Treat this file as default guidance for every project.
+- Do not invent project conventions. Discover them from the repository before acting.
+- Follow explicit user instructions and repo-local instructions unless they conflict with safety, privacy, security, or the hard guardrails below.
+- When instructions conflict, state the conflict briefly and follow the higher-priority or more task-specific instruction.
 
 ## Communication
 
-- **Be direct and concise**: Skip pleasantries and filler.
-- **State what you're doing**: No silent actions. Explain before acting.
-- **When uncertain, explain options**: Present tradeoffs—don't guess.
-
-## Principles
-
-- **KISS**: Prefer simple solutions. Prefer standard-library and built-in platform/framework features; when a third-party library is needed, prefer existing, already-approved dependencies in the repo over adding a new one.
-- **YAGNI**: Only write code needed for the current task. No speculative features, unused abstractions, or TODOs for "later".
-- **Follow existing patterns**: Match the style, structure, and conventions already in the codebase.
-- **Comments explain why, not what**: Prefer self-documenting code. Comment only non-obvious intent.
-- **Idiomatic and concise**: Follow the idioms and conventions of the language and framework. Be concise in code, but thorough in planning.
-
-## Guardrails
-
-- Do not use Python for any repository task, script, test, migration or build helper ever. Under no circumstances.
-- **No dependencies without approval**: Ask before adding any new dependency.
-- **No secrets or credential access**: Never commit, log, or transmit credentials, API keys, or other sensitive data. Avoid requesting/accessing secrets; if required for debugging, minimize exposure and redact in outputs.
-- **No auth/billing changes**: Never modify authentication or payment settings without explicit approval.
-- **Prefer editing over creating files**: Modify existing files when it keeps structure clean. Create new files when it improves clarity/maintenance (e.g., new module/test/doc) rather than forcing awkward edits.
-- **Don't touch global/system config**: Never modify files outside the project (e.g., ~/.bashrc, global git config).
-- **Don't disable security features**: No disabling auth, validation, or safety checks without asking.
-- **No background processes**: Don't start daemons, watchers, or long-running processes unless requested.
-- **No config changes**: Avoid modifying lint, format, build, or CI configs unless required for the task; keep changes minimal and explain the rationale.
-- **Keep diffs minimal**: Avoid formatting-only changes or unrelated cleanups; keep changes scoped to the task.
-- **Do what was asked**: Stay focused on the task. No drive-by refactors, gold-plating, or unrequested improvements.
-- **Call out behavior changes**: If a change affects public APIs, user-facing behavior, or operational characteristics, explicitly note it.
-- **No VCS operations unless asked**: Don't stage, commit, or push changes unless explicitly told to.
-- **Verify before recommending packages**: Never suggest a specific package, library, or dependency without first checking it exists, is the official/canonical choice, and is actively maintained. Always check the registry (npm, GitHub, etc.) before naming a package
+- Be direct and concise. Skip pleasantries, filler, and repetition.
+- Before substantial edits, risky actions, or long investigations, briefly state the plan.
+- For longer work, provide concise updates only when a material finding, blocker, or direction change occurs.
+- When changes were made, finish with what changed, what was verified, and any remaining risks or blockers.
 
 ## Workflow
 
-- **Verify before assuming**: Read the code before guessing. For ambiguous requests, explore the codebase first. Ask if still unclear.
-- **No unverified technical claims**: Don't state specific capabilities, limits, or specs of external tools, APIs, or services as fact. Prefer checking the repo (source, README, type defs) first; then use `btca ask` or web search when needed.
-- **Use btca for library/framework docs**: When you need current, detailed documentation about a dependency, use `btca ask` (if available) to search actual source code rather than relying on training data.
-- **Prefer idempotent operations**: Safe to retry is safer to run.
-- **Run checks before finishing**: Run the most relevant, practical checks that exist (tests, linter, type-checker). Prefer fast/targeted runs; report what you ran and flag anything you couldn't run.
-- **Report errors**: Surface failures clearly. Don't silently continue.
-- **Remove debug code**: No console.logs, print statements, or commented-out code left behind.
+- Read before changing. Inspect relevant source, existing usage, nearby tests, and relevant config before editing.
+- For ambiguous requests, use repository context to resolve ambiguity first. Ask only if the remaining ambiguity blocks useful progress.
+- Keep changes scoped to the task. Avoid unrelated cleanup, formatting churn, drive-by refactors, and gold-plating.
+- Preserve unrelated behavior and call out intentional behavior changes.
+- Do not stage, commit, amend, rebase, push, or run other VCS write operations unless explicitly requested.
+- Do not leave daemons, watchers, development servers, or background processes running. If one is needed for verification, start it only as long as necessary and stop it before finishing.
+
+## Engineering Defaults
+
+- Prefer simple, idiomatic, maintainable solutions that follow existing patterns.
+- Prefer standard-library and built-in platform/framework features; reuse existing helpers and approved dependencies before adding new code or packages.
+- Do not add speculative features, unused abstractions, or TODOs for hypothetical future work.
+- Comments should explain non-obvious intent, constraints, or tradeoffs. Avoid comments that restate the code.
+- Do not leave debug code, temporary instrumentation, commented-out code, `console.log`, print statements, or equivalent noise behind.
+
+## Hard Guardrails
+
+- Do not use Python as an ad-hoc helper, code generation tool, migration script, or build helper unless the repository itself is Python-based or the user explicitly requests it.
+- Do not add, upgrade, replace, or remove dependencies without explicit approval.
+- Do not modify authentication, authorization, billing, payment, or security-sensitive behavior without explicit approval.
+- Do not disable validation, auth, permissions, rate limits, safety checks, linting, type checks, tests, or CI checks to make a task pass.
+- Do not access, request, print, log, commit, transmit, or expose secrets, credentials, tokens, API keys, private certificates, or sensitive data.
+- Do not modify files outside the repository, including shell profiles, global git config, global package manager config, or system settings.
+- Do not change lint, format, build, test, compiler, bundler, deployment, or CI configuration unless required for the task. Keep required config changes minimal.
+- Do not run destructive commands such as `rm -rf`, `git reset --hard`, `git checkout --`, database resets, destructive migrations, or mass file rewrites unless explicitly requested and clearly scoped.
+- Avoid casual edits to generated files, vendored code, lockfiles, snapshots, and migration outputs; modify them only when they are expected outputs of the task.
+
+## Dependencies and External Information
+
+- For existing dependencies, inspect the repository first: source, manifests, lockfiles, README files, type definitions, and existing usage.
+- Before naming or recommending a package, library, service, or external API capability, verify it against official documentation, a package registry, or a canonical repository.
+- Prefer already-approved dependencies. If a new dependency appears necessary, explain why existing options are insufficient and ask for approval.
+
+## Verification
+
+- Discover the repository’s relevant checks instead of assuming commands.
+- Run the most relevant practical checks before finishing, such as targeted tests, lint, type checks, build checks, or smoke checks.
+- Do not claim a check passed unless it was actually run and completed successfully.
+- If a check cannot be run or fails, state that clearly and explain the remaining risk.

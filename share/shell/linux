@@ -1,0 +1,1 @@
+alias net='iwctl station wlan0'

@@ -39,16 +39,21 @@ omarchy-pkg-drop \
 	llvm \
 	luarocks \
 	mariadb-libs \
-	opencode \
 	postgresql-libs \
 	python-poetry-core \
-	ruby \
-	slurp \
 	tldr \
 	tree-sitter-cli \
 	wayfreeze \
 	whois \
 	zoxide
+
+# Remove Omarchy's opencode package without touching opencode-bin.
+if pacman -Qq | grep -qx "opencode"; then
+	sudo pacman -Rns --noconfirm opencode
+fi
+
+# Remove Omarchy's npx-installed CLI stubs.
+rm -f "${HOME}/.local/bin/"{codex,gemini,copilot,opencode,playwright-cli,pi}
 
 ################################################################################
 
@@ -59,9 +64,6 @@ rm -f "${HOME}/.bash_history" "${HOME}/.bash_logout" "${HOME}/.bash_profile"
 
 rm -rf "${HOME}/.config/"{Typora,xournalpp,lazygit,fcitx5}
 rm -f "${HOME}/.config/environment.d/fcitx.conf"
-
-# Remove fcitx5 autostart from upstream Omarchy config
-sed -i '/exec-once = uwsm-app -- fcitx5/d' "${HOME}/.local/share/omarchy/default/hypr/autostart.conf"
 
 # Disable screensaver on idle (still available via force-launch in system menu)
 mkdir -p "${HOME}/.local/state/omarchy/toggles"
