@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-mapfile -t packages <"${HOME}/.dotfiles/omarchy/install/install.packages"
+mapfile -t packages <"${HOME}/.dotfiles/loki/install/install.packages"
 
 yay -Syu --noconfirm
 for package in "${packages[@]}"; do

@@ -41,7 +41,7 @@ omarchy-theme-bg-set "${HOME}/.dotfiles/share/backgrounds/rose-pine.png"
 # Boot logo
 ################################################################################
 
-omarchy-plymouth-set "#232136" "#e0def4" "${HOME}/.dotfiles/omarchy/logo.png"
+omarchy-plymouth-set "#232136" "#e0def4" "${HOME}/.dotfiles/loki/logo.png"
 
 ################################################################################
 # Logind (lid switch behavior)

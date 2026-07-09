@@ -1,0 +1,165 @@
+# Mac mini (kratos) setup & maintenance — run ON the mac mini.
+#
+# Cold start (fresh box):
+#   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+#   brew install just && just bootstrap
+#
+# Brewfile is the source of truth for everything brew-managed
+# (CLIs, casks, infra, and the codex/claude/cursor/opencode/pi agents).
+# Language runtimes + dev tools come from the shared mise config
+# (../share/config/mise/config.toml, stowed to ~/.config/mise).
+# t3 is the only non-brew agent (pnpm global).
+
+brewfile := "Brewfile"
+dotfiles := parent_directory(justfile_directory())
+
+# macOS authenticated-restart (keeps FileVault ON for headless reboots).
+admin_user := "kevthedev"
+
+# List available recipes
+default:
+    @just --list
+
+# --- provision -------------------------------------------------------------
+
+# Full fresh-box provision: Homebrew + dotfiles + hardening + tools + theme
+bootstrap:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if ! command -v brew >/dev/null 2>&1 && [ ! -x /opt/homebrew/bin/brew ]; then
+      /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    fi
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+    sudo softwareupdate --install-rosetta --agree-to-license || true
+    just stow
+    just harden
+    just setup
+    just theme
+
+# Provision packages/tools only: brew + mise + pnpm globals
+setup: brew mise pnpm-globals
+
+# Converge Homebrew to the Brewfile (additive; removes nothing)
+brew:
+    brew bundle install --file {{brewfile}}
+
+# Install mise-managed runtimes/tools (config comes from the stowed share mise config)
+mise:
+    mise install
+
+# Install pnpm global packages (t3 — the only non-brew agent)
+# `mise exec` so pnpm resolves even before mise shims are on PATH (fresh box).
+pnpm-globals:
+    mise exec -- pnpm add -g t3
+
+# Symlink shared dotfiles into place (zshenv, zshrc, ~/.config, ~/.local/bin)
+stow:
+    mkdir -p "$HOME/.config" "$HOME/.local/bin"
+    stow --restow --dir="{{dotfiles}}/share" --target="$HOME" zshenv
+    stow --restow --dir="{{dotfiles}}/share" --target="$HOME" zshrc
+    stow --restow --dir="{{dotfiles}}/share" --target="$HOME/.config" config
+    stow --restow --dir="{{dotfiles}}/share" --target="$HOME/.local/bin" bin
+
+# Apply macOS security hardening (headless-appropriate)
+harden:
+    bash {{justfile_directory()}}/harden.sh
+
+# Initialize / switch theme (symlinks ghostty, tmux, starship, etc.)
+theme name="rosepine":
+    bash {{dotfiles}}/share/bin/theme-switch {{name}}
+
+# Initialize the Podman machine + docker-socket compatibility (one-time)
+podman-init:
+    podman machine init || true
+    podman machine start
+    sudo podman-mac-helper install
+
+# --- upgrades --------------------------------------------------------------
+
+# Upgrade everything (packages only; does NOT touch macOS — see upgrade-macos)
+upgrade: upgrade-brew upgrade-mise upgrade-t3
+
+# Upgrade all Homebrew packages (formulae + casks; --greedy bumps self-updaters)
+upgrade-brew:
+    brew update
+    brew upgrade
+    brew upgrade --cask --greedy
+
+# Upgrade all mise-managed tools
+upgrade-mise:
+    mise upgrade
+
+# Update the T3 CLI (pnpm global)
+upgrade-t3:
+    pnpm add -g t3@latest
+
+# Update the coding agents only (brew agents + t3)
+upgrade-agents: upgrade-t3
+    brew upgrade --cask --greedy codex claude-code@latest cursor-cli
+    brew upgrade pi-coding-agent anomalyco/tap/opencode
+
+# Keeps FileVault ON: does an AUTHENTICATED restart so the headless box unlocks
+# and returns on its own. Prompts once for your admin password (used for both
+# sudo and the FileVault unlock). Major jumps: upgrade-macos-major.
+# Upgrade macOS system software (point releases + security). RESTARTS the box.
+[confirm("Install all macOS updates and authenticated-restart the Mac mini? SSH drops; the box returns on its own.")]
+upgrade-macos:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    softwareupdate --list
+    read -rs -p "Admin password (sudo + FileVault authenticated restart): " pw < /dev/tty; echo
+    printf '%s\n' "$pw" | sudo -S -v
+    printf '%s' "$pw" | sudo softwareupdate --install --all --restart --user {{admin_user}} --stdinpass
+
+# List available full macOS installers (valid versions for upgrade-macos-major)
+upgrade-macos-list:
+    softwareupdate --list-full-installers
+
+# Run upgrade-macos-list first for valid versions. Downloads the full installer,
+# then startosinstall does an AUTHENTICATED restart (FileVault-safe, headless).
+# Prompts once for your admin password (sudo + FileVault unlock).
+# Upgrade to a MAJOR macOS version, e.g.: just upgrade-macos-major 15.5
+[confirm("Download + install a MAJOR macOS upgrade, then authenticated-restart? SSH drops; the box returns on its own.")]
+upgrade-macos-major version:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    softwareupdate --fetch-full-installer --full-installer-version {{version}}
+    installer="$(ls -d "/Applications/Install macOS"*.app | head -n1)"
+    read -rs -p "Admin password (sudo + FileVault authenticated restart): " pw < /dev/tty; echo
+    printf '%s\n' "$pw" | sudo -S -v
+    printf '%s' "$pw" | sudo "$installer/Contents/Resources/startosinstall" --agreetolicense --nointeraction --user {{admin_user}} --stdinpass
+
+# --- maintenance -----------------------------------------------------------
+
+# Show current brew / mise state
+audit:
+    @echo "== brew leaves ==" && brew leaves --installed-on-request | sort
+    @echo "== casks =="       && brew list --cask | sort
+    @echo "== services =="    && brew services list
+    @echo "== mise =="        && mise ls
+
+# Dry-run: list what cleanup would remove (removes nothing)
+cleanup-preview:
+    @echo ">> DRY RUN — nothing removed. Items below are NOT in {{brewfile}}."
+    brew bundle cleanup --file {{brewfile}}
+
+# Destructive: uninstall everything not in the Brewfile (formulae/casks; no zap)
+[confirm("Uninstall everything not in the Brewfile? Run cleanup-preview first.")]
+cleanup-apply:
+    brew bundle dump --file ~/Brewfile.before-cleanup.$(date +%Y%m%d%H%M%S) --force
+    brew bundle cleanup --file {{brewfile}} --force
+
+# Destructive: uninstall + zap casks (DELETES app data). e.g. just zap obsidian signal
+[confirm("zap DELETES application data for the given casks. Proceed?")]
+zap +casks:
+    for c in {{casks}}; do echo ">> zapping $c" && brew uninstall --cask --zap "$c" || true; done
+
+# Safe cache prune
+cache-safe:
+    brew cleanup
+    pnpm store prune || true
+
+# Destructive: caches that re-download on next use
+[confirm("Delete ~/.cache/{bun,deno,pnpm}? They re-download on next use.")]
+cache-redownload:
+    rm -rf ~/.cache/bun ~/.cache/deno ~/.cache/pnpm

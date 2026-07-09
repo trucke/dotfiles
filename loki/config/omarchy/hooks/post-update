@@ -49,7 +49,7 @@ rm -f "${HOME}/.local/bin/"{codex,gemini,copilot,opencode,playwright-cli,pi}
 git -C "${DOTFILES}" submodule update --init --recursive
 
 # Re-stow dotfiles and re-apply theme
-stow --restow --dir="${DOTFILES}/omarchy" --target="${HOME}/.config" config
+stow --restow --dir="${DOTFILES}/loki" --target="${HOME}/.config" config
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.config" config
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}" zshenv
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}" zshrc
@@ -58,8 +58,8 @@ current_theme="$(basename "$(readlink "${HOME}/.config/theme/current")" 2>/dev/n
 bash "${DOTFILES}/share/bin/theme-switch" "${current_theme}"
 
 case "${current_theme}" in
-  catppuccin) omarchy-plymouth-set "#1e1e2e" "#cdd6f4" "${DOTFILES}/omarchy/logo.png" ;;
-  *) omarchy-plymouth-set "#232136" "#e0def4" "${DOTFILES}/omarchy/logo.png" ;;
+  catppuccin) omarchy-plymouth-set "#1e1e2e" "#cdd6f4" "${DOTFILES}/loki/logo.png" ;;
+  *) omarchy-plymouth-set "#232136" "#e0def4" "${DOTFILES}/loki/logo.png" ;;
 esac
 
-bash "${DOTFILES}/omarchy/install/install-hypr-overrides.sh"
+bash "${DOTFILES}/loki/install/install-hypr-overrides.sh"

@@ -31,7 +31,8 @@ _darcs
 .DS_Store
 \.jj
 \.gitmodules
-arch
+kratos
+loki
 macos
 share
 tmux-fzf-url

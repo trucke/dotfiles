@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-DOTFILES="${HOME}/.dotfiles/omarchy/config/hypr"
+DOTFILES="${HOME}/.dotfiles/loki/config/hypr"
 HYPR_CONFIG="${HOME}/.config/hypr"
 
 ################################################################################
