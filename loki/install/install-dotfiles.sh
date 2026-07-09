@@ -28,7 +28,8 @@ rm -f "${HOME}/.config/opencode/opencode.json"
 rm -f "${HOME}/.config/starship.toml"
 rm -f "${HOME}/.local/bin/"{codex,gemini,copilot,opencode,playwright-cli,pi}
 
-mkdir -p "${HOME}/.local/bin"
+mkdir -p "${HOME}/.local/bin" "${HOME}/.ssh"
+chmod 700 "${HOME}/.ssh"
 
 git -C "${DOTFILES}" submodule update --init --recursive
 
@@ -38,6 +39,7 @@ stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.config" config
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}" zshenv
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}" zshrc
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.local/bin" bin
+stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.ssh" ssh
 
 popd >/dev/null
 

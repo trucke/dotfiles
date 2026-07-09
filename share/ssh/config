@@ -1,0 +1,14 @@
+# Public SSH config (dotfiles). Sensitive hosts live in
+# ~/.ssh/config.d/hosts.conf — install it from Proton Pass (chmod 600).
+
+Host github.com
+    User git
+    IdentityFile ~/.ssh/github
+    IdentitiesOnly yes
+
+Include ~/.ssh/config.d/*.conf
+
+Host *
+    AddKeysToAgent yes
+    ServerAliveInterval 30
+    ServerAliveCountMax 6

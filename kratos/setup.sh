@@ -83,15 +83,22 @@ command -v just >/dev/null 2>&1 || brew install just
 echo "--- provisioning: just bootstrap"
 ( cd "${DOTFILES}/kratos" && just bootstrap )
 
+echo "--- SSH keys (generate per convention; register the printed pubkeys)"
+( cd "${DOTFILES}/kratos" && just ssh-keys )
+
 # --- remaining interactive steps -------------------------------------------
 cat <<'EOF'
 
 === setup complete — remaining INTERACTIVE steps ===
-  1. netbird up                       # SSO login; then macmini.dev.internal resolves
-                                       #   (you can disconnect the display after this)
-  2. just -f ~/.dotfiles/kratos/justfile podman-init
-  3. sudo fdesetup enable             # FileVault — SAVE the recovery key
-  4. Agents: codex; claude; cursor-agent; opencode  # /connect ; pi  # /login ; t3
-  5. t3 serve --host "$(netbird status | awk '/NetBird IP:/{split($3,a,"/");print a[1]}')"
-  6. just -f ~/.dotfiles/kratos/justfile audit
+  1. Register the generated pubkeys: github (GitHub settings),
+       net (the other machine's authorized_keys)
+  2. From Proton Pass, install into ~/.ssh (chmod 600):
+       - shared keys: hlx-admin  roomvibes  rv-edgeplayer  rv-edgeplayer-sync
+       - host config: -> ~/.ssh/config.d/hosts.conf
+  3. netbird up                       # SSO login (then you can disconnect the display)
+  4. just -f ~/.dotfiles/kratos/justfile podman-init
+  5. sudo fdesetup enable             # FileVault — SAVE the recovery key
+  6. Agents: codex; claude; cursor-agent; opencode  # /connect ; pi  # /login ; t3
+  7. t3 serve --host "$(netbird status | awk '/NetBird IP:/{split($3,a,"/");print a[1]}')"
+  8. just -f ~/.dotfiles/kratos/justfile audit
 EOF

@@ -49,13 +49,15 @@ mise:
 pnpm-globals:
     mise exec -- pnpm add -g t3
 
-# Symlink shared dotfiles into place (zshenv, zshrc, ~/.config, ~/.local/bin)
+# Symlink shared dotfiles into place (zshenv, zshrc, ~/.config, ~/.local/bin, ~/.ssh)
 stow:
-    mkdir -p "$HOME/.config" "$HOME/.local/bin"
+    mkdir -p "$HOME/.config" "$HOME/.local/bin" "$HOME/.ssh"
+    chmod 700 "$HOME/.ssh"
     stow --restow --dir="{{dotfiles}}/share" --target="$HOME" zshenv
     stow --restow --dir="{{dotfiles}}/share" --target="$HOME" zshrc
     stow --restow --dir="{{dotfiles}}/share" --target="$HOME/.config" config
     stow --restow --dir="{{dotfiles}}/share" --target="$HOME/.local/bin" bin
+    stow --restow --dir="{{dotfiles}}/share" --target="$HOME/.ssh" ssh
 
 # Apply macOS security hardening (headless-appropriate)
 harden:
@@ -64,6 +66,10 @@ harden:
 # Initialize / switch theme (symlinks ghostty, tmux, starship, etc.)
 theme name="rosepine":
     bash {{dotfiles}}/share/bin/theme-switch {{name}}
+
+# Generate this machine's SSH keypairs (ed25519, per the naming convention)
+ssh-keys:
+    bash {{dotfiles}}/share/bin/ssh-keys-gen
 
 # Initialize the Podman machine + docker-socket compatibility (one-time)
 podman-init:

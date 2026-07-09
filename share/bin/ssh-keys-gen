@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+#
+# Generate this machine's PER-MACHINE SSH keypairs (ed25519), comment
+# skadi@<host>-<key>-<yyyymm>. Idempotent — existing keys are left untouched.
+# Prints the public keys and where to register each.
+#
+# Only per-machine keys are generated here:
+#   github  - github accepts multiple keys; one per machine, revocable
+#   net     - internal machine-to-machine (you own the authorized_keys)
+#
+# SHARED / existing keys are NOT generated: hlx-admin, roomvibes, rv-edgeplayer,
+# rv-edgeplayer-sync are prod/client keys reused across machines. Keep them in
+# Proton Pass and install manually into ~/.ssh (chmod 600).
+
+set -euo pipefail
+
+where_for() {
+  case "$1" in
+    github) echo "github.com -> Settings -> SSH and GPG keys" ;;
+    net)    echo "authorized_keys on the other machine, e.g. loki (user skadi)" ;;
+  esac
+}
+order="github net"
+
+host="$(hostname -s)"
+stamp="$(date +%Y-%m)"
+sshdir="${HOME}/.ssh"
+mkdir -p "$sshdir"; chmod 700 "$sshdir"
+
+for k in $order; do
+  f="${sshdir}/${k}"
+  if [[ -f "$f" ]]; then
+    echo "* ${k}: exists — skipping"
+  else
+    ssh-keygen -t ed25519 -N "" -C "skadi@${host}-${k}-${stamp}" -f "$f" >/dev/null
+    chmod 600 "$f"; chmod 644 "${f}.pub"
+    echo "+ ${k}: created  (skadi@${host}-${k}-${stamp})"
+  fi
+done
+
+echo
+echo "=== register these public keys ==="
+for k in $order; do
+  echo
+  echo "# ${k}  ->  $(where_for "$k")"
+  cat "${sshdir}/${k}.pub"
+done
+
+echo
+echo "Reminder: install the SHARED keys from Proton Pass into ~/.ssh (chmod 600):"
+echo "  hlx-admin  roomvibes  rv-edgeplayer  rv-edgeplayer-sync"

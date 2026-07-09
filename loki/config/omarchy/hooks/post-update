@@ -49,11 +49,13 @@ rm -f "${HOME}/.local/bin/"{codex,gemini,copilot,opencode,playwright-cli,pi}
 git -C "${DOTFILES}" submodule update --init --recursive
 
 # Re-stow dotfiles and re-apply theme
+mkdir -p "${HOME}/.ssh" && chmod 700 "${HOME}/.ssh"
 stow --restow --dir="${DOTFILES}/loki" --target="${HOME}/.config" config
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.config" config
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}" zshenv
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}" zshrc
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.local/bin" bin
+stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.ssh" ssh
 current_theme="$(basename "$(readlink "${HOME}/.config/theme/current")" 2>/dev/null || echo rosepine)"
 bash "${DOTFILES}/share/bin/theme-switch" "${current_theme}"
 

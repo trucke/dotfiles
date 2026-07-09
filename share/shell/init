@@ -10,10 +10,6 @@ if command -v mise &> /dev/null; then
     fi
 fi
 
-if command -v orb &> /dev/null; then
-    source ~/.orbstack/shell/init.zsh 2>/dev/null || :
-fi
-
 if [[ -o interactive && -t 0 ]] && command -v starship &> /dev/null; then
     eval "$(starship init ${shell})"
 fi
