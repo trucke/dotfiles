@@ -13,9 +13,6 @@
 brewfile := "Brewfile"
 dotfiles := parent_directory(justfile_directory())
 
-# macOS authenticated-restart (keeps FileVault ON for headless reboots).
-admin_user := "kevthedev"
-
 # List available recipes
 default:
     @just --list
@@ -109,7 +106,7 @@ upgrade-macos:
     softwareupdate --list
     read -rs -p "Admin password (sudo + FileVault authenticated restart): " pw < /dev/tty; echo
     printf '%s\n' "$pw" | sudo -S -v
-    printf '%s' "$pw" | sudo softwareupdate --install --all --restart --user {{admin_user}} --stdinpass
+    printf '%s' "$pw" | sudo softwareupdate --install --all --restart --user "$(id -un)" --stdinpass
 
 # List available full macOS installers (valid versions for upgrade-macos-major)
 upgrade-macos-list:
@@ -127,7 +124,7 @@ upgrade-macos-major version:
     installer="$(ls -d "/Applications/Install macOS"*.app | head -n1)"
     read -rs -p "Admin password (sudo + FileVault authenticated restart): " pw < /dev/tty; echo
     printf '%s\n' "$pw" | sudo -S -v
-    printf '%s' "$pw" | sudo "$installer/Contents/Resources/startosinstall" --agreetolicense --nointeraction --user {{admin_user}} --stdinpass
+    printf '%s' "$pw" | sudo "$installer/Contents/Resources/startosinstall" --agreetolicense --nointeraction --user "$(id -un)" --stdinpass
 
 # --- maintenance -----------------------------------------------------------
 
