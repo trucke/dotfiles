@@ -1,0 +1,39 @@
+# Framework 13 (loki) setup & maintenance — run ON the laptop.
+#
+# Day-to-day updates go through Omarchy: `omarchy update` runs the post-update
+# hook -> sync.sh automatically. This justfile only covers the dotfiles-repo
+# operations Omarchy doesn't — its main use is `just sync` after editing dotfiles.
+#
+# Cold start (fresh box): install Omarchy, clone dotfiles, then `bash setup.sh`
+# (just isn't installed until packages land, so the first run can't use it).
+
+dotfiles := parent_directory(justfile_directory())
+
+# List available recipes
+default:
+    @just --list
+
+# --- provision -------------------------------------------------------------
+
+# Fresh-provision this machine (cleanup, packages, dotfiles, services, config)
+setup:
+    bash {{justfile_directory()}}/setup.sh
+
+# Re-assert customizations (stow, hypr overrides, pkg drops, mise) — run after editing dotfiles
+sync:
+    bash {{justfile_directory()}}/sync.sh
+
+# Install/converge repo + AUR packages from the lists (after editing packages.repo/.aur)
+packages:
+    bash {{justfile_directory()}}/install/install-packages.sh
+
+# Generate this machine's SSH keypairs (ed25519, per the naming convention)
+ssh-keys:
+    bash {{dotfiles}}/share/bin/ssh-keys-gen
+
+# --- upgrades --------------------------------------------------------------
+
+# Upgrade everything: Omarchy system update, then mise-managed dev tools
+upgrade:
+    omarchy update
+    mise upgrade
