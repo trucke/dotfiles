@@ -51,6 +51,8 @@ brew:
     brew trust --formula netbirdio/tap/netbird       || true
     brew trust --formula anomalyco/tap/opencode      || true
     brew trust --formula slp/krunkit/krunkit         || true
+    brew trust --formula slp/krunkit/libkrun-efi     || true
+    brew trust --formula slp/krunkit/virglrenderer   || true
     brew bundle install --file {{brewfile}}
 
 # Install mise-managed runtimes/tools (config comes from the stowed share mise config)
