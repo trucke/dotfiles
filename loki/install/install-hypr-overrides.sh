@@ -25,8 +25,8 @@ deploy_config() {
 
 ################################################################################
 
-# Hyprland override files (sourced by upstream hyprland.conf after defaults)
-deploy_config "${DOTFILES}/monitors.conf" "${HYPR_CONFIG}/monitors.conf" "Monitors config"
+# Hyprland override files (sourced by upstream hyprland.conf after defaults).
+# Displays are managed by kanshi (profiles), not a monitors.conf override.
 deploy_config "${DOTFILES}/input.conf" "${HYPR_CONFIG}/input.conf" "Input config"
 deploy_config "${DOTFILES}/bindings.conf" "${HYPR_CONFIG}/bindings.conf" "Bindings config"
 deploy_config "${DOTFILES}/looknfeel.conf" "${HYPR_CONFIG}/looknfeel.conf" "Look-n-feel config"

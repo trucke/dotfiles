@@ -66,7 +66,7 @@ Runs on top of [Omarchy](https://github.com/basecamp/omarchy). Omarchy's
 `hyprland.conf` sources user overrides from `~/.config/hypr/` **after** defaults:
 
 ```
-monitors.conf   input.conf   bindings.conf   looknfeel.conf
+input.conf   bindings.conf   looknfeel.conf
 ```
 
 deployed via symlink from `loki/config/hypr/`.

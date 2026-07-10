@@ -27,10 +27,6 @@ rm -f "${HOME}/.bash_history" "${HOME}/.bash_logout" "${HOME}/.bash_profile"
 rm -rf "${HOME}/.config/"{Typora,xournalpp,lazygit,fcitx5}
 rm -f "${HOME}/.config/environment.d/fcitx.conf"
 
-# Disable screensaver on idle (still available via force-launch in system menu)
-mkdir -p "${HOME}/.local/state/omarchy/toggles"
-touch "${HOME}/.local/state/omarchy/toggles/screensaver-off"
-
 ################################################################################
 
 echo "Cleanup finished."
