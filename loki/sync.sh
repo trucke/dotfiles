@@ -49,7 +49,8 @@ rm -f "${HOME}/.local/bin/"{codex,gemini,copilot,opencode,playwright-cli,pi}
 # Re-stow shared + host dotfiles. Some targets are pre-created so stow links the
 # files instead of folding the dir (Zed and pi keep runtime state alongside).
 mkdir -p "${HOME}/.local/bin" "${HOME}/.ssh" "${HOME}/.config/zed" \
-	"${HOME}/.pi/agent/extensions" "${HOME}/.pi/agent/skills" "${HOME}/.pi/agent/themes"
+	"${HOME}/.pi/agent/extensions" "${HOME}/.pi/agent/skills" "${HOME}/.pi/agent/themes" \
+	"${HOME}/.local/share/applications"
 chmod 700 "${HOME}/.ssh"
 stow --restow --dir="${DOTFILES}/loki"  --target="${HOME}/.config"    config
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.config"    config
@@ -57,6 +58,7 @@ stow --restow --dir="${DOTFILES}/share" --target="${HOME}"            zsh
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.local/bin" bin
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.ssh"       ssh
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.pi/agent"  pi
+stow --restow --dir="${DOTFILES}/loki"  --target="${HOME}/.local/share/applications" applications
 
 # Install/refresh mise-managed dev tools (mise config was just stowed).
 if command -v mise &>/dev/null; then

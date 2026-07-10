@@ -1,0 +1,13 @@
+# User override of /usr/share/applications/t3code.desktop. Forces Electron's
+# libsecret password store to work around t3code's safeStorage bug on Hyprland
+# (pingdotgg/t3code#2880 — safeStorage.isEncryptionAvailable() wrongly false).
+# Drop this once t3code ships an Electron with the upstream fix.
+[Desktop Entry]
+Name=T3 Code
+Comment=T3 Code desktop build
+Exec=t3code --password-store=gnome-libsecret %U
+Terminal=false
+Type=Application
+Icon=t3code
+StartupWMClass=t3code
+Categories=Development;
