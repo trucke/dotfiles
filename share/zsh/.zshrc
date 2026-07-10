@@ -1,4 +1,3 @@
-source "${HOME}/.dotfiles/share/shell/env"
 # --------------------------------------------------------------------
 # Download Zinit, if it's not there yet
 # --------------------------------------------------------------------
@@ -96,8 +95,3 @@ export PATH
 source "${HOME}/.dotfiles/share/shell/aliases"
 source "${HOME}/.dotfiles/share/shell/functions"
 source "${HOME}/.dotfiles/share/shell/init"
-
-case "$(uname -s)" in
-  Darwin) source "${HOME}/.dotfiles/share/shell/macos" ;;
-  Linux) source "${HOME}/.dotfiles/share/shell/linux" ;;
-esac

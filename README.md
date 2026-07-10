@@ -91,7 +91,7 @@ Stowed on every host:
 - `shell/` — zsh fragments (`env`, `aliases`, `functions`, `init`, per-OS `macos`/`linux`)
 - `config/` — nvim, git, jj, mise, tmux, ghostty, opencode, …
 - `bin/` → `~/.local/bin`
-- `zshenv`, `zshrc`
+- `zsh` (bundles `.zshenv` + `.zshrc`)
 - `backgrounds/`
 
 ### Theming

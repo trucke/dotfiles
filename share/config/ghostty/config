@@ -1,7 +1,7 @@
 theme = Catppuccin Mocha
 
 font-size = 10
-font-feature = -calt 
+font-feature = -calt
 
 shell-integration-features = no-cursor,ssh-env
 
@@ -11,11 +11,6 @@ window-padding-balance = true
 confirm-close-surface=false
 quit-after-last-window-closed = true
 macos-titlebar-style = hidden
-
-quick-terminal-position = right
-quick-terminal-size = 35%,85%
-
-keybind = global:cmd+slash=toggle_quick_terminal
 
 mouse-scroll-multiplier = 0.95
 

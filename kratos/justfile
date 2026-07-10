@@ -49,12 +49,11 @@ mise:
 pnpm-globals:
     mise exec -- pnpm add -g t3
 
-# Symlink shared dotfiles into place (zshenv, zshrc, ~/.config, ~/.local/bin, ~/.ssh)
+# Symlink shared dotfiles into place (zsh, ~/.config, ~/.local/bin, ~/.ssh)
 stow:
     mkdir -p "$HOME/.config" "$HOME/.local/bin" "$HOME/.ssh"
     chmod 700 "$HOME/.ssh"
-    stow --restow --dir="{{dotfiles}}/share" --target="$HOME" zshenv
-    stow --restow --dir="{{dotfiles}}/share" --target="$HOME" zshrc
+    stow --restow --dir="{{dotfiles}}/share" --target="$HOME" zsh
     stow --restow --dir="{{dotfiles}}/share" --target="$HOME/.config" config
     stow --restow --dir="{{dotfiles}}/share" --target="$HOME/.local/bin" bin
     stow --restow --dir="{{dotfiles}}/share" --target="$HOME/.ssh" ssh

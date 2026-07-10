@@ -1,9 +1,11 @@
+# Sourced for EVERY zsh invocation (interactive, non-interactive, scripts).
+# Keep it to environment only — interactive setup belongs in .zshrc.
+
 export DOTFILES="${HOME}/.dotfiles"
-export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-${HOME}/.config}"
-export XDG_DATA_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}"
-export XDG_STATE_HOME="${XDG_STATE_HOME:-${HOME}/.local/state}"
-export XDG_CACHE_HOME="${XDG_CACHE_HOME:-${HOME}/.cache}"
-export XDG_BIN_DIR="${XDG_BIN_DIR:-${HOME}/.local/bin}"
+
+# XDG dirs + tool environment. Sourced here (not .zshrc) so non-interactive
+# sessions (ssh <cmd>, scripts, git hooks) get a correct environment too.
+source "${DOTFILES}/share/shell/env"
 
 case "$(uname -s)" in
   Darwin)

@@ -53,8 +53,7 @@ mkdir -p "${HOME}/.local/bin" "${HOME}/.ssh" "${HOME}/.config/zed"
 chmod 700 "${HOME}/.ssh"
 stow --restow --dir="${DOTFILES}/loki"  --target="${HOME}/.config"    config
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.config"    config
-stow --restow --dir="${DOTFILES}/share" --target="${HOME}"            zshenv
-stow --restow --dir="${DOTFILES}/share" --target="${HOME}"            zshrc
+stow --restow --dir="${DOTFILES}/share" --target="${HOME}"            zsh
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.local/bin" bin
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.ssh"       ssh
 
