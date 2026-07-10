@@ -22,10 +22,6 @@ if command -v jj &> /dev/null; then
     source <(jj util completion ${shell})
 fi
 
-if command -v doppler &> /dev/null; then
-    eval "$(doppler completion 2>/dev/null)"
-fi
-
 if command -v just &> /dev/null; then
     eval "$(just --completions ${shell})"
 fi

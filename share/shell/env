@@ -37,14 +37,7 @@ export CARGO_INSTALL_ROOT="${XDG_DATA_HOME}"
 export RUSTUP_HOME="${XDG_DATA_HOME}/rust/rustup"
 export CARGO_HOME="${XDG_DATA_HOME}/rust/cargo"
 
-export MIX_HOME="${XDG_DATA_HOME}/mix"
-export HEX_HOME="${XDG_DATA_HOME}/hex"
-
-export DOPPLER_CONFIG_DIR="${XDG_CONFIG_HOME}/doppler"
-
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
-
-export ANSIBLE_HOME="${XDG_DATA_HOME}/ansible"
 
 export RIPGREP_CONFIG_PATH="${XDG_CONFIG_HOME}/.ripgreprc"
 
