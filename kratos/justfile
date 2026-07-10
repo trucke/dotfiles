@@ -44,7 +44,7 @@ setup: brew mise pnpm-globals
 brew:
     #!/usr/bin/env bash
     set -euo pipefail
-    for tap in infisical/get-cli netbirdio/tap anomalyco/tap slp/krunkit; do
+    for tap in infisical/get-cli netbirdio/tap anomalyco/tap; do
       brew tap "$tap" >/dev/null 2>&1 || true
       brew trust --tap "$tap" || true
     done
@@ -78,8 +78,20 @@ harden:
 ssh-keys:
     bash {{dotfiles}}/share/bin/ssh-keys-gen
 
-# Initialize the Podman machine + docker-socket compatibility (one-time)
+# Install the official Podman (its .pkg bundles the machine + VM provider; Podman
+# does not recommend the Homebrew formula) + start its machine (one-time).
 podman-init:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if ! /opt/podman/bin/podman --version >/dev/null 2>&1; then
+      echo "Installing the official Podman .pkg..."
+      pkg="$(mktemp -d)/podman.pkg"
+      url="$(curl -fsSL https://api.github.com/repos/containers/podman/releases/latest | grep -oE '"browser_download_url": "[^"]+podman-installer-macos-arm64\.pkg"' | head -1 | cut -d'"' -f4)"
+      [ -n "$url" ] || { echo "Could not resolve the Podman installer URL"; exit 1; }
+      curl -fsSL -o "$pkg" "$url"
+      sudo installer -pkg "$pkg" -target /
+    fi
+    export PATH="/opt/podman/bin:$PATH"
     podman machine init || true
     podman machine start
     sudo podman-mac-helper install

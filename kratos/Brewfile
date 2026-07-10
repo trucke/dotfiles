@@ -23,8 +23,8 @@ brew "netbirdio/tap/netbird"
 brew "ollama"
 brew "pandoc"
 brew "playwright-cli"
-brew "podman"
-brew "slp/krunkit/krunkit"  # podman machine VM provider (libkrun; Podman's default on Apple Silicon)
+# podman: installed via the official .pkg (see justfile `podman-init`); Podman
+# does not recommend the Homebrew formula. colima/docker above cover Docker compat.
 brew "poppler"
 brew "qpdf"
 brew "ripgrep"
