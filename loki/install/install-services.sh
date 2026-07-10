@@ -2,16 +2,12 @@
 
 set -euo pipefail
 
+# kanata + kanshi are installed by install-packages.sh; this only wires their
+# permissions and user services.
+
 ################################################################################
 # Kanata (keyboard remapping)
 ################################################################################
-
-paru -S --noconfirm --needed kanata-bin
-
-if ! command -v kanata &>/dev/null; then
-	echo "Kanata installation failed."
-	exit 1
-fi
 
 sudo groupadd -rf uinput
 sudo usermod -aG input "${USER}"
@@ -44,22 +40,13 @@ systemctl --user daemon-reload
 systemctl --user enable kanata.service
 systemctl --user restart kanata.service || true
 
-echo "Kanata configured."
+echo "Kanata service configured."
 
 ################################################################################
 # Kanshi (display auto-config)
 ################################################################################
 
-paru -S --noconfirm --needed kanshi
-
-if ! command -v kanshi &>/dev/null; then
-	echo "Kanshi installation failed."
-	exit 1
-fi
-
-KANSHI_SERVICE="${HOME}/.config/systemd/user/kanshi.service"
-
-cat >"${KANSHI_SERVICE}" <<'EOF'
+cat >"${HOME}/.config/systemd/user/kanshi.service" <<'EOF'
 [Unit]
 Description=Kanshi output manager
 Documentation=man:kanshi(1)
@@ -78,4 +65,4 @@ systemctl --user daemon-reload
 systemctl --user enable kanshi.service
 systemctl --user restart kanshi.service || true
 
-echo "Kanshi configured."
+echo "Kanshi service configured."

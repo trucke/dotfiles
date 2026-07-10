@@ -1,0 +1,26 @@
+{
+  "buffer_font_size": 14.0,
+  "buffer_font_family": "JetBrainsMono Nerd Font",
+  "ui_font_family": ".ZedSans",
+  "buffer_line_height": "comfortable",
+  "terminal": { "font_family": ".ZedMono" },
+  "auto_install_extensions": {
+    "catppuccin": true,
+    "catppuccin-icons": true,
+  },
+  "theme": "Catppuccin Mocha",
+  "icon_theme": "Catppuccin Mocha",
+  "redact_private_values": true,
+  "telemetry": { "diagnostics": true, "metrics": false },
+  "session": { "trust_all_worktrees": true },
+  "vim_mode": true,
+  "agent_servers": {
+    "cursor": { "type": "registry" },
+    "codex-acp": { "type": "registry" },
+    "claude-acp": { "type": "registry" },
+  },
+  "base_keymap": "Cursor",
+  "buffer_font_features": {
+    "calt": false,
+  },
+}

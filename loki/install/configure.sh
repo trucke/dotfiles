@@ -6,7 +6,7 @@ set -euo pipefail
 # Theme
 ################################################################################
 
-bash "${HOME}/.dotfiles/share/bin/theme-switch" rosepine
+omarchy theme set "Catppuccin"
 
 ################################################################################
 # Shell
@@ -30,18 +30,6 @@ omarchy-refresh-applications
 update-desktop-database "${HOME}/.local/share/applications"
 
 xdg-mime default proton-mail.desktop x-scheme-handler/mailto
-
-################################################################################
-# Background
-################################################################################
-
-omarchy-theme-bg-set "${HOME}/.dotfiles/share/backgrounds/rose-pine.png"
-
-################################################################################
-# Boot logo
-################################################################################
-
-omarchy-plymouth-set "#232136" "#e0def4" "${HOME}/.dotfiles/loki/logo.png"
 
 ################################################################################
 # Logind (lid switch behavior)

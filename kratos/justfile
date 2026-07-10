@@ -63,10 +63,6 @@ stow:
 harden:
     bash {{justfile_directory()}}/harden.sh
 
-# Initialize / switch theme (symlinks ghostty, tmux, starship, etc.)
-theme name="rosepine":
-    bash {{dotfiles}}/share/bin/theme-switch {{name}}
-
 # Generate this machine's SSH keypairs (ed25519, per the naming convention)
 ssh-keys:
     bash {{dotfiles}}/share/bin/ssh-keys-gen

@@ -14,46 +14,8 @@ rm -f "${HOME}/.config/hypr/bindings.conf"
 cp "${HOME}/.local/share/omarchy/default/hypr/plain-bindings.conf" "${HOME}/.config/hypr/bindings.conf"
 hyprctl reload >/dev/null 2>&1 || true
 
-# Drop preinstalled packages (covered by omarchy-remove-preinstalls) and extras
-omarchy-pkg-drop \
-	aether \
-	typora \
-	spotify \
-	libreoffice-fresh \
-	1password-beta \
-	1password-cli \
-	xournalpp \
-	pinta \
-	obs-studio \
-	kdenlive \
-	lazydocker \
-	asdcontrol \
-	clang \
-	dotnet-runtime-9.0 \
-	dust \
-	fcitx5 \
-	fcitx5-gtk \
-	fcitx5-qt \
-	github-cli \
-	lazygit \
-	llvm \
-	luarocks \
-	mariadb-libs \
-	postgresql-libs \
-	python-poetry-core \
-	tldr \
-	tree-sitter-cli \
-	wayfreeze \
-	whois \
-	zoxide
-
-# Remove Omarchy's opencode package without touching opencode-bin.
-if pacman -Qq | grep -qx "opencode"; then
-	sudo pacman -Rns --noconfirm opencode
-fi
-
-# Remove Omarchy's npx-installed CLI stubs.
-rm -f "${HOME}/.local/bin/"{codex,gemini,copilot,opencode,playwright-cli,pi}
+# NOTE: package drops + npx-stub removal live in loki/sync.sh (idempotent, also
+# re-run after every `omarchy update`). This script is fresh-provision only.
 
 ################################################################################
 

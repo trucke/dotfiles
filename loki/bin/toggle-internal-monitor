@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-count=$(hyprctl monitors all | grep Monitor | wc -l)
+count=$(hyprctl monitors all | grep -c Monitor)
 [[ $count -lt 2 ]] && exit 0
 
 if hyprctl monitors | grep "eDP-1" > /dev/null; then

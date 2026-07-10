@@ -92,17 +92,14 @@ Stowed on every host:
 - `config/` — nvim, git, jj, mise, tmux, ghostty, opencode, …
 - `bin/` → `~/.local/bin`
 - `zshenv`, `zshrc`
-- `themes/`, `backgrounds/`
+- `backgrounds/`
 
-### Theme system
+### Theming
 
-Two themes: **Rose Pine Moon** (default) and **Catppuccin Mocha**:
+Everything is **Catppuccin Mocha**, statically — no theme switching:
 
-```bash
-theme-switch rosepine    # or: catppuccin
-```
-
-Theme files live in `share/themes/`, symlinked to `~/.config/theme/current/`.
+- **loki (Hyprland)** follows Omarchy's active theme; set once with `omarchy theme set "Catppuccin"`.
+- **Shared CLIs** — ghostty, tmux, starship, and neovim pin Catppuccin Mocha directly.
 
 ## macos/ (legacy)
 

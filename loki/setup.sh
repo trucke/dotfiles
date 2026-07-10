@@ -12,8 +12,6 @@ bash ./install/install-dotfiles.sh
 # Generate this machine's per-machine SSH keys (github, net)
 bash "${HOME}/.dotfiles/share/bin/ssh-keys-gen"
 
-bash ./install/install-applications.sh
-bash ./install/install-hypr-overrides.sh
 bash ./install/install-services.sh
 bash ./install/configure.sh
 

@@ -9,11 +9,10 @@ if ! pacman -Qi "stow" &>/dev/null; then
 	exit 1
 fi
 
-pushd ~ >/dev/null
-
-echo "Removing old configs"
+# Fresh-only: remove Omarchy default configs that would block stow symlinks.
+# (Not idempotent — would wipe editor state on re-run — so it lives here, not sync.sh.)
+echo "Removing conflicting default configs"
 rm -rf "${HOME}/.config/nvim" \
-	"${HOME}/.config/starship.toml" \
 	"${HOME}/.local/share/nvim/" \
 	"${HOME}/.cache/nvim/" \
 	"${HOME}/.config/ghostty" \
@@ -22,25 +21,12 @@ rm -rf "${HOME}/.config/nvim" \
 	"${HOME}/.config/tmux" \
 	"${HOME}/.config/kanshi" \
 	"${HOME}/.config/kanata"
+rm -f "${HOME}/.config/starship.toml" \
+	"${HOME}/.config/opencode/opencode.json" \
+	"${HOME}/.config/zed/settings.json" \
+	"${HOME}/.config/zed/keymap.json"
 
-# Remove Omarchy defaults that conflict with stowed dotfiles
-rm -f "${HOME}/.config/opencode/opencode.json"
-rm -f "${HOME}/.config/starship.toml"
-rm -f "${HOME}/.local/bin/"{codex,gemini,copilot,opencode,playwright-cli,pi}
-
-mkdir -p "${HOME}/.local/bin" "${HOME}/.ssh"
-chmod 700 "${HOME}/.ssh"
-
-git -C "${DOTFILES}" submodule update --init --recursive
-
-echo "Link personal config files"
-stow --restow --dir="${DOTFILES}/loki" --target="${HOME}/.config" config
-stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.config" config
-stow --restow --dir="${DOTFILES}/share" --target="${HOME}" zshenv
-stow --restow --dir="${DOTFILES}/share" --target="${HOME}" zshrc
-stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.local/bin" bin
-stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.ssh" ssh
-
-popd >/dev/null
+# Everything else (stow, submodules, hypr overrides, ...) is idempotent.
+bash "${DOTFILES}/loki/sync.sh"
 
 echo "Dotfiles successfully installed."

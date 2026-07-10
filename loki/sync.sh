@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+
+# Idempotent "re-assert my customizations" path.
+# Run on fresh provisioning (via install-dotfiles.sh) and after every
+# `omarchy update` (via the post-update hook). Safe to re-run anytime.
+
+set -euo pipefail
+
+DOTFILES="${HOME}/.dotfiles"
+
+# Update vendored submodules (tmux-fzf-url, ...)
+git -C "${DOTFILES}" submodule update --init --recursive
+
+# Re-drop Omarchy packages we don't want; upstream migrations may reinstall them.
+# omarchy-pkg-drop is a no-op for packages that are already absent.
+omarchy-pkg-drop \
+	typora \
+	spotify \
+	libreoffice-fresh \
+	1password-beta \
+	1password-cli \
+	xournalpp \
+	pinta \
+	obs-studio \
+	kdenlive \
+	lazydocker \
+	asdcontrol \
+	clang \
+	dotnet-runtime-9.0 \
+	dust \
+	fcitx5 \
+	fcitx5-gtk \
+	fcitx5-qt \
+	github-cli \
+	lazygit \
+	llvm \
+	luarocks \
+	mariadb-libs \
+	postgresql-libs \
+	python-poetry-core \
+	tldr \
+	wayfreeze \
+	whois \
+	zoxide
+
+# Remove Omarchy's npx-installed CLI stubs so the repo/AUR agents win in PATH.
+rm -f "${HOME}/.local/bin/"{codex,gemini,copilot,opencode,playwright-cli,pi}
+
+# Re-stow shared + host dotfiles.
+# ~/.config/zed pre-created so stow links the files (not folds the dir — Zed
+# writes runtime state there: themes/, extensions).
+mkdir -p "${HOME}/.local/bin" "${HOME}/.ssh" "${HOME}/.config/zed"
+chmod 700 "${HOME}/.ssh"
+stow --restow --dir="${DOTFILES}/loki"  --target="${HOME}/.config"    config
+stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.config"    config
+stow --restow --dir="${DOTFILES}/share" --target="${HOME}"            zshenv
+stow --restow --dir="${DOTFILES}/share" --target="${HOME}"            zshrc
+stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.local/bin" bin
+stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.ssh"       ssh
+
+# Install/refresh mise-managed dev tools (mise config was just stowed).
+if command -v mise &>/dev/null; then
+	mise install -y
+fi
+
+# Re-deploy Hyprland override files (stow-ignored; they live beside Omarchy's own).
+bash "${DOTFILES}/loki/install/install-hypr-overrides.sh"
+
+# Re-assert boot logo (Omarchy updates can reset plymouth).
+omarchy-plymouth-set "#1e1e2e" "#cdd6f4" "${DOTFILES}/loki/logo.png"
+
+echo "Sync complete."

@@ -1,5 +1,4 @@
-# Theme loaded from ~/.config/theme/current/
-config-file = ~/.config/theme/current/ghostty.theme
+theme = Catppuccin Mocha
 
 font-size = 10
 font-feature = -calt 

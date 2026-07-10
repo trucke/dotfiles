@@ -1,67 +1,7 @@
 #!/usr/bin/env bash
 
-# Re-apply custom configs after Omarchy upgrade
+# Re-apply customizations after `omarchy update`.
 
 set -euo pipefail
 
-DOTFILES="${HOME}/.dotfiles"
-
-# Remove packages that upstream migrations may have reinstalled
-omarchy-pkg-drop \
-  aether \
-  typora \
-  libreoffice-fresh \
-  1password-beta \
-  1password-cli \
-  xournalpp \
-  pinta \
-  obs-studio \
-  kdenlive \
-  lazydocker \
-  asdcontrol \
-  clang \
-  dotnet-runtime-9.0 \
-  dust \
-  fcitx5 \
-  fcitx5-gtk \
-  fcitx5-qt \
-  github-cli \
-  lazygit \
-  llvm \
-  luarocks \
-  mariadb-libs \
-  postgresql-libs \
-  python-poetry-core \
-  tldr \
-  tree-sitter-cli \
-  wayfreeze \
-  whois \
-  zoxide
-
-# Remove Omarchy's opencode package without touching opencode-bin.
-if pacman -Qq | grep -qx "opencode"; then
-  sudo pacman -Rns --noconfirm opencode
-fi
-
-# Remove Omarchy's npx-installed CLI stubs.
-rm -f "${HOME}/.local/bin/"{codex,gemini,copilot,opencode,playwright-cli,pi}
-
-git -C "${DOTFILES}" submodule update --init --recursive
-
-# Re-stow dotfiles and re-apply theme
-mkdir -p "${HOME}/.ssh" && chmod 700 "${HOME}/.ssh"
-stow --restow --dir="${DOTFILES}/loki" --target="${HOME}/.config" config
-stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.config" config
-stow --restow --dir="${DOTFILES}/share" --target="${HOME}" zshenv
-stow --restow --dir="${DOTFILES}/share" --target="${HOME}" zshrc
-stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.local/bin" bin
-stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.ssh" ssh
-current_theme="$(basename "$(readlink "${HOME}/.config/theme/current")" 2>/dev/null || echo rosepine)"
-bash "${DOTFILES}/share/bin/theme-switch" "${current_theme}"
-
-case "${current_theme}" in
-  catppuccin) omarchy-plymouth-set "#1e1e2e" "#cdd6f4" "${DOTFILES}/loki/logo.png" ;;
-  *) omarchy-plymouth-set "#232136" "#e0def4" "${DOTFILES}/loki/logo.png" ;;
-esac
-
-bash "${DOTFILES}/loki/install/install-hypr-overrides.sh"
+bash "${HOME}/.dotfiles/loki/sync.sh"
