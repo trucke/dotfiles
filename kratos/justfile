@@ -19,7 +19,7 @@ default:
 
 # --- provision -------------------------------------------------------------
 
-# Full fresh-box provision: Homebrew + dotfiles + hardening + tools + theme
+# Full fresh-box provision: Homebrew + Brewfile + dotfiles + hardening + tools
 bootstrap:
     #!/usr/bin/env bash
     set -euo pipefail
@@ -28,10 +28,11 @@ bootstrap:
     fi
     eval "$(/opt/homebrew/bin/brew shellenv)"
     sudo softwareupdate --install-rosetta --agree-to-license || true
-    just stow
+    just brew          # Brewfile first — installs stow + mise before they're used
+    just stow          # stow now exists; also deploys the mise config
     just harden
-    just setup
-    just theme
+    just mise          # needs the stowed mise config
+    just pnpm-globals
 
 # Provision packages/tools only: brew + mise + pnpm globals
 setup: brew mise pnpm-globals
