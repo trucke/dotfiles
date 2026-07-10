@@ -96,7 +96,7 @@ cat <<'EOF'
   1. Register the generated pubkeys: github (GitHub settings),
        net (the other machine's authorized_keys)
   2. From Proton Pass, install into ~/.ssh (chmod 600):
-       - shared keys: hlx-admin  roomvibes  rv-edgeplayer  rv-edgeplayer-sync
+       - your shared keys
        - host config: -> ~/.ssh/config.d/hosts.conf
   3. netbird up                       # SSO login (then you can disconnect the display)
   4. just -f ~/.dotfiles/kratos/justfile podman-init

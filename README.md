@@ -97,7 +97,6 @@ Stowed on every host:
 - `shell/` — zsh fragments (`env`, `aliases`, `functions`, `init`)
 - `config/` — nvim, git, jj, mise, tmux, ghostty, starship, zed, opencode, ripgrep
 - `bin/` → `~/.local/bin`
-- `backgrounds/`
 
 ### Theming
 

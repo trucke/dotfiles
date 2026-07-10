@@ -39,11 +39,6 @@ autoload -Uz compinit && compinit -C -d "${ZSH_COMPDUMP}"
 zinit cdreplay -q
 
 # --------------------------------------------------------------------
-# Keybindings
-# --------------------------------------------------------------------
-[[ -o interactive && -t 0 ]] && bindkey -s ^f "tmux-sessionizer\n"
-
-# --------------------------------------------------------------------
 # Shell fragments
 # --------------------------------------------------------------------
 source "${DOTFILES}/share/shell/aliases"

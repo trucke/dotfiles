@@ -8,9 +8,8 @@
 #   github  - github accepts multiple keys; one per machine, revocable
 #   net     - internal machine-to-machine (you own the authorized_keys)
 #
-# SHARED / existing keys are NOT generated: hlx-admin, roomvibes, rv-edgeplayer,
-# rv-edgeplayer-sync are prod/client keys reused across machines. Keep them in
-# Proton Pass and install manually into ~/.ssh (chmod 600).
+# Shared/existing keys are NOT generated here — those are reused across machines;
+# keep them in Proton Pass and install manually into ~/.ssh (chmod 600).
 
 set -euo pipefail
 
@@ -47,5 +46,4 @@ for k in $order; do
 done
 
 echo
-echo "Reminder: install the SHARED keys from Proton Pass into ~/.ssh (chmod 600):"
-echo "  hlx-admin  roomvibes  rv-edgeplayer  rv-edgeplayer-sync"
+echo "Reminder: install your shared keys from Proton Pass into ~/.ssh (chmod 600)."

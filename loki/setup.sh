@@ -21,6 +21,6 @@ cat <<'EOF'
 Setup complete.
 
 SSH: register the generated pubkeys (printed above), then from Proton Pass
-install into ~/.ssh (chmod 600): shared keys (hlx-admin, roomvibes,
-rv-edgeplayer, rv-edgeplayer-sync) + host config -> ~/.ssh/config.d/hosts.conf
+install into ~/.ssh (chmod 600): your shared keys + host config ->
+~/.ssh/config.d/hosts.conf
 EOF
