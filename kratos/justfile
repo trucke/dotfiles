@@ -74,6 +74,20 @@ podman-init:
     podman machine start
     sudo podman-mac-helper install
 
+# Point Time Machine at the NAS over SMB (one-time). Prompts for the password;
+# it's stored in the system keychain (daemon-readable, so it works headless) and
+# never touches this repo. Use a URL-safe password (no @ / : in it).
+timemachine share="smb://tm@truenas.local/timemachine":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    read -rs -p "SMB password for {{share}}: " pw < /dev/tty; echo
+    url="{{share}}"
+    sudo tmutil setdestination -a "${url/@/:${pw}@}"
+    sudo tmutil enable
+    tmutil destinationinfo
+    echo "Destination set + backups enabled. Start the first backup with:"
+    echo "  tmutil startbackup --auto --block"
+
 # --- upgrades --------------------------------------------------------------
 
 # Upgrade everything (packages only; does NOT touch macOS — see upgrade-macos)
