@@ -46,6 +46,7 @@ cask "coderabbit"  # AI code review CLI
 cask "brave-browser"
 cask "font-jetbrains-mono-nerd-font"
 cask "ghostty"
+cask "navigator"
 cask "proton-pass"
 cask "raycast"
 cask "rustdesk"
