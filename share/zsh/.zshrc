@@ -1,20 +1,12 @@
 # --------------------------------------------------------------------
-# Download Zinit, if it's not there yet
+# Zinit
 # --------------------------------------------------------------------
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
-if [ ! -d "$ZINIT_HOME" ]; then
-   mkdir -p "$(dirname $ZINIT_HOME)"
-   git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
+if [[ ! -d "$ZINIT_HOME" ]]; then
+  mkdir -p "$(dirname "$ZINIT_HOME")"
+  git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
 fi
-
-# Source/Load zinit
 source "${ZINIT_HOME}/zinit.zsh"
-if command -v brew &> /dev/null; then
-    if [[ -f "/opt/homebrew/bin/brew" ]] then
-        # If you're using macOS, you'll want this enabled
-        eval "$(/opt/homebrew/bin/brew shellenv)"
-    fi
-fi
 
 # --------------------------------------------------------------------
 # History
@@ -23,25 +15,16 @@ HISTSIZE=5000
 HISTFILE="${XDG_DATA_HOME}/zsh/zsh_history"
 SAVEHIST=$HISTSIZE
 HISTDUP=erase
-setopt appendhistory
-setopt sharehistory
-setopt hist_ignore_space
-setopt hist_ignore_all_dups
-setopt hist_save_no_dups
-setopt hist_ignore_dups
-setopt hist_find_no_dups
-if [[ ! -f "${HISTFILE}" ]]; then
-    mkdir -p $(dirname "${HISTFILE}") && touch "${HISTFILE}"
-    chmod 644 "${HISTFILE}"
-fi
+setopt appendhistory sharehistory hist_ignore_space \
+  hist_ignore_all_dups hist_save_no_dups hist_ignore_dups hist_find_no_dups
+mkdir -p "${HISTFILE:h}"
 
 # --------------------------------------------------------------------
-# zinit configuration and setup
+# Plugins + completions
 # --------------------------------------------------------------------
 zinit light zsh-users/zsh-syntax-highlighting
 zinit light zsh-users/zsh-completions
 zinit light Aloxaf/fzf-tab
-
 zinit snippet OMZP::command-not-found
 
 zstyle ':completion:*' dump-file "${XDG_CACHE_HOME}/zsh/.zcompdump"
@@ -52,46 +35,17 @@ zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always $realpath'
 zstyle ':fzf-tab:*' switch-group '<' '>'
 zstyle ':fzf-tab:*' fzf-command ftb-tmux-popup
 
-# Load completions
 autoload -Uz compinit && compinit -C -d "${ZSH_COMPDUMP}"
 zinit cdreplay -q
 
 # --------------------------------------------------------------------
 # Keybindings
 # --------------------------------------------------------------------
-if [[ -o interactive && -t 0 ]]; then
-    bindkey -s ^f "tmux-sessionizer\n"
-fi
+[[ -o interactive && -t 0 ]] && bindkey -s ^f "tmux-sessionizer\n"
 
 # --------------------------------------------------------------------
-# Setup PATH
+# Shell fragments
 # --------------------------------------------------------------------
-function prepend-path() {
-  [[ -d "$1" ]] && PATH="$1:${PATH}"
-}
-
-local PATH=$PATH
-# prepend new items to path (if directory exists)
-if [[ -f "/opt/homebrew/bin/brew" ]] then
-    brew_prefix=$(/opt/homebrew/bin/brew --prefix)
-    prepend-path "${brew_prefix}/sbin"
-    prepend-path "${brew_prefix}/bin"
-fi
-prepend-path "${CARGO_HOME}/bin"
-prepend-path "${XDG_DATA_HOME}/bin"
-prepend-path "${DOTFILES}/share/bin"
-prepend-path "${GHOSTTY_BIN_DIR}"
-prepend-path "${XDG_BIN_DIR}"
-prepend-path "${XDG_CACHE_HOME}/.bun/bin"
-# Remove duplicates (preserving prepended items)
-# Source: http://unix.stackexchange.com/a/40755
-PATH=$(echo -n "${PATH}" | awk -v RS=: '{ if (!arr[$0]++) {printf("%s%s",!ln++?"":":",$0)}}')
-# Wrap up
-export PATH
-
-# --------------------------------------------------------------------
-# Source shell file
-# --------------------------------------------------------------------
-source "${HOME}/.dotfiles/share/shell/aliases"
-source "${HOME}/.dotfiles/share/shell/functions"
-source "${HOME}/.dotfiles/share/shell/init"
+source "${DOTFILES}/share/shell/aliases"
+source "${DOTFILES}/share/shell/functions"
+source "${DOTFILES}/share/shell/init"

@@ -7,11 +7,19 @@ export DOTFILES="${HOME}/.dotfiles"
 # sessions (ssh <cmd>, scripts, git hooks) get a correct environment too.
 source "${DOTFILES}/share/shell/env"
 
-case "$(uname -s)" in
-  Darwin)
-    export PATH="${XDG_DATA_HOME}/mise/shims:${XDG_DATA_HOME}/pnpm/bin:${HOME}/Library/pnpm/bin:${XDG_BIN_DIR}:/opt/homebrew/bin:/opt/homebrew/sbin:${PATH}"
-    ;;
-  Linux)
-    export PATH="${XDG_DATA_HOME}/mise/shims:${XDG_DATA_HOME}/pnpm/bin:${XDG_BIN_DIR}:${PATH}"
-    ;;
-esac
+# Homebrew (macOS): sets PATH, HOMEBREW_*, FPATH, MANPATH.
+[[ "$OSTYPE" == darwin* && -x /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
+
+# PATH: our dirs first, auto-deduped (typeset -U). Missing dirs are harmless.
+typeset -U path PATH
+path=(
+  "${XDG_DATA_HOME}/mise/shims"
+  "${XDG_DATA_HOME}/pnpm/bin"
+  "${HOME}/Library/pnpm/bin"
+  "${CARGO_HOME}/bin"
+  "${XDG_DATA_HOME}/bin"
+  "${DOTFILES}/share/bin"
+  "${XDG_CACHE_HOME}/.bun/bin"
+  "${XDG_BIN_DIR}"
+  $path
+)
