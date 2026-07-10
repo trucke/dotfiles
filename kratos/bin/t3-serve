@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+#
+# LaunchDaemon wrapper for `t3 serve` (see kratos/services/com.t3code.serve.plist
+# and `just t3-serve-install`). Waits for NetBird, then binds --host to its IP.
+
+set -euo pipefail
+
+# A LaunchDaemon starts with a minimal PATH — add netbird (brew), node (mise
+# shims), and t3 (pnpm global bin).
+export PATH="/opt/homebrew/bin:${HOME}/.local/share/mise/shims:${HOME}/.local/share/pnpm/bin:${PATH}"
+
+# NetBird may still be connecting right after boot — wait up to ~60s for its IP.
+host=""
+for _ in $(seq 1 30); do
+	host="$(netbird status 2>/dev/null | awk '/NetBird IP:/{split($3,a,"/");print a[1]; exit}')"
+	[[ -n "$host" ]] && break
+	sleep 2
+done
+[[ -n "$host" ]] || { echo "NetBird IP unavailable; binding 0.0.0.0" >&2; host="0.0.0.0"; }
+
+echo "$(date '+%Y-%m-%d %H:%M:%S')  starting: t3 serve --host ${host}"
+exec t3 serve --host "${host}"

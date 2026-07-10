@@ -102,6 +102,6 @@ cat <<'EOF'
   4. just -f ~/.dotfiles/kratos/justfile podman-init
   5. sudo fdesetup enable             # FileVault — SAVE the recovery key
   6. Agents: codex; claude; cursor-agent; opencode  # /connect ; pi  # /login ; t3
-  7. t3 serve --host "$(netbird status | awk '/NetBird IP:/{split($3,a,"/");print a[1]}')"
+  7. just -f ~/.dotfiles/kratos/justfile t3-serve-install   # persistent t3 serve daemon (NetBird IP)
   8. just -f ~/.dotfiles/kratos/justfile audit
 EOF

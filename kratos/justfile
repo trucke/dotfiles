@@ -110,6 +110,25 @@ timemachine share="smb://tm@truenas.local/timemachine":
     echo "Destination set + backups enabled. Start the first backup with:"
     echo "  tmutil startbackup --auto --block"
 
+# Install + start the t3 serve LaunchDaemon: runs `t3 serve` persistently, bound
+# to the NetBird IP, with auto-restart + start-on-boot. Needs netbird up + t3.
+t3-serve-install:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    label="com.t3code.serve"
+    plist="/Library/LaunchDaemons/${label}.plist"
+    sed -e "s|__HOME__|${HOME}|g" -e "s|__USER__|$(id -un)|g" "{{justfile_directory()}}/services/${label}.plist" | sudo tee "$plist" >/dev/null
+    sudo chown root:wheel "$plist" && sudo chmod 644 "$plist"
+    sudo launchctl bootout system "$plist" 2>/dev/null || true
+    sudo launchctl bootstrap system "$plist"
+    echo "Installed. Logs: ${HOME}/Library/Logs/t3-serve.log ; status: sudo launchctl print system/${label}"
+
+# Stop + remove the t3 serve LaunchDaemon
+t3-serve-uninstall:
+    -sudo launchctl bootout system /Library/LaunchDaemons/com.t3code.serve.plist
+    sudo rm -f /Library/LaunchDaemons/com.t3code.serve.plist
+    @echo "t3 serve daemon removed."
+
 # --- upgrades --------------------------------------------------------------
 
 # Upgrade everything (packages only; does NOT touch macOS — see upgrade-macos)
