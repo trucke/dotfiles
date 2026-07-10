@@ -93,8 +93,8 @@ podman-init:
     fi
     export PATH="/opt/podman/bin:$PATH"
     podman machine init || true
+    sudo podman-mac-helper install    # before start, so the machine wires /var/run/docker.sock
     podman machine start
-    sudo podman-mac-helper install
 
 # Point Time Machine at the NAS over SMB (one-time). Prompts for the password;
 # it's stored in the system keychain (daemon-readable, so it works headless) and
