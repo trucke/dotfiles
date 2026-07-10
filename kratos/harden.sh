@@ -26,7 +26,7 @@ sysadminctl -autologin off 2>/dev/null || true
 
 # --- Application firewall ---------------------------------------------------
 # Intentionally kept OFF. kratos is a headless server reached only over NetBird's
-# ACL'd WireGuard mesh (SSH-key-only auth, FileVault at rest), and services bind
+# ACL'd WireGuard mesh (SSH-key-only auth), and services bind
 # to specific interfaces (e.g. t3 serve -> the NetBird IP). The macOS application
 # firewall + stealth mode drop incoming connections to those served processes
 # (t3 serve, podman) with no real benefit here — NetBird + per-service bind

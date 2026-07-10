@@ -32,7 +32,7 @@ git clone https://github.com/trucke/dotfiles.git ~/.dotfiles   # HTTPS — no SS
 ```
 
 `setup.sh` prints the remaining interactive steps (NetBird join, `just
-podman-init`, `just t3-serve-install`, FileVault, agent auth). On an
+podman-init`, `just t3-serve-install`, agent auth). On an
 already-configured box, `just bootstrap` provisions without the system tweaks.
 
 **Day-to-day** (`just` from `~/.dotfiles/kratos`):
@@ -40,7 +40,7 @@ already-configured box, `just bootstrap` provisions without the system tweaks.
 ```bash
 just setup            # converge brew + mise + pnpm agent (t3)
 just upgrade          # upgrade all packages (brew + mise + t3)
-just upgrade-macos    # macOS point/security update (authenticated restart, FileVault-safe)
+just upgrade-macos    # macOS point/security update (restarts; returns on its own)
 just audit            # current brew/mise state
 just cleanup-preview  # what convergence would remove (dry-run)
 ```

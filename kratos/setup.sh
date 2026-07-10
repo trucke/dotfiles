@@ -8,8 +8,8 @@
 # `just bootstrap` for package/dotfile provisioning. sudo is used per-command
 # (you'll be prompted).
 #
-# Interactive steps that can't be scripted (NetBird SSO, agent logins, FileVault
-# recovery key) are printed at the end.
+# Interactive steps that can't be scripted (NetBird SSO, agent logins) are
+# printed at the end.
 
 set -euo pipefail
 
@@ -54,15 +54,20 @@ echo "--- enable Remote Login (SSH)"
 sudo systemsetup -setremotelogin on
 
 # --- headless-server power behavior ----------------------------------------
-# Never sleep; wake on network; auto-restart after power loss / freeze.
-# NOTE: with FileVault ON, an unattended reboot stops at the unlock screen —
-# power-loss recovery is not fully headless (expected trade-off for encryption).
-echo "--- power: never sleep, wake-on-LAN, auto-restart on power loss/freeze"
-sudo pmset -a sleep 0 displaysleep 0 disksleep 0
+# System never sleeps; display off after 5 min; wake on network; auto-restart
+# after power loss / freeze.
+echo "--- power: never sleep, display off after 5m, wake-on-LAN, auto-restart"
+sudo pmset -a sleep 0 displaysleep 5 disksleep 0
 sudo pmset -a womp 1
 sudo pmset -a autorestart 1
 sudo systemsetup -setrestartpowerfailure on >/dev/null 2>&1 || true
 sudo systemsetup -setrestartfreeze on >/dev/null 2>&1 || true
+
+# --- display + lock screen -------------------------------------------------
+echo "--- lock screen: require password immediately; screensaver never starts"
+defaults write com.apple.screensaver askForPassword -int 1
+defaults write com.apple.screensaver askForPasswordDelay -int 0
+defaults -currentHost write com.apple.screensaver idleTime -int 0
 
 # --- optional static IP ----------------------------------------------------
 if [[ -n "${STATIC_IP}" && -n "${ROUTER}" ]]; then
@@ -100,8 +105,7 @@ cat <<'EOF'
        - host config: -> ~/.ssh/config.d/hosts.conf
   3. netbird up                       # SSO login (then you can disconnect the display)
   4. just -f ~/.dotfiles/kratos/justfile podman-init
-  5. sudo fdesetup enable             # FileVault — SAVE the recovery key
-  6. Agents: codex; claude; cursor-agent; opencode  # /connect ; pi  # /login ; t3
-  7. just -f ~/.dotfiles/kratos/justfile t3-serve-install   # persistent t3 serve daemon (NetBird IP)
-  8. just -f ~/.dotfiles/kratos/justfile audit
+  5. Agents: codex; claude; cursor-agent; opencode  # /connect ; pi  # /login ; t3
+  6. just -f ~/.dotfiles/kratos/justfile t3-serve-install   # persistent t3 serve daemon (NetBird IP)
+  7. just -f ~/.dotfiles/kratos/justfile audit
 EOF

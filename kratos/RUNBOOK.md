@@ -81,17 +81,13 @@ config) → `harden` → `mise install` → `pnpm-globals` (t3).
    the LaunchDaemon (persistent, bound to the NetBird IP, boot-start + auto-restart).
 6. **Agents:** `codex` · `claude` · `cursor-agent` · `opencode` (`/connect`) ·
    `pi` (`/login`) · `t3`.
-7. **FileVault:** `sudo fdesetup enable -outputplist > ~/fv.plist` then
-   `/usr/libexec/PlistBuddy -c 'Print :RecoveryKey' ~/fv.plist` → **save the key to
-   Proton Pass**, then `rm ~/fv.plist`.
-8. **Time Machine:** `just -f ~/.dotfiles/kratos/justfile timemachine` (NAS over SMB).
+7. **Time Machine:** `just -f ~/.dotfiles/kratos/justfile timemachine` (NAS over SMB).
 
 ## 6. Verify
 
 ```bash
 ssh kratos                                  # via NetBird
 netbird status                              # connected
-fdesetup status                             # On (if enabled)
 podman machine ls                           # running; docker ps works
 sudo launchctl print system/com.t3code.serve | grep -iE 'state|pid'   # t3 daemon running
 tmutil status                               # backing up
@@ -101,7 +97,7 @@ tmutil status                               # backing up
 
 `just` from `~/.dotfiles/kratos`:
 - `just upgrade` — brew + mise + t3
-- `just upgrade-macos` — macOS point/security update (authenticated restart, FileVault-safe)
+- `just upgrade-macos` — macOS point/security update (restarts; returns on its own)
 - `just audit` — current brew/mise state
 - `just cleanup-preview` — what convergence would remove (dry-run)
 
@@ -133,14 +129,12 @@ by the scripts, documented here so a future you knows why.)*
   installed after start, the socket isn't live until the next restart. `podman-init`
   orders it correctly; if you did it by hand, `podman machine stop && start`.
 - **t3 pairing token is short-lived / single-use.** It changes on every `t3 serve`
-  start and expires quickly. To pair: restart the daemon, grab the fresh token,
-  pair within a minute:
+  start and expires quickly. To pair: mint a fresh one and pair within a minute:
   ```bash
-  sudo launchctl kickstart -k system/com.t3code.serve
-  grep -o 'token=[A-Za-z0-9]*' ~/Library/Logs/t3-serve.log | tail -1
+  just -f ~/.dotfiles/kratos/justfile t3-serve-restart   # restarts + prints the fresh token/URL
   ```
-  Pair the loki client at `http://<kratos-netbird-ip>:3773` + that token. Once
-  paired, the credential persists.
+  Pair the loki client at the printed `http://<kratos-netbird-ip>:3773` + token.
+  Once paired, the credential persists.
 - **loki t3code client needs an Electron flag.** t3code's bundled Electron has a
   safeStorage bug on Hyprland (`pingdotgg/t3code#2880`) → "secure storage
   unavailable" when saving the connection. Fixed by launching with
@@ -150,9 +144,6 @@ by the scripts, documented here so a future you knows why.)*
   **internet** (the private "NetBird-Only Access" needs a self-hosted embedded
   proxy you don't have). For a private agent host, **skip it** — pair the client
   directly over the mesh (`http://<netbird-ip>:3773`).
-- **FileVault + headless.** Planned reboots: `sudo fdesetup authrestart` (unlocks
-  once, returns on its own). An **unplanned** reboot (power loss/panic) sits at the
-  FileVault unlock screen until you physically attach a keyboard.
 - **PATH / macOS `path_helper`.** `/etc/zprofile` reorders PATH after `.zshenv` on
   login shells; `.zshrc` re-sources `share/shell/path` to put Homebrew + our dirs
   back in front. If `which git` shows `/usr/bin/git`, you're in a shell that

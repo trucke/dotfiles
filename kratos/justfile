@@ -129,6 +129,26 @@ t3-serve-uninstall:
     sudo rm -f /Library/LaunchDaemons/com.t3code.serve.plist
     @echo "t3 serve daemon removed."
 
+# Restart the t3 serve daemon and print a fresh pairing token + connection URL
+t3-serve-restart:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    log="${HOME}/Library/Logs/t3-serve.log"
+    prev="$(grep -oE 'token=[A-Za-z0-9]+' "$log" 2>/dev/null | tail -1 || true)"
+    echo "Restarting t3 serve..."
+    sudo launchctl kickstart -k system/com.t3code.serve
+    pair=""
+    for _ in $(seq 1 25); do
+      pair="$(grep -oE 'https?://[0-9.]+:[0-9]+/pair#token=[A-Za-z0-9]+' "$log" 2>/dev/null | tail -1 || true)"
+      [[ -n "$pair" && "${pair##*token=}" != "${prev##*token=}" ]] && break
+      pair=""; sleep 1
+    done
+    [[ -n "$pair" ]] || { echo "Fresh token didn't appear yet — check $log"; exit 1; }
+    echo
+    echo "  Connection: ${pair%%/pair*}"
+    echo "  Token:      ${pair##*token=}"
+    echo "  Pair URL:   $pair"
+
 # --- upgrades --------------------------------------------------------------
 
 # Upgrade everything (packages only; does NOT touch macOS — see upgrade-macos)
@@ -153,36 +173,27 @@ upgrade-agents: upgrade-t3
     brew upgrade --cask --greedy codex claude-code@latest cursor-cli
     brew upgrade pi-coding-agent anomalyco/tap/opencode
 
-# Keeps FileVault ON: does an AUTHENTICATED restart so the headless box unlocks
-# and returns on its own. Prompts once for your admin password (used for both
-# sudo and the FileVault unlock). Major jumps: upgrade-macos-major.
-# Upgrade macOS system software (point releases + security). RESTARTS the box.
-[confirm("Install all macOS updates and authenticated-restart the Mac mini? SSH drops; the box returns on its own.")]
+# Upgrade macOS system software (point releases + security). RESTARTS the box;
+# it returns on its own (pmset autorestart). Major jumps: upgrade-macos-major.
+[confirm("Install all macOS updates and restart the Mac mini? SSH drops; the box returns on its own.")]
 upgrade-macos:
-    #!/usr/bin/env bash
-    set -euo pipefail
     softwareupdate --list
-    read -rs -p "Admin password (sudo + FileVault authenticated restart): " pw < /dev/tty; echo
-    printf '%s\n' "$pw" | sudo -S -v
-    printf '%s' "$pw" | sudo softwareupdate --install --all --restart --user "$(id -un)" --stdinpass
+    sudo softwareupdate --install --all --restart
 
 # List available full macOS installers (valid versions for upgrade-macos-major)
 upgrade-macos-list:
     softwareupdate --list-full-installers
 
 # Run upgrade-macos-list first for valid versions. Downloads the full installer,
-# then startosinstall does an AUTHENTICATED restart (FileVault-safe, headless).
-# Prompts once for your admin password (sudo + FileVault unlock).
+# then startosinstall installs + restarts (returns on its own via pmset autorestart).
 # Upgrade to a MAJOR macOS version, e.g.: just upgrade-macos-major 15.5
-[confirm("Download + install a MAJOR macOS upgrade, then authenticated-restart? SSH drops; the box returns on its own.")]
+[confirm("Download + install a MAJOR macOS upgrade, then restart? SSH drops; the box returns on its own.")]
 upgrade-macos-major version:
     #!/usr/bin/env bash
     set -euo pipefail
     softwareupdate --fetch-full-installer --full-installer-version {{version}}
     installer="$(ls -d "/Applications/Install macOS"*.app | head -n1)"
-    read -rs -p "Admin password (sudo + FileVault authenticated restart): " pw < /dev/tty; echo
-    printf '%s\n' "$pw" | sudo -S -v
-    printf '%s' "$pw" | sudo "$installer/Contents/Resources/startosinstall" --agreetolicense --nointeraction --user "$(id -un)" --stdinpass
+    sudo "$installer/Contents/Resources/startosinstall" --agreetolicense --nointeraction
 
 # --- maintenance -----------------------------------------------------------
 
