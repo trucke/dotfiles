@@ -21,18 +21,19 @@ truth for every brew package, cask, and agent (codex/claude/cursor/opencode/pi);
 `t3` is the only non-brew agent (pnpm global). Runtimes and dev tools come from
 the shared `share/config/mise/config.toml`.
 
-**Fresh machine** — clean macOS + admin user; enable Remote Login at the console
-once, then SSH in with `-A` so `git` uses your forwarded key:
+**Fresh machine** — create the `skadi` admin user + enable Remote Login at the
+console (needs a monitor once), then SSH in. Full reinstall flow + gotchas:
+**[`kratos/RUNBOOK.md`](kratos/RUNBOOK.md)**.
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-git clone git@github.com:trucke/dotfiles.git ~/.dotfiles
+git clone https://github.com/trucke/dotfiles.git ~/.dotfiles   # HTTPS — no SSH key yet on a fresh box
 ~/.dotfiles/kratos/setup.sh   # system defaults (hostname, network, power, SSH) + full provision
 ```
 
 `setup.sh` prints the remaining interactive steps (NetBird join, `just
-podman-init`, FileVault, agent auth, `t3 serve`). On an already-configured box,
-`just bootstrap` provisions without the system tweaks.
+podman-init`, `just t3-serve-install`, FileVault, agent auth). On an
+already-configured box, `just bootstrap` provisions without the system tweaks.
 
 **Day-to-day** (`just` from `~/.dotfiles/kratos`):
 
