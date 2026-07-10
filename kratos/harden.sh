@@ -26,9 +26,10 @@ sysadminctl -autologin off 2>/dev/null || true
 
 # --- Application firewall ---------------------------------------------------
 echo '--- Enable application firewall + logging + stealth mode'
-/usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate on
-/usr/libexec/ApplicationFirewall/socketfilterfw --setloggingmode on
-/usr/libexec/ApplicationFirewall/socketfilterfw --setstealthmode on
+# socketfilterfw flags shift between macOS releases (--setloggingmode was removed
+# in macOS 26); the com.apple.alf defaults below are the durable backstop.
+/usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate on 2>/dev/null || true
+/usr/libexec/ApplicationFirewall/socketfilterfw --setstealthmode on 2>/dev/null || true
 defaults write /Library/Preferences/com.apple.alf globalstate -int 1
 defaults write /Library/Preferences/com.apple.alf loggingenabled -int 1
 defaults write /Library/Preferences/com.apple.alf stealthenabled -int 1
@@ -40,9 +41,9 @@ launchctl disable system/com.apple.tftpd 2>/dev/null || true
 defaults write /Library/Preferences/com.apple.mDNSResponder.plist NoMulticastAdvertisements -bool true
 
 echo '--- Disable printer sharing and remote printer administration'
-cupsctl --no-share-printers
-cupsctl --no-remote-any
-cupsctl --no-remote-admin
+cupsctl --no-share-printers 2>/dev/null || true
+cupsctl --no-remote-any 2>/dev/null || true
+cupsctl --no-remote-admin 2>/dev/null || true
 
 # --- Guest access ----------------------------------------------------------
 echo '--- Disable guest login and guest file sharing (SMB/AFP)'
