@@ -24,6 +24,7 @@ brew "ollama"
 brew "pandoc"
 brew "playwright-cli"
 brew "podman"
+brew "slp/krunkit/krunkit"  # podman machine VM provider (libkrun; Podman's default on Apple Silicon)
 brew "poppler"
 brew "qpdf"
 brew "ripgrep"

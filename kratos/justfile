@@ -46,9 +46,11 @@ brew:
     brew tap infisical/get-cli >/dev/null 2>&1 || true
     brew tap netbirdio/tap     >/dev/null 2>&1 || true
     brew tap anomalyco/tap     >/dev/null 2>&1 || true
+    brew tap slp/krunkit       >/dev/null 2>&1 || true
     brew trust --formula infisical/get-cli/infisical || true
     brew trust --formula netbirdio/tap/netbird       || true
     brew trust --formula anomalyco/tap/opencode      || true
+    brew trust --formula slp/krunkit/krunkit         || true
     brew bundle install --file {{brewfile}}
 
 # Install mise-managed runtimes/tools (config comes from the stowed share mise config)
