@@ -40,6 +40,7 @@ cask "claude-code@latest"
 cask "cursor-cli"
 brew "pi-coding-agent"
 brew "anomalyco/tap/opencode"
+cask "coderabbit"  # AI code review CLI
 # ---------------------------------------------------------------------------
 
 cask "brave-browser"

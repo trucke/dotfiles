@@ -51,12 +51,14 @@ pnpm-globals:
 
 # Symlink shared dotfiles into place (zsh, ~/.config, ~/.local/bin, ~/.ssh)
 stow:
-    mkdir -p "$HOME/.config" "$HOME/.local/bin" "$HOME/.ssh"
+    mkdir -p "$HOME/.config/zed" "$HOME/.local/bin" "$HOME/.ssh" \
+      "$HOME/.pi/agent/extensions" "$HOME/.pi/agent/skills" "$HOME/.pi/agent/themes"
     chmod 700 "$HOME/.ssh"
     stow --restow --dir="{{dotfiles}}/share" --target="$HOME" zsh
     stow --restow --dir="{{dotfiles}}/share" --target="$HOME/.config" config
     stow --restow --dir="{{dotfiles}}/share" --target="$HOME/.local/bin" bin
     stow --restow --dir="{{dotfiles}}/share" --target="$HOME/.ssh" ssh
+    stow --restow --dir="{{dotfiles}}/share" --target="$HOME/.pi/agent" pi
 
 # Apply macOS security hardening (headless-appropriate)
 harden:

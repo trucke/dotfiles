@@ -46,16 +46,17 @@ omarchy-pkg-drop \
 # Remove Omarchy's npx-installed CLI stubs so the repo/AUR agents win in PATH.
 rm -f "${HOME}/.local/bin/"{codex,gemini,copilot,opencode,playwright-cli,pi}
 
-# Re-stow shared + host dotfiles.
-# ~/.config/zed pre-created so stow links the files (not folds the dir — Zed
-# writes runtime state there: themes/, extensions).
-mkdir -p "${HOME}/.local/bin" "${HOME}/.ssh" "${HOME}/.config/zed"
+# Re-stow shared + host dotfiles. Some targets are pre-created so stow links the
+# files instead of folding the dir (Zed and pi keep runtime state alongside).
+mkdir -p "${HOME}/.local/bin" "${HOME}/.ssh" "${HOME}/.config/zed" \
+	"${HOME}/.pi/agent/extensions" "${HOME}/.pi/agent/skills" "${HOME}/.pi/agent/themes"
 chmod 700 "${HOME}/.ssh"
 stow --restow --dir="${DOTFILES}/loki"  --target="${HOME}/.config"    config
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.config"    config
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}"            zsh
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.local/bin" bin
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.ssh"       ssh
+stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.pi/agent"  pi
 
 # Install/refresh mise-managed dev tools (mise config was just stowed).
 if command -v mise &>/dev/null; then

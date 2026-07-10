@@ -96,6 +96,7 @@ Stowed on every host:
 - `zsh` — bundles `.zshenv` (environment + PATH) and `.zshrc` (interactive setup)
 - `shell/` — zsh fragments (`env`, `aliases`, `functions`, `init`)
 - `config/` — nvim, git, jj, mise, tmux, ghostty, starship, zed, opencode, ripgrep
+- `pi/` — pi-coding-agent config (`AGENTS.md`, extensions, skills, themes) → `~/.pi/agent`
 - `bin/` → `~/.local/bin`
 
 ### Theming
