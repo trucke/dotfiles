@@ -25,14 +25,16 @@ sysadminctl -automaticTime on 2>/dev/null || true
 sysadminctl -autologin off 2>/dev/null || true
 
 # --- Application firewall ---------------------------------------------------
-echo '--- Enable application firewall + logging + stealth mode'
-# socketfilterfw flags shift between macOS releases (--setloggingmode was removed
-# in macOS 26); the com.apple.alf defaults below are the durable backstop.
-/usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate on 2>/dev/null || true
-/usr/libexec/ApplicationFirewall/socketfilterfw --setstealthmode on 2>/dev/null || true
-defaults write /Library/Preferences/com.apple.alf globalstate -int 1
-defaults write /Library/Preferences/com.apple.alf loggingenabled -int 1
-defaults write /Library/Preferences/com.apple.alf stealthenabled -int 1
+# Intentionally kept OFF. kratos is a headless server reached only over NetBird's
+# ACL'd WireGuard mesh (SSH-key-only auth, FileVault at rest), and services bind
+# to specific interfaces (e.g. t3 serve -> the NetBird IP). The macOS application
+# firewall + stealth mode drop incoming connections to those served processes
+# (t3 serve, podman) with no real benefit here — NetBird + per-service bind
+# addresses govern exposure. Disabled explicitly so a prior run doesn't linger.
+echo '--- Application firewall left OFF (NetBird-fronted server)'
+/usr/libexec/ApplicationFirewall/socketfilterfw --setglobalstate off 2>/dev/null || true
+/usr/libexec/ApplicationFirewall/socketfilterfw --setstealthmode off 2>/dev/null || true
+defaults write /Library/Preferences/com.apple.alf globalstate -int 0
 
 # --- Disable insecure / unused network services ----------------------------
 echo '--- Disable telnet, TFTP, Bonjour multicast advertising'
