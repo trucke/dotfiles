@@ -38,21 +38,16 @@ bootstrap:
 setup: brew mise pnpm-globals
 
 # Converge Homebrew to the Brewfile (additive; removes nothing).
-# Trust the third-party formulae first — recent Homebrew refuses to load formulae
-# from untrusted taps. Formula-level trust is non-interactive and persists.
+# Trust the third-party taps wholesale — recent Homebrew refuses to load formulae
+# from untrusted taps. Trusting the tap covers all its formulae (incl. deps like
+# slp/krunkit's libkrun-efi + virglrenderer).
 brew:
     #!/usr/bin/env bash
     set -euo pipefail
-    brew tap infisical/get-cli >/dev/null 2>&1 || true
-    brew tap netbirdio/tap     >/dev/null 2>&1 || true
-    brew tap anomalyco/tap     >/dev/null 2>&1 || true
-    brew tap slp/krunkit       >/dev/null 2>&1 || true
-    brew trust --formula infisical/get-cli/infisical || true
-    brew trust --formula netbirdio/tap/netbird       || true
-    brew trust --formula anomalyco/tap/opencode      || true
-    brew trust --formula slp/krunkit/krunkit         || true
-    brew trust --formula slp/krunkit/libkrun-efi     || true
-    brew trust --formula slp/krunkit/virglrenderer   || true
+    for tap in infisical/get-cli netbirdio/tap anomalyco/tap slp/krunkit; do
+      brew tap "$tap" >/dev/null 2>&1 || true
+      brew trust --tap "$tap" || true
+    done
     brew bundle install --file {{brewfile}}
 
 # Install mise-managed runtimes/tools (config comes from the stowed share mise config)
