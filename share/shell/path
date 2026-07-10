@@ -1,0 +1,23 @@
+# PATH construction — Homebrew + our dirs, ours first, auto-deduped.
+#
+# Sourced by BOTH .zshenv (so non-interactive/script sessions get it) AND .zshrc.
+# The .zshrc re-source is required because macOS runs path_helper (via
+# /etc/zprofile) AFTER .zshenv on login shells, which rebuilds PATH with
+# /usr/bin ahead of /opt/homebrew/bin. Re-sourcing here (post-path_helper) puts
+# our dirs + Homebrew back in front.
+
+# Homebrew (macOS): PATH, HOMEBREW_*, FPATH, MANPATH.
+[[ "$OSTYPE" == darwin* && -x /opt/homebrew/bin/brew ]] && eval "$(/opt/homebrew/bin/brew shellenv)"
+
+typeset -U path PATH
+path=(
+  "${XDG_DATA_HOME}/mise/shims"
+  "${XDG_DATA_HOME}/pnpm/bin"
+  "${HOME}/Library/pnpm/bin"
+  "${CARGO_HOME}/bin"
+  "${XDG_DATA_HOME}/bin"
+  "${DOTFILES}/share/bin"
+  "${XDG_CACHE_HOME}/.bun/bin"
+  "${XDG_BIN_DIR}"
+  $path
+)
