@@ -8,7 +8,6 @@ organized **by host**:
 ├── kratos/         # Mac mini — headless dev/agent box (macOS)
 ├── loki/           # Framework 13 laptop (Arch + Hyprland via Omarchy)
 ├── share/          # Cross-host configs, stowed on every machine
-├── macos/          # LEGACY — old platform-based macOS setup (archived)
 └── tmux-fzf-url/   # submodule
 ```
 
@@ -106,11 +105,6 @@ Everything is **Catppuccin Mocha**, static — no theme switching:
 
 - **loki (Hyprland)** follows Omarchy's active theme; set once with `omarchy theme set "Catppuccin"`.
 - **Shared CLIs** — ghostty, tmux, starship, neovim, zed — pin Catppuccin Mocha directly.
-
-## macos/ — legacy
-
-The previous platform-based macOS setup, kept for reference only, superseded by
-`kratos/`. See `macos/LEGACY.md`.
 
 ---
 
