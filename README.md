@@ -1,25 +1,29 @@
 # .dotfiles
 
-Personal dotfiles managed with GNU Stow, organized **by host**:
+Personal dotfiles managed with [GNU Stow](https://www.gnu.org/software/stow/),
+organized **by host**:
 
 ```
 .dotfiles/
-├── kratos/         # Mac mini dev/agent box (macOS)
+├── kratos/         # Mac mini — headless dev/agent box (macOS)
 ├── loki/           # Framework 13 laptop (Arch + Hyprland via Omarchy)
-├── share/          # Cross-platform configs (stowed on every host)
+├── share/          # Cross-host configs, stowed on every machine
 ├── macos/          # LEGACY — old platform-based macOS setup (archived)
 └── tmux-fzf-url/   # submodule
 ```
 
-Host directories are named after the machines' hostnames (God of War theme):
-`kratos` (Mac mini), `loki` (FW13). `share/` holds everything common.
+Host directories are named after each machine's hostname (God of War theme).
+Each host has a `just` front door; `share/` holds everything common.
 
-## kratos (Mac mini)
+## kratos — Mac mini (dev/agent box)
 
-Provisioned and maintained through a `just` interface.
+Homebrew-driven, orchestrated through `just`. `kratos/Brewfile` is the source of
+truth for every brew package, cask, and agent (codex/claude/cursor/opencode/pi);
+`t3` is the only non-brew agent (pnpm global). Runtimes and dev tools come from
+the shared `share/config/mise/config.toml`.
 
-**Fresh machine** (clean macOS install + admin user; enable Remote Login at the
-console once, then SSH in with `-A` so `git` can use your forwarded key):
+**Fresh machine** — clean macOS + admin user; enable Remote Login at the console
+once, then SSH in with `-A` so `git` uses your forwarded key:
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
@@ -27,83 +31,85 @@ git clone git@github.com:trucke/dotfiles.git ~/.dotfiles
 ~/.dotfiles/kratos/setup.sh   # system defaults (hostname, network, power, SSH) + full provision
 ```
 
-`setup.sh` then prints the remaining interactive steps (NetBird join,
-`just podman-init`, FileVault, agent auth, `t3 serve`). To provision an
-already-configured box, use `just bootstrap`.
+`setup.sh` prints the remaining interactive steps (NetBird join, `just
+podman-init`, FileVault, agent auth, `t3 serve`). On an already-configured box,
+`just bootstrap` provisions without the system tweaks.
 
-**Day-to-day:**
+**Day-to-day** (`just` from `~/.dotfiles/kratos`):
 
 ```bash
 just setup            # converge brew + mise + pnpm agent (t3)
 just upgrade          # upgrade all packages (brew + mise + t3)
-just upgrade-macos    # macOS point/security update (authenticated restart)
+just upgrade-macos    # macOS point/security update (authenticated restart, FileVault-safe)
 just audit            # current brew/mise state
 just cleanup-preview  # what convergence would remove (dry-run)
 ```
 
-- `kratos/Brewfile` — source of truth for all brew-managed packages, casks, and
-  agents (codex/claude/cursor/opencode/pi). `t3` is the only non-brew agent (pnpm).
-- `kratos/harden.sh` — macOS security hardening (headless-appropriate).
-- Runtimes/dev tools come from the shared `share/config/mise/config.toml`.
+## loki — Framework 13 (Omarchy/Hyprland)
 
-## loki (Framework 13, Omarchy)
+Layered on top of [Omarchy](https://omarchy.org): Omarchy owns the OS lifecycle
+(`omarchy update`, `omarchy pkg`, `omarchy theme`) and this repo adds packages,
+dotfiles, and Hyprland/tool customizations on top.
 
-First install [Omarchy](https://omarchy.org), then apply customizations:
+**Fresh machine** — install Omarchy first, then:
 
 ```bash
 git clone git@github.com:trucke/dotfiles.git ~/.dotfiles
-cd ~/.dotfiles/loki
-./setup.sh
+bash ~/.dotfiles/loki/setup.sh   # (not `just` — just isn't installed until packages land)
 ```
 
-The setup script installs packages, stows dotfiles, applies Hyprland overrides,
-sets up Kanata (home-row mods) + Kanshi (monitor profiles), configures shell,
-apps, background, and Plymouth logo, and removes unwanted packages.
+**Provision vs. sync.** `setup.sh` runs once (cleanup → packages → dotfiles →
+services → config). `sync.sh` is the idempotent "re-assert my customizations"
+path — stow dotfiles, Hyprland overrides, package drops, `mise install`, boot
+logo. Both `setup.sh` and Omarchy's `post-update` hook call it, so **every
+`omarchy update` re-applies everything automatically**.
+
+**Day-to-day** (`just` from `~/.dotfiles/loki`):
+
+```bash
+just sync       # redeploy after editing dotfiles (stow + hypr + drops + mise)
+just packages   # converge repo + AUR packages after editing the lists
+just upgrade    # omarchy update, then mise upgrade
+```
 
 ### Omarchy customization layer
 
-Runs on top of [Omarchy](https://github.com/basecamp/omarchy). Omarchy's
-`hyprland.conf` sources user overrides from `~/.config/hypr/` **after** defaults:
+Omarchy's `hyprland.conf` sources user overrides from `~/.config/hypr/` **after**
+its defaults; these are symlinked from `loki/config/hypr/`:
 
 ```
 input.conf   bindings.conf   looknfeel.conf
 ```
 
-deployed via symlink from `loki/config/hypr/`.
+| Area | Customization |
+|------|---------------|
+| Displays | kanshi profiles (docked / portable-dual / mobile) — sole authority; auto-disables the internal panel when docked |
+| Input | EU layout, caps:escape, vim-style HJKL focus/swap; Kanata home-row mods |
+| Keybinds | app launchers (browser, Signal, Obsidian, Proton Pass, T3Chat, mail); hyprshot screenshots |
+| Lock / idle | hyprlock + hypridle (lock at 5 min, no screensaver) |
+| Agents | opencode (repo) + pi + herdr (AUR) |
+| Branding | custom Plymouth boot logo |
 
-| Component | Customization |
-|-----------|---------------|
-| Monitors | Framework 13 + Lenovo P27h-30 (Kanshi dynamic switching) |
-| Input | EU layout, caps:escape, vim-style HJKL focus/swap |
-| Screenshots | hyprshot |
-| Lock | hyprlock directly |
-| Apps | T3Chat, Proton Mail, Proton Pass |
-| Branding | Custom Plymouth boot logo |
-
-After `omarchy-update`, the hook at `~/.config/omarchy/hooks/post-update`
-re-drops unwanted packages, removes conflicting defaults, re-stows dotfiles, and
-re-applies the theme + Hyprland overrides.
-
-## share (common)
+## share — common configs
 
 Stowed on every host:
 
-- `shell/` — zsh fragments (`env`, `aliases`, `functions`, `init`, per-OS `macos`/`linux`)
-- `config/` — nvim, git, jj, mise, tmux, ghostty, opencode, …
+- `zsh` — bundles `.zshenv` (environment + PATH) and `.zshrc` (interactive setup)
+- `shell/` — zsh fragments (`env`, `aliases`, `functions`, `init`)
+- `config/` — nvim, git, jj, mise, tmux, ghostty, starship, zed, opencode, ripgrep
 - `bin/` → `~/.local/bin`
-- `zsh` (bundles `.zshenv` + `.zshrc`)
 - `backgrounds/`
 
 ### Theming
 
-Everything is **Catppuccin Mocha**, statically — no theme switching:
+Everything is **Catppuccin Mocha**, static — no theme switching:
 
 - **loki (Hyprland)** follows Omarchy's active theme; set once with `omarchy theme set "Catppuccin"`.
-- **Shared CLIs** — ghostty, tmux, starship, and neovim pin Catppuccin Mocha directly.
+- **Shared CLIs** — ghostty, tmux, starship, neovim, zed — pin Catppuccin Mocha directly.
 
-## macos/ (legacy)
+## macos/ — legacy
 
-The previous platform-based macOS setup, kept for reference only — superseded by
+The previous platform-based macOS setup, kept for reference only, superseded by
 `kratos/`. See `macos/LEGACY.md`.
 
 ---
