@@ -15,7 +15,7 @@ set -euo pipefail
 
 # --- config (edit to taste) ------------------------------------------------
 HOST_NAME="kratos"
-TIMEZONE="Europe/Berlin"                 # `sudo systemsetup -listtimezones`
+TIMEZONE="Europe/Vienna"                 # `sudo systemsetup -listtimezones`
 
 # Static IP is OPTIONAL — access is via NetBird regardless. Leave STATIC_IP
 # empty to keep DHCP. Find the service name with:

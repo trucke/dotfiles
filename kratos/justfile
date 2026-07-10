@@ -37,8 +37,16 @@ bootstrap:
 # Provision packages/tools only: brew + mise + pnpm globals
 setup: brew mise pnpm-globals
 
-# Converge Homebrew to the Brewfile (additive; removes nothing)
+# Converge Homebrew to the Brewfile (additive; removes nothing).
+# Trust the third-party taps the Brewfile pulls from first — recent Homebrew
+# refuses to load formulae from untrusted taps. Idempotent.
 brew:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    for tap in infisical/get-cli netbirdio/tap anomalyco/tap; do
+      brew tap "$tap" >/dev/null 2>&1 || true
+      brew trust "$tap" >/dev/null 2>&1 || true
+    done
     brew bundle install --file {{brewfile}}
 
 # Install mise-managed runtimes/tools (config comes from the stowed share mise config)
