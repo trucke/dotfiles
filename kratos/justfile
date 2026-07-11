@@ -124,7 +124,7 @@ podman-init:
     if ! /opt/podman/bin/podman --version >/dev/null 2>&1; then
       echo "Installing the official Podman .pkg..."
       pkg="$(mktemp -d)/podman.pkg"
-      url="$(curl -fsSL https://api.github.com/repos/containers/podman/releases/latest | grep -oE '"browser_download_url": "[^"]+podman-installer-macos-arm64\.pkg"' | head -1 | cut -d'"' -f4)"
+      url="$(curl -fsSL https://api.github.com/repos/containers/podman/releases/latest | grep -m1 -oE '"browser_download_url": "[^"]+podman-installer-macos-arm64\.pkg"' | cut -d'"' -f4)"
       [ -n "$url" ] || { echo "Could not resolve the Podman installer URL"; exit 1; }
       curl -fsSL -o "$pkg" "$url"
       sudo installer -pkg "$pkg" -target /
@@ -321,7 +321,9 @@ upgrade-macos-major version:
     #!/usr/bin/env bash
     set -euo pipefail
     softwareupdate --fetch-full-installer --full-installer-version {{version}}
-    installer="$(ls -d "/Applications/Install macOS"*.app | head -n1)"
+    apps=("/Applications/Install macOS"*.app)
+    [ -e "${apps[0]}" ] || { echo "No 'Install macOS…' app found — run upgrade-macos-list first" >&2; exit 1; }
+    installer="${apps[0]}"
     sudo "$installer/Contents/Resources/startosinstall" --agreetolicense --nointeraction
 
 # --- maintenance -----------------------------------------------------------

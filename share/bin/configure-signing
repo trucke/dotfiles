@@ -16,7 +16,7 @@ command -v gpg >/dev/null || {
 }
 
 # Get the key ID
-KEY_ID=$(gpg --list-secret-keys --keyid-format=long 2>/dev/null | awk -F'[/ ]' '/^sec/ {for(i=1;i<=NF;i++) if($i ~ /^[A-F0-9]{16}$/) print $i}' | head -1)
+KEY_ID=$(gpg --list-secret-keys --keyid-format=long 2>/dev/null | awk -F'[/ ]' '/^sec/ {for(i=1;i<=NF;i++) if($i ~ /^[A-F0-9]{16}$/){print $i; exit}}')
 
 if [[ -z "$KEY_ID" ]]; then
 	echo -e "${RED}No GPG key found. Run ./setup-yubikey-gpg.sh first.${NC}"

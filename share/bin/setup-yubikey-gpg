@@ -26,7 +26,7 @@ if ! ykman info &>/dev/null; then
 fi
 
 echo -e "${GREEN}YubiKey detected:${NC}"
-ykman info | head -5
+ykman info | sed -n '1,5p'
 
 # Check if keys already exist on card
 KEYS_EXIST=false
@@ -131,7 +131,7 @@ fi
 
 # Export public key
 echo -e "\n${GREEN}=== Step 4: Export Public Key ===${NC}"
-KEY_ID=$(gpg --list-secret-keys --keyid-format=long 2>/dev/null | awk -F'[/ ]' '/^sec/ {for(i=1;i<=NF;i++) if($i ~ /^[A-F0-9]{16}$/) print $i}' | head -1)
+KEY_ID=$(gpg --list-secret-keys --keyid-format=long 2>/dev/null | awk -F'[/ ]' '/^sec/ {for(i=1;i<=NF;i++) if($i ~ /^[A-F0-9]{16}$/){print $i; exit}}')
 
 if [[ -z "$KEY_ID" ]]; then
 	echo -e "${YELLOW}No key ID detected - skipping export${NC}"
