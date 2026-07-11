@@ -149,6 +149,28 @@ t3-serve-restart:
     echo "  Token:      ${pair##*token=}"
     echo "  Pair URL:   $pair"
 
+# Gives agents a headless browser to drive/verify the web apps they build, with
+# no display attached. `claude --chrome` and computer-use both need a monitor and
+# won't run on this box; a Playwright MCP server is the headless path. Registers
+# with Claude Code; other agents: share/mcp/README.md.
+
+# Install Playwright MCP + headless Chromium and register it with Claude Code
+browser-init:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    echo "--- installing @playwright/mcp + playwright (pnpm global)"
+    mise exec -- pnpm add -g @playwright/mcp playwright
+    gbin="$(mise exec -- pnpm bin -g)"
+    echo "--- installing headless Chromium (Playwright-managed build)"
+    "${gbin}/playwright" install chromium
+    echo "--- registering 'playwright' MCP with Claude Code (user scope)"
+    claude mcp remove playwright -s user >/dev/null 2>&1 || true
+    claude mcp add playwright -s user -- "${gbin}/playwright-mcp" --headless --browser chromium --isolated
+    echo
+    echo "Done. Verify:  claude mcp list"
+    echo "Agents drive a served app at http://localhost:<port>, assert the DOM,"
+    echo "and screenshot — no display needed. Other agents: share/mcp/README.md"
+
 # --- upgrades --------------------------------------------------------------
 
 # Upgrade everything (packages only; does NOT touch macOS — see upgrade-macos)
