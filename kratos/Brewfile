@@ -12,14 +12,14 @@ brew "fzf"
 brew "git"
 brew "git-delta"
 brew "herdr"
-brew "infisical/get-cli/infisical"
+brew "infisical/get-cli/infisical", trusted: true
 brew "jq"
 brew "just"
 brew "mise"
 brew "mole"
 brew "mosh"
 brew "neovim"
-brew "netbirdio/tap/netbird"
+brew "netbirdio/tap/netbird", trusted: true
 brew "ollama"
 brew "pandoc"
 brew "playwright-cli"
@@ -41,7 +41,7 @@ cask "codex"
 cask "claude-code@latest"
 cask "cursor-cli", postinstall: "xattr -dr com.apple.quarantine /opt/homebrew/Caskroom/cursor-cli"
 brew "pi-coding-agent"
-brew "anomalyco/tap/opencode"
+brew "anomalyco/tap/opencode", trusted: true
 cask "coderabbit"  # AI code review CLI
 # ---------------------------------------------------------------------------
 
