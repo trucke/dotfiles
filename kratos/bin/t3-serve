@@ -6,8 +6,10 @@
 set -euo pipefail
 
 # A LaunchDaemon starts with a minimal PATH — add netbird (brew), node (mise
-# shims), and t3 (pnpm global bin).
-export PATH="/opt/homebrew/bin:${HOME}/.local/share/mise/shims:${HOME}/.local/share/pnpm/bin:${PATH}"
+# shims), and t3 (pnpm global bin). pnpm is pinned to XDG (see `just pnpm-globals`),
+# so the global bin dir is $XDG_DATA_HOME/pnpm/bin on macOS and Linux alike.
+export XDG_DATA_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}"
+export PATH="/opt/homebrew/bin:${XDG_DATA_HOME}/mise/shims:${XDG_DATA_HOME}/pnpm/bin:${PATH}"
 
 # NetBird may still be connecting right after boot — wait up to ~60s for its IP.
 host=""

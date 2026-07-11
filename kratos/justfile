@@ -64,11 +64,12 @@ mise:
 pnpm-globals:
     #!/usr/bin/env bash
     set -euo pipefail
-    # pnpm refuses `add -g` unless its global bin dir is on PATH, and this recipe's
-    # shell doesn't source share/shell/path. `pnpm bin -g` returns EMPTY when the dir
-    # isn't already on PATH, so add both known locations explicitly up front
-    # (macOS: ~/Library/pnpm/bin, Linux: ~/.local/share/pnpm/bin).
-    export PATH="${HOME}/Library/pnpm/bin:${HOME}/.local/share/pnpm/bin:${PATH}"
+    # Pin pnpm's global bin dir to XDG: with XDG_DATA_HOME set, pnpm uses
+    # $XDG_DATA_HOME/pnpm/bin on macOS AND Linux (else macOS defaults to
+    # ~/Library/pnpm). This recipe shell doesn't source share/shell/*, so set it
+    # here and prepend the dir so `pnpm add -g` sees it on PATH.
+    export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+    export PATH="$XDG_DATA_HOME/pnpm/bin:$PATH"
     mise exec -- pnpm add -g t3
 
 # Symlink shared dotfiles into place (zsh, ~/.config, ~/.local/bin, ~/.ssh) +
@@ -221,6 +222,8 @@ t3-serve-install:
     sudo launchctl bootout system "$plist" 2>/dev/null || true
     sudo launchctl bootstrap system "$plist"
     echo "Installed. Logs: ${HOME}/Library/Logs/t3-serve.log ; status: sudo launchctl print system/${label}"
+    # kick it once the daemon is loaded and print the fresh pairing token/URL
+    {{just_executable()}} --justfile "{{justfile()}}" t3-serve-restart
 
 # Stop + remove the t3 serve LaunchDaemon
 t3-serve-uninstall:
@@ -257,9 +260,10 @@ t3-serve-restart:
 browser-init:
     #!/usr/bin/env bash
     set -euo pipefail
-    # pnpm needs its global bin dir on PATH for `add -g` (see pnpm-globals); with it
-    # on PATH, `pnpm bin -g` then resolves reliably.
-    export PATH="${HOME}/Library/pnpm/bin:${HOME}/.local/share/pnpm/bin:${PATH}"
+    # Pin pnpm to XDG + prepend its global bin dir so `add -g` works (see
+    # pnpm-globals); then `pnpm bin -g` resolves reliably.
+    export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+    export PATH="$XDG_DATA_HOME/pnpm/bin:$PATH"
     echo "--- installing @playwright/mcp + playwright (pnpm global)"
     mise exec -- pnpm add -g @playwright/mcp playwright
     gbin="$(mise exec -- pnpm bin -g)"
