@@ -98,14 +98,17 @@ echo "--- SSH keys (generate per convention; register the printed pubkeys)"
 cat <<'EOF'
 
 === setup complete — remaining INTERACTIVE steps ===
+  (run just from ~/.dotfiles/kratos, or with -f ~/.dotfiles/kratos/justfile)
   1. Register the generated pubkeys: github (GitHub settings),
        net (the other machine's authorized_keys)
-  2. From Proton Pass, install into ~/.ssh (chmod 600):
-       - your shared keys
-       - host config: -> ~/.ssh/config.d/hosts.conf
-  3. just -f ~/.dotfiles/kratos/justfile netbird-up <setup-key>   # join mesh (headless; disconnect display after)
-  4. just -f ~/.dotfiles/kratos/justfile podman-init
+  2. SSH keys from Proton Pass — all on this box, no scp needed:
+       just unlock-keychain     # login password (unlocks the Keychain over SSH)
+       just pass-login          # Proton Pass PAT
+       just ssh-keys-fetch      # pulls keys + hosts.conf into ~/.ssh
+  3. just netbird-up <setup-key>   # join the mesh (headless; disconnect the display after)
+  4. just podman-init              # official Podman + machine (ends with a hello smoke test)
   5. Agents: codex; claude; cursor-agent; opencode  # /connect ; pi  # /login ; t3
-  6. just -f ~/.dotfiles/kratos/justfile t3-serve-install   # persistent t3 serve daemon (NetBird IP)
-  7. just -f ~/.dotfiles/kratos/justfile audit
+  6. just t3-serve-install         # persistent t3 serve daemon (+ prints a pairing token)
+  7. just browser-init             # optional: Playwright MCP for agent web testing
+  8. just audit
 EOF
