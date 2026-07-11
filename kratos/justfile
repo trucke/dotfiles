@@ -158,6 +158,22 @@ unlock-keychain:
     unset pw
     echo "login keychain unlocked + auto-lock disabled (re-run after a reboot)."
 
+# Authenticate pass-cli (Proton Pass CLI) with a Personal Access Token. Create the
+# PAT in the Proton Pass web app (format pst_<token>::<key>). Prompts for it — never
+# on the command line. Prereqs: pass-cli installed + `just unlock-keychain` first
+# (the session is stored in the login keychain).
+
+# Log pass-cli in with a Personal Access Token (prompted)
+pass-login:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    command -v pass-cli >/dev/null 2>&1 || { echo "pass-cli not found — brew install proton-pass-cli"; exit 1; }
+    read -rs -p "Proton Pass PAT (pst_...::...): " pat < /dev/tty; echo
+    [ -n "$pat" ] || { echo "no token entered"; exit 1; }
+    pass-cli login --pat "$pat"
+    unset pat
+    pass-cli info
+
 # Install + start the t3 serve LaunchDaemon: runs `t3 serve` persistently, bound
 # to the NetBird IP, with auto-restart + start-on-boot. Needs netbird up + t3.
 t3-serve-install:
