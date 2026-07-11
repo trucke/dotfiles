@@ -19,6 +19,12 @@ dotfiles := parent_directory(justfile_directory())
 # single-line output. Exported to every recipe shell.
 export HOMEBREW_DOWNLOAD_CONCURRENCY := "1"
 
+# Pin pnpm's global bin dir to XDG on macOS too (else it defaults to ~/Library/
+# pnpm): with XDG_DATA_HOME set, pnpm uses $XDG_DATA_HOME/pnpm/bin everywhere.
+# Exported to every recipe shell, so the bootstrap (which never sources the zsh
+# env) gets it too. Respects an already-set value.
+export XDG_DATA_HOME := env_var_or_default("XDG_DATA_HOME", env_var("HOME") / ".local/share")
+
 # List available recipes
 default:
     @just --list
@@ -64,11 +70,9 @@ mise:
 pnpm-globals:
     #!/usr/bin/env bash
     set -euo pipefail
-    # Pin pnpm's global bin dir to XDG: with XDG_DATA_HOME set, pnpm uses
-    # $XDG_DATA_HOME/pnpm/bin on macOS AND Linux (else macOS defaults to
-    # ~/Library/pnpm). This recipe shell doesn't source share/shell/*, so set it
-    # here and prepend the dir so `pnpm add -g` sees it on PATH.
-    export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+    # XDG_DATA_HOME is exported justfile-wide (pins pnpm's global bin to XDG). Just
+    # prepend that bin dir so `pnpm add -g` finds it on PATH (this shell doesn't
+    # source share/shell/path).
     export PATH="$XDG_DATA_HOME/pnpm/bin:$PATH"
     mise exec -- pnpm add -g t3
 
@@ -260,9 +264,8 @@ t3-serve-restart:
 browser-init:
     #!/usr/bin/env bash
     set -euo pipefail
-    # Pin pnpm to XDG + prepend its global bin dir so `add -g` works (see
-    # pnpm-globals); then `pnpm bin -g` resolves reliably.
-    export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+    # XDG_DATA_HOME is exported justfile-wide; prepend pnpm's XDG bin dir so
+    # `add -g` finds it on PATH, after which `pnpm bin -g` resolves reliably.
     export PATH="$XDG_DATA_HOME/pnpm/bin:$PATH"
     echo "--- installing @playwright/mcp + playwright (pnpm global)"
     mise exec -- pnpm add -g @playwright/mcp playwright
