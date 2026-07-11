@@ -235,10 +235,11 @@ t3-serve-uninstall:
     sudo rm -f /Library/LaunchDaemons/com.t3code.serve.plist
     @echo "t3 serve daemon removed."
 
-# Mint a fresh client pairing token + URL on demand. `t3 auth pairing create`
-# writes to the running server's auth control plane, so NO daemon restart is
-# needed — the live t3 serve honors it immediately. Default TTL 15m (e.g. just
-# t3-pair 1h). Pair the loki client with the printed pairUrl.
+# `t3 auth pairing create` writes to the running server's auth control plane, so
+# the live t3 serve honors the token with NO daemon restart. Pair the loki client
+# with the printed pairUrl. Default TTL 15m — override e.g. `just t3-pair 1h`.
+
+# Mint a fresh client pairing token + URL on demand (no daemon restart)
 t3-pair ttl="15m":
     #!/usr/bin/env bash
     set -euo pipefail
