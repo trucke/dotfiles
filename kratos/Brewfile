@@ -39,7 +39,7 @@ brew "tree-sitter-cli"
 # t3 is the only non-brew agent; it's a pnpm global (see justfile `pnpm-globals`).
 cask "codex"
 cask "claude-code@latest"
-cask "cursor-cli", args: { no_quarantine: true }
+cask "cursor-cli", postinstall: "xattr -dr com.apple.quarantine /opt/homebrew/Caskroom/cursor-cli"
 brew "pi-coding-agent"
 brew "anomalyco/tap/opencode"
 cask "coderabbit"  # AI code review CLI
