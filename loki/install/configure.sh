@@ -35,7 +35,9 @@ xdg-mime default proton-mail.desktop x-scheme-handler/mailto
 # Logind (lid switch behavior)
 ################################################################################
 
-sudo cp /etc/systemd/logind.conf{,.backup-"$(date +%s)"}
+# Back up the pristine original once. Guarded so re-runs neither pile up
+# timestamped copies nor overwrite the backup with already-modified state.
+[ -f /etc/systemd/logind.conf.orig ] || sudo cp /etc/systemd/logind.conf /etc/systemd/logind.conf.orig
 sudo sed -i 's/^#\?HandleLidSwitch=/HandleLidSwitch=/' /etc/systemd/logind.conf
 sudo sed -i 's/^#\?HandleLidSwitchExternalPower=.*/HandleLidSwitchExternalPower=suspend/' /etc/systemd/logind.conf
 sudo sed -i 's/^#\?HandleLidSwitchDocked=/HandleLidSwitchDocked=/' /etc/systemd/logind.conf
