@@ -44,7 +44,7 @@ omarchy-pkg-drop \
 	zoxide
 
 # Remove Omarchy's npx-installed CLI stubs so the repo/AUR agents win in PATH.
-rm -f "${HOME}/.local/bin/"{codex,gemini,copilot,opencode,playwright-cli,pi}
+rm -f "${HOME}/.local/bin/"{codex,gemini,copilot,ghui,opencode,playwright-cli,pi}
 
 # Re-stow shared + host dotfiles. Some targets are pre-created so stow links the
 # files instead of folding the dir (Zed and pi keep runtime state alongside).
