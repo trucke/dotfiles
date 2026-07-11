@@ -23,6 +23,7 @@ omarchy-pkg-drop \
 	pinta \
 	obs-studio \
 	kdenlive \
+	chromium \
 	lazydocker \
 	asdcontrol \
 	clang \

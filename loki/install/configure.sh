@@ -29,6 +29,16 @@ fi
 omarchy-refresh-applications
 update-desktop-database "${HOME}/.local/share/applications"
 
+# Default browser -> Brave Origin. brave-origin-bin ships brave-origin.desktop;
+# it's Chromium-family, so it also serves Omarchy web apps via --app (why we drop
+# the chromium package in sync.sh). NB: `omarchy-default-browser brave-origin`
+# targets brave-origin-BETA.desktop, which this package doesn't provide, so set
+# the http/https/html handlers directly to the real desktop id.
+xdg-settings set default-web-browser brave-origin.desktop
+xdg-mime default brave-origin.desktop x-scheme-handler/http
+xdg-mime default brave-origin.desktop x-scheme-handler/https
+xdg-mime default brave-origin.desktop text/html
+
 xdg-mime default proton-mail.desktop x-scheme-handler/mailto
 
 ################################################################################
