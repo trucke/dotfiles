@@ -37,3 +37,25 @@ ssh-keys:
 upgrade:
     omarchy update
     mise upgrade
+
+# --- agents ----------------------------------------------------------------
+
+# Playwright ships its own headless Chromium (~/.cache/ms-playwright), independent
+# of the system chromium package. Mirrors kratos; other agents: share/mcp/README.md.
+# Install Playwright MCP + headless Chromium so local agents can test web apps.
+browser-init:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+    export PATH="$XDG_DATA_HOME/pnpm/bin:$PATH"   # so pnpm global bin resolves in this non-interactive shell
+    echo "--- installing @playwright/mcp + playwright (pnpm global)"
+    mise exec -- pnpm add -g @playwright/mcp playwright
+    gbin="$(mise exec -- pnpm bin -g)"
+    [ -n "$gbin" ] || { echo "could not resolve pnpm global bin dir"; exit 1; }
+    echo "--- installing headless Chromium (Playwright-managed build)"
+    "${gbin}/playwright" install chromium
+    echo "--- registering 'playwright' MCP with Claude Code (user scope)"
+    claude mcp remove playwright -s user >/dev/null 2>&1 || true
+    claude mcp add playwright -s user -- "${gbin}/playwright-mcp" --headless --browser chromium --isolated
+    echo
+    echo "Done. Verify:  claude mcp list"
