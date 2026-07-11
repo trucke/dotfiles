@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+#
+# link-agent-skills — deploy the repo's Agent Skills to the shared, vendor-neutral
+# ~/.agents/skills/ (read natively by codex, cursor, opencode, pi, and other
+# Agent-Skills-compatible agents) and bridge each into ~/.claude/skills/ so Claude
+# Code — which only reads its own dir — sees them too.
+#
+# Idempotent. Called from the host provisioners (kratos `just stow`, loki sync.sh)
+# and safe to run by hand. Source of truth: share/agents/ in this repo.
+
+set -euo pipefail
+
+DOTFILES="${DOTFILES:-${HOME}/.dotfiles}"
+
+mkdir -p "${HOME}/.agents/skills" "${HOME}/.claude/skills"
+
+# Stow the repo's skills into ~/.agents (folds into the existing dir, so the
+# omarchy symlink and anything else already there are left alone).
+stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.agents" agents
+
+# Bridge each ~/.agents skill into ~/.claude/skills as a per-skill symlink.
+# Per-skill (not a whole-dir symlink) so Claude's other skills — e.g. omarchy,
+# itself a symlink living in ~/.claude/skills — are untouched. Additive only:
+# anything already present at ~/.claude/skills/<name> (a real dir, or a symlink
+# some other tool owns) is left exactly as-is; we never clobber.
+for src in "${HOME}"/.agents/skills/*/; do
+	[ -e "$src" ] || continue
+	name="$(basename "$src")"
+	dst="${HOME}/.claude/skills/${name}"
+	if [ -e "$dst" ] || [ -L "$dst" ]; then
+		continue   # already present (real dir or a symlink) — leave it
+	fi
+	ln -s "${HOME}/.agents/skills/${name}" "$dst"
+	echo "link-agent-skills: bridged '${name}' into ~/.claude/skills"
+done
+
+echo "link-agent-skills: ~/.agents/skills deployed; bridged into ~/.claude/skills"

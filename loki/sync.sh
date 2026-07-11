@@ -60,6 +60,10 @@ stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.ssh"       ssh
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.pi/agent"  pi
 stow --restow --dir="${DOTFILES}/loki"  --target="${HOME}/.local/share/applications" applications
 
+# Deploy Agent Skills to ~/.agents/skills (read natively by codex/cursor/opencode/
+# pi) and bridge each into ~/.claude/skills for Claude Code.
+env DOTFILES="${DOTFILES}" bash "${DOTFILES}/share/bin/link-agent-skills"
+
 # Install/refresh mise-managed dev tools (mise config was just stowed).
 if command -v mise &>/dev/null; then
 	mise install -y

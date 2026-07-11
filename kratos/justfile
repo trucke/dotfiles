@@ -59,7 +59,8 @@ mise:
 pnpm-globals:
     mise exec -- pnpm add -g t3
 
-# Symlink shared dotfiles into place (zsh, ~/.config, ~/.local/bin, ~/.ssh)
+# Symlink shared dotfiles into place (zsh, ~/.config, ~/.local/bin, ~/.ssh) +
+# deploy Agent Skills to ~/.agents/skills and bridge them into ~/.claude/skills
 stow:
     mkdir -p "$HOME/.config/zed" "$HOME/.local/bin" "$HOME/.ssh" \
       "$HOME/.pi/agent/extensions" "$HOME/.pi/agent/skills" "$HOME/.pi/agent/themes"
@@ -69,6 +70,7 @@ stow:
     stow --restow --dir="{{dotfiles}}/share" --target="$HOME/.local/bin" bin
     stow --restow --dir="{{dotfiles}}/share" --target="$HOME/.ssh" ssh
     stow --restow --dir="{{dotfiles}}/share" --target="$HOME/.pi/agent" pi
+    DOTFILES="{{dotfiles}}" bash "{{dotfiles}}/share/bin/link-agent-skills"
 
 # Apply macOS security hardening (headless-appropriate)
 harden:
