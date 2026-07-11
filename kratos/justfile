@@ -124,11 +124,12 @@ timemachine share="smb://tm@truenas.local/timemachine":
     echo "Destination set + backups enabled. Start the first backup with:"
     echo "  tmutil startbackup --auto --block"
 
-# Unlock the login keychain so Keychain-backed CLIs (Proton Pass CLI, etc.) work
-# over SSH. macOS keeps the login keychain LOCKED with no GUI login, so anything
-# reading it fails with "User interaction is not allowed". This unlocks it and
-# disables auto-lock, so it stays usable until the next reboot (re-run after one).
-# Prompts for the login password — never stored, never on the command line.
+# macOS keeps the login keychain LOCKED with no GUI login, so Keychain-backed CLIs
+# (Proton Pass CLI, etc.) fail over SSH with "User interaction is not allowed".
+# This unlocks it + disables auto-lock (until reboot). Prompts for the login
+# password via /dev/tty; never stored, never on the command line.
+
+# Unlock the login keychain so Keychain CLIs (Proton Pass CLI, etc.) work over SSH
 unlock-keychain:
     #!/usr/bin/env bash
     set -euo pipefail
