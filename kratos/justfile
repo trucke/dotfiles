@@ -174,6 +174,39 @@ pass-login:
     unset pat
     pass-cli info
 
+# Fetch the SSH key + hosts.conf attachments from the Proton Pass "SSH" vault into
+# ~/.ssh (keys) and ~/.ssh/config.d (hosts.conf). Only attachment metadata (ids +
+# filenames) is read via jq — the item's secret fields are never printed. Prereqs:
+# `just pass-login` done + `just unlock-keychain`.
+
+# Download SSH keys + hosts.conf from the Proton Pass "SSH" vault into ~/.ssh
+ssh-keys-fetch:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    vault="SSH"
+    mkdir -p "${HOME}/.ssh/config.d"
+    chmod 700 "${HOME}/.ssh" "${HOME}/.ssh/config.d"
+    fetch() {   # $1 = item title, $2 = target dir
+      local item="$1" dir="$2" json sid iid n=0
+      json="$(pass-cli item view --vault-name "$vault" --item-title "$item" --output json)"
+      sid="$(jq -r '.item.share_id' <<<"$json")"
+      iid="$(jq -r '.item.id' <<<"$json")"
+      { [ -n "$sid" ] && [ "$sid" != null ] && [ -n "$iid" ] && [ "$iid" != null ]; } \
+        || { echo "!! could not resolve item '$item' in vault '$vault'"; return 1; }
+      while IFS=$'\t' read -r aid aname; do
+        [ -n "$aid" ] || continue
+        pass-cli item attachment download --share-id "$sid" --item-id "$iid" \
+          --attachment-id "$aid" --output "${dir}/${aname}"
+        chmod 600 "${dir}/${aname}"
+        echo "  ${item} -> ${dir}/${aname}"
+        n=$((n+1))
+      done < <(jq -r '(.attachments // [])[] | [.id, .content.name] | @tsv' <<<"$json")
+      [ "$n" -gt 0 ] || echo "  (item '$item' has no attachments)"
+    }
+    for item in hlx-admin homelab roomvibes rv-edgeplayer; do fetch "$item" "${HOME}/.ssh"; done
+    fetch hosts.conf "${HOME}/.ssh/config.d"
+    echo "done — keys in ~/.ssh, hosts.conf in ~/.ssh/config.d (all chmod 600)."
+
 # Install + start the t3 serve LaunchDaemon: runs `t3 serve` persistently, bound
 # to the NetBird IP, with auto-restart + start-on-boot. Needs netbird up + t3.
 t3-serve-install:
