@@ -32,3 +32,25 @@ img2png() {
         -define png:exclude-chunk=all \
         "${1%.*}.png"
 }
+
+# Create a zstd-compressed tarball, excluding node_modules. Portable across GNU
+# tar (Linux) and bsdtar (macOS): tar only streams the archive, zstd compresses
+# via pipe — so no --use-compress-program flavor differences. Needs the zstd CLI
+# (Arch: base; macOS: `brew "zstd"`).
+compress() {
+    if [ "$#" -lt 2 ]; then
+        echo "Usage: compress <archive_name> <path...>" >&2
+        return 1
+    fi
+    local name="$1"
+    shift
+    tar -cf - --exclude="node_modules" "$@" | zstd -5 -T0 >"${name}.tar.zst"
+}
+
+decompress() {
+    if [ "$#" -ne 1 ]; then
+        echo "Usage: decompress <archive.tar.zst>" >&2
+        return 1
+    fi
+    zstd -dc "$1" | tar -xf -
+}

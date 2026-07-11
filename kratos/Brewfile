@@ -34,6 +34,7 @@ brew "starship"
 brew "stow"
 brew "tmux"
 brew "tree-sitter-cli"
+brew "zstd"                 # the compress()/decompress() shell fns need the CLI (Linux gets it from base)
 
 # --- agents (brew-managed) --------------------------------------------------
 # t3 is the only non-brew agent; it's a pnpm global (see justfile `pnpm-globals`).
