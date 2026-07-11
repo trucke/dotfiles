@@ -199,9 +199,10 @@ ssh-keys-fetch:
       # nothing else from the item (its secret fields) is ever read.
       jq -r '.item as $i | .attachments[]? | [$i.share_id, $i.id, .id, .content.name] | @tsv' <<<"$json" \
         | while IFS=$'\t' read -r sid iid aid name; do
-            pass-cli item attachment download --share-id "$sid" --item-id "$iid" --attachment-id "$aid" --output "$dir/$name"
+            out="$(pass-cli item attachment download --share-id "$sid" --item-id "$iid" --attachment-id "$aid" --output "$dir/$name" 2>&1)" \
+              || { echo "FAILED: $dir/$name"; printf '%s\n' "$out" | sed 's/^/  /'; exit 1; }
             chmod 600 "$dir/$name"
-            echo "  $item -> $dir/$name"
+            echo "  $dir/$name"
           done
     done
     echo "done — SSH keys in ~/.ssh, hosts.conf in ~/.ssh/config.d (chmod 600)."
