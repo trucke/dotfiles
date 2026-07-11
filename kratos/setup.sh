@@ -103,7 +103,7 @@ cat <<'EOF'
   2. From Proton Pass, install into ~/.ssh (chmod 600):
        - your shared keys
        - host config: -> ~/.ssh/config.d/hosts.conf
-  3. netbird up                       # SSO login (then you can disconnect the display)
+  3. just -f ~/.dotfiles/kratos/justfile netbird-up <setup-key>   # join mesh (headless; disconnect display after)
   4. just -f ~/.dotfiles/kratos/justfile podman-init
   5. Agents: codex; claude; cursor-agent; opencode  # /connect ; pi  # /login ; t3
   6. just -f ~/.dotfiles/kratos/justfile t3-serve-install   # persistent t3 serve daemon (NetBird IP)

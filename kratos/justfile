@@ -92,6 +92,24 @@ harden:
 ssh-keys:
     bash {{dotfiles}}/share/bin/ssh-keys-gen
 
+# Join the NetBird mesh headlessly with a setup key (no interactive SSO): installs +
+# starts the service, then `netbird up --setup-key`. Get a reusable key from the
+# NetBird admin console. Passing it as an arg lands in shell history — omit the arg
+# to be prompted instead.
+
+# Join the NetBird mesh with a setup key (installs+starts the service, then up)
+netbird-up key="":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    key="{{key}}"
+    if [ -z "$key" ]; then
+      read -rs -p "NetBird setup key: " key < /dev/tty; echo
+    fi
+    sudo netbird service install || true   # idempotent: already-installed is fine
+    sudo netbird service start   || true
+    netbird up --setup-key "$key"
+    netbird status
+
 # Install the official Podman (its .pkg bundles the machine + VM provider; Podman
 # does not recommend the Homebrew formula) + start its machine (one-time).
 podman-init:
