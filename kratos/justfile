@@ -40,7 +40,12 @@ bootstrap:
       /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
     eval "$(/opt/homebrew/bin/brew shellenv)"
-    sudo softwareupdate --install-rosetta --agree-to-license || true
+    # Rosetta 2 (Apple Silicon only) — idempotent: skip if the runtime is already
+    # present, otherwise softwareupdate re-runs the installer on every provision
+    # and prints its benign "missing installKBytes" authoring warning each time.
+    if [ "$(uname -m)" = "arm64" ] && [ ! -f /Library/Apple/usr/libexec/oah/libRosettaRuntime ]; then
+      sudo softwareupdate --install-rosetta --agree-to-license || true
+    fi
     just brew          # Brewfile first — installs stow + mise before they're used
     just stow          # stow now exists; also deploys the mise config
     just harden
