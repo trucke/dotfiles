@@ -53,8 +53,10 @@ dotfiles, and Hyprland/tool customizations on top.
 **Fresh machine** — install Omarchy first, then:
 
 ```bash
-git clone git@github.com:trucke/dotfiles.git ~/.dotfiles
+git clone https://github.com/trucke/dotfiles.git ~/.dotfiles   # HTTPS — no SSH key yet on a fresh box
 bash ~/.dotfiles/loki/setup.sh   # (not `just` — just isn't installed until packages land)
+# after keys are registered, switch to SSH:
+git -C ~/.dotfiles remote set-url origin git@github.com:trucke/dotfiles.git
 ```
 
 **Provision vs. sync.** `setup.sh` runs once (cleanup → packages → dotfiles →
