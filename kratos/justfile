@@ -226,8 +226,8 @@ t3-serve-install:
     sudo launchctl bootout system "$plist" 2>/dev/null || true
     sudo launchctl bootstrap system "$plist"
     echo "Installed. Logs: ${HOME}/Library/Logs/t3-serve.log ; status: sudo launchctl print system/${label}"
-    # kick it once the daemon is loaded and print the fresh pairing token/URL
-    {{just_executable()}} --justfile "{{justfile()}}" t3-serve-restart
+    # print a ready-to-use pairing token/URL (no restart needed)
+    {{just_executable()}} --justfile "{{justfile()}}" t3-pair
 
 # Stop + remove the t3 serve LaunchDaemon
 t3-serve-uninstall:
@@ -235,25 +235,20 @@ t3-serve-uninstall:
     sudo rm -f /Library/LaunchDaemons/com.t3code.serve.plist
     @echo "t3 serve daemon removed."
 
-# Restart the t3 serve daemon and print a fresh pairing token + connection URL
-t3-serve-restart:
+# Mint a fresh client pairing token + URL on demand. `t3 auth pairing create`
+# writes to the running server's auth control plane, so NO daemon restart is
+# needed — the live t3 serve honors it immediately. Default TTL 15m (e.g. just
+# t3-pair 1h). Pair the loki client with the printed pairUrl.
+t3-pair ttl="15m":
     #!/usr/bin/env bash
     set -euo pipefail
-    log="${HOME}/Library/Logs/t3-serve.log"
-    prev="$(grep -oE 'token=[A-Za-z0-9]+' "$log" 2>/dev/null | tail -1 || true)"
-    echo "Restarting t3 serve..."
+    export PATH="${XDG_DATA_HOME}/pnpm/bin:${PATH}"   # find the pnpm-global t3
+    t3 auth pairing create --ttl "{{ttl}}" --base-url http://kratos.netbird.cloud:3773 --log-level warn
+
+# Restart the t3 serve daemon (rarely needed). For a pairing token, use t3-pair.
+t3-serve-restart:
     sudo launchctl kickstart -k system/com.t3code.serve
-    pair=""
-    for _ in $(seq 1 25); do
-      pair="$(grep -oE 'https?://[0-9.]+:[0-9]+/pair#token=[A-Za-z0-9]+' "$log" 2>/dev/null | tail -1 || true)"
-      [[ -n "$pair" && "${pair##*token=}" != "${prev##*token=}" ]] && break
-      pair=""; sleep 1
-    done
-    [[ -n "$pair" ]] || { echo "Fresh token didn't appear yet — check $log"; exit 1; }
-    echo
-    echo "  Connection: ${pair%%/pair*}"
-    echo "  Token:      ${pair##*token=}"
-    echo "  Pair URL:   $pair"
+    @echo "t3 serve restarted. Mint a pairing token with: just t3-pair"
 
 # Gives agents a headless browser to drive/verify the web apps they build, with
 # no display attached. `claude --chrome` and computer-use both need a monitor and
