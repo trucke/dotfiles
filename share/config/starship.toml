@@ -2,7 +2,7 @@
 # Palette: https://github.com/catppuccin/starship
 
 command_timeout = 200
-format = "$directory$git_branch$git_status${custom.jj}$line_break$character"
+format = "$username$hostname$directory$git_branch$git_status${custom.jj}$line_break$character"
 palette = "catppuccin_mocha"
 
 [palettes.catppuccin_mocha]
@@ -37,6 +37,19 @@ crust = "#11111b"
 error_symbol = "[❯](bold blue)"
 success_symbol = "[❯](bold blue)"
 vimcmd_symbol = "[❮](bold blue)"
+
+[username]
+# Always show user@host (local + remote) so the box is unmistakable, even in
+# tmux/mosh where SSH_* env vars don't propagate. root shows in red.
+show_always = true
+format = "[$user]($style)"
+style_user = "bold peach"
+style_root = "bold red"
+
+[hostname]
+ssh_only = false
+format = "[@$hostname]($style) "
+style = "bold peach"
 
 [directory]
 style = "bold teal"
