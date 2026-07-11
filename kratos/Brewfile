@@ -26,6 +26,7 @@ brew "playwright-cli"
 # podman: installed via the official .pkg (see justfile `podman-init`); Podman
 # does not recommend the Homebrew formula. colima/docker above cover Docker compat.
 brew "poppler"
+brew "proton-pass-cli"
 brew "qpdf"
 brew "ripgrep"
 brew "rsync"
