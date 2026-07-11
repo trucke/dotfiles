@@ -22,8 +22,7 @@ truth for every brew package, cask, and agent (codex/claude/cursor/opencode/pi);
 the shared `share/config/mise/config.toml`.
 
 **Fresh machine** — create the `skadi` admin user + enable Remote Login at the
-console (needs a monitor once), then SSH in. Full reinstall flow + gotchas:
-**[`kratos/RUNBOOK.md`](kratos/RUNBOOK.md)**.
+console (needs a monitor once), then SSH in.
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
