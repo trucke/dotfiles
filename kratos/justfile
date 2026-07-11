@@ -133,9 +133,10 @@ timemachine share="smb://tm@truenas.local/timemachine":
 unlock-keychain:
     #!/usr/bin/env bash
     set -euo pipefail
+    kc="${HOME}/Library/Keychains/login.keychain-db"   # explicit path (verified working)
     read -rs -p "Login password for $(id -un): " pw < /dev/tty; echo
-    security unlock-keychain -p "$pw"      # default (login) keychain
-    security set-keychain-settings         # no auto-lock, no lock-on-sleep
+    security unlock-keychain -p "$pw" "$kc"
+    security set-keychain-settings "$kc"   # no auto-lock, no lock-on-sleep
     unset pw
     echo "login keychain unlocked + auto-lock disabled (re-run after a reboot)."
 
