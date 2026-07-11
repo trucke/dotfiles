@@ -13,6 +13,12 @@
 brewfile := "Brewfile"
 dotfiles := parent_directory(justfile_directory())
 
+# Serial brew downloads. Homebrew 5.0 defaults DOWNLOAD_CONCURRENCY=auto, and its
+# concurrent progress renderer garbles the terminal (dangling cursor/scroll-region
+# escapes → a "staircase" that stays broken after brew exits). Serial = clean,
+# single-line output. Exported to every recipe shell.
+export HOMEBREW_DOWNLOAD_CONCURRENCY := "1"
+
 # List available recipes
 default:
     @just --list
@@ -55,8 +61,14 @@ mise:
     mise install
 
 # Install pnpm global packages (t3 — the only non-brew agent)
-# `mise exec` so pnpm resolves even before mise shims are on PATH (fresh box).
 pnpm-globals:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    # pnpm refuses `add -g` unless its global bin dir is on PATH, and this recipe's
+    # shell doesn't source share/shell/path. `pnpm bin -g` returns EMPTY when the dir
+    # isn't already on PATH, so add both known locations explicitly up front
+    # (macOS: ~/Library/pnpm/bin, Linux: ~/.local/share/pnpm/bin).
+    export PATH="${HOME}/Library/pnpm/bin:${HOME}/.local/share/pnpm/bin:${PATH}"
     mise exec -- pnpm add -g t3
 
 # Symlink shared dotfiles into place (zsh, ~/.config, ~/.local/bin, ~/.ssh) +
@@ -160,9 +172,13 @@ t3-serve-restart:
 browser-init:
     #!/usr/bin/env bash
     set -euo pipefail
+    # pnpm needs its global bin dir on PATH for `add -g` (see pnpm-globals); with it
+    # on PATH, `pnpm bin -g` then resolves reliably.
+    export PATH="${HOME}/Library/pnpm/bin:${HOME}/.local/share/pnpm/bin:${PATH}"
     echo "--- installing @playwright/mcp + playwright (pnpm global)"
     mise exec -- pnpm add -g @playwright/mcp playwright
     gbin="$(mise exec -- pnpm bin -g)"
+    [ -n "$gbin" ] || { echo "could not resolve pnpm global bin dir"; exit 1; }
     echo "--- installing headless Chromium (Playwright-managed build)"
     "${gbin}/playwright" install chromium
     echo "--- registering 'playwright' MCP with Claude Code (user scope)"
