@@ -201,7 +201,7 @@ ssh-keys-fetch:
         | while IFS=$'\t' read -r sid iid aid name; do
             out="$(pass-cli item attachment download --share-id "$sid" --item-id "$iid" --attachment-id "$aid" --output "$dir/$name" 2>&1)" \
               || { echo "FAILED: $dir/$name"; printf '%s\n' "$out" | sed 's/^/  /'; exit 1; }
-            chmod 600 "$dir/$name"
+            case "$name" in *.pub) chmod 644 "$dir/$name" ;; *) chmod 600 "$dir/$name" ;; esac
             echo "  $dir/$name"
           done
     done
