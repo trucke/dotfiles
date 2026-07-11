@@ -79,7 +79,7 @@ fi
 
 # Generate key using GPG (this part requires gpg)
 echo -e "\n${GREEN}=== Step 2: Generate GPG Key ===${NC}"
-if ! gpg --card-status 2>/dev/null | grep -q "Signature key.*\[none\]"; then
+if [[ "$KEYS_EXIST" == true ]]; then
 	echo -e "${GREEN}GPG key already exists on YubiKey - skipping generation${NC}"
 else
 	echo -e "${YELLOW}Launching gpg --card-edit for key generation...${NC}"
