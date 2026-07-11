@@ -43,7 +43,7 @@ upgrade:
 # Playwright ships its own headless Chromium (~/.cache/ms-playwright), independent
 # of the system chromium package. Mirrors kratos; other agents: share/mcp/README.md.
 # Install Playwright MCP + headless Chromium so local agents can test web apps.
-browser-init:
+playwright-mcp:
     #!/usr/bin/env bash
     set -euo pipefail
     export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"

@@ -19,7 +19,7 @@ accessibility tree (deterministic, token-cheap), not screenshot-guessing.
 ### Install (kratos)
 
 ```bash
-just -f ~/.dotfiles/kratos/justfile browser-init
+just -f ~/.dotfiles/kratos/justfile playwright-mcp
 ```
 
 That installs `@playwright/mcp` + Chromium and registers the server with Claude
@@ -27,7 +27,7 @@ Code. Verify with `claude mcp list`.
 
 ### Register per agent
 
-**Claude Code** *(verified — done by `browser-init`)*. Manual equivalent, user scope:
+**Claude Code** *(verified — done by `playwright-mcp`)*. Manual equivalent, user scope:
 
 ```bash
 claude mcp add playwright -s user -- \

@@ -109,6 +109,6 @@ cat <<'EOF'
   4. just podman-init              # official Podman + machine (ends with a hello smoke test)
   5. Agents: codex; claude; cursor-agent; opencode  # /connect ; pi  # /login ; t3
   6. just t3-serve-install         # persistent t3 serve daemon (+ prints a pairing token)
-  7. just browser-init             # optional: Playwright MCP for agent web testing
+  7. just playwright-mcp             # optional: Playwright MCP for agent web testing
   8. just audit
 EOF

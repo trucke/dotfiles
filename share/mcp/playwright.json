@@ -1,5 +1,5 @@
 {
-  "_comment": "Canonical Playwright MCP server spec — headless Chromium for agents to drive/verify web apps they build (no display required). Standard `mcpServers` shape; command assumes the pnpm global bin dir is on PATH. `kratos/justfile browser-init` registers this with Claude Code using an ABSOLUTE path for robustness. See README.md for per-agent wiring.",
+  "_comment": "Canonical Playwright MCP server spec — headless Chromium for agents to drive/verify web apps they build (no display required). Standard `mcpServers` shape; command assumes the pnpm global bin dir is on PATH. `kratos/justfile playwright-mcp` registers this with Claude Code using an ABSOLUTE path for robustness. See README.md for per-agent wiring.",
   "mcpServers": {
     "playwright": {
       "command": "playwright-mcp",

@@ -103,7 +103,7 @@ runs `sync.sh` automatically):
 | `upgrade` | Upgrade all packages (brew + mise + t3) |
 | `upgrade-macos` | macOS point/security update (restarts; returns on its own) |
 | `t3-serve-restart` | Restart the `t3 serve` daemon + print a fresh pairing token/URL |
-| `browser-init` | Install Playwright MCP + headless Chromium for agent web testing |
+| `playwright-mcp` | Install Playwright MCP + headless Chromium for agent web testing |
 | `audit` | Current brew/mise state |
 
 (Full list: `just --justfile ~/.dotfiles/kratos/justfile --list`.)

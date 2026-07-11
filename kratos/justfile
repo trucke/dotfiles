@@ -263,7 +263,7 @@ t3-serve-restart:
 # with Claude Code; other agents: share/mcp/README.md.
 
 # Install Playwright MCP + headless Chromium and register it with Claude Code
-browser-init:
+playwright-mcp:
     #!/usr/bin/env bash
     set -euo pipefail
     # XDG_DATA_HOME is exported justfile-wide; prepend pnpm's XDG bin dir so
