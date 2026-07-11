@@ -13,11 +13,12 @@
 brewfile := "Brewfile"
 dotfiles := parent_directory(justfile_directory())
 
-# Serial brew downloads. Homebrew 5.0 defaults DOWNLOAD_CONCURRENCY=auto, and its
-# concurrent progress renderer garbles the terminal (dangling cursor/scroll-region
-# escapes → a "staircase" that stays broken after brew exits). Serial = clean,
-# single-line output. Exported to every recipe shell.
+# Serial brew, both axes — the concurrent renderers garble the terminal with a
+# "staircase" that stays broken after brew exits. Homebrew 5.x parallelizes BOTH
+# downloads (DOWNLOAD_CONCURRENCY=auto) AND `brew bundle` installs (BUNDLE_JOBS=
+# auto); pin both to 1 for clean, single-line output. Exported to every recipe.
 export HOMEBREW_DOWNLOAD_CONCURRENCY := "1"
+export HOMEBREW_BUNDLE_JOBS := "1"
 
 # Pin pnpm's global bin dir to XDG on macOS too (else it defaults to ~/Library/
 # pnpm): with XDG_DATA_HOME set, pnpm uses $XDG_DATA_HOME/pnpm/bin everywhere.
@@ -60,7 +61,7 @@ brew:
       brew tap "$tap" >/dev/null 2>&1 || true
       brew trust "$tap" || true          # POSITIONAL — there is NO `--tap` flag (that silently no-op'd)
     done
-    brew bundle install --file {{brewfile}}
+    brew bundle install --file {{brewfile}} --jobs 1   # serial installs (no staircase); env sets this too
 
 # Install mise-managed runtimes/tools (config comes from the stowed share mise config)
 mise:
