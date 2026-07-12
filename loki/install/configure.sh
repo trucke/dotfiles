@@ -26,6 +26,9 @@ fi
 # Default applications
 ################################################################################
 
+# Ghostty supports enhanced keyboard protocols needed by Pi through SSH + tmux.
+omarchy default terminal ghostty
+
 omarchy-refresh-applications
 update-desktop-database "${HOME}/.local/share/applications"
 
