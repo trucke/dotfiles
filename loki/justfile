@@ -27,6 +27,10 @@ sync:
 packages:
     bash {{justfile_directory()}}/install/install-packages.sh
 
+# Configure uinput permissions/module and enable the Kanata user service
+kanata-setup:
+    bash {{justfile_directory()}}/install/setup-kanata.sh
+
 # Generate this machine's SSH keypairs (ed25519, per the naming convention)
 ssh-keys:
     bash {{dotfiles}}/share/bin/ssh-keys-gen

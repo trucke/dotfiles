@@ -9,38 +9,7 @@ set -euo pipefail
 # Kanata (keyboard remapping)
 ################################################################################
 
-sudo groupadd -rf uinput
-sudo usermod -aG input "${USER}"
-sudo usermod -aG uinput "${USER}"
-
-sudo tee /etc/udev/rules.d/99-input.rules >/dev/null <<'EOF'
-KERNEL=="uinput", MODE="0660", GROUP="uinput", OPTIONS+="static_node=uinput"
-EOF
-
-sudo udevadm control --reload-rules && sudo udevadm trigger
-
-mkdir -p "${HOME}/.config/systemd/user"
-
-cat >"${HOME}/.config/systemd/user/kanata.service" <<'EOF'
-[Unit]
-Description=Kanata keyboard remapper
-Documentation=https://github.com/jtroo/kanata
-
-[Service]
-Environment=DISPLAY=:0
-Type=simple
-ExecStart=/usr/bin/sh -c 'exec /usr/bin/kanata --cfg ${HOME}/.config/kanata/config.kbd'
-Restart=on-failure
-
-[Install]
-WantedBy=default.target
-EOF
-
-systemctl --user daemon-reload
-systemctl --user enable kanata.service
-systemctl --user restart kanata.service || true
-
-echo "Kanata service configured."
+bash "${HOME}/.dotfiles/loki/install/setup-kanata.sh"
 
 ################################################################################
 # Kanshi (display auto-config)
