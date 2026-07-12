@@ -31,6 +31,35 @@ packages:
 ssh-keys:
     bash {{dotfiles}}/share/bin/ssh-keys-gen
 
+# Download SSH keys + hosts.conf from the Proton Pass "SSH" vault into ~/.ssh
+ssh-keys-fetch:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    command -v pass-cli >/dev/null 2>&1 || { echo "pass-cli not found — install proton-pass-cli-bin"; exit 1; }
+    command -v jq >/dev/null 2>&1 || { echo "jq not found — install jq"; exit 1; }
+    mkdir -p "${HOME}/.ssh/config.d"
+    chmod 700 "${HOME}/.ssh" "${HOME}/.ssh/config.d"
+    # "item title|destination dir" — SSH keys into ~/.ssh, hosts.conf into config.d
+    for entry in \
+      "hlx-admin|${HOME}/.ssh" \
+      "homelab|${HOME}/.ssh" \
+      "roomvibes|${HOME}/.ssh" \
+      "rv-edgeplayer|${HOME}/.ssh" \
+      "hosts.conf|${HOME}/.ssh/config.d"; do
+      item="${entry%%|*}" dir="${entry##*|}"
+      json="$(pass-cli item view --vault-name SSH --item-title "$item" --output json)" \
+        || { echo "skip: '$item' not found in SSH vault"; continue; }
+      # Read only attachment metadata; never print the item's secret fields.
+      jq -r '.item as $i | .attachments[]? | [$i.share_id, $i.id, .id, .content.name] | @tsv' <<<"$json" \
+        | while IFS=$'\t' read -r sid iid aid name; do
+            out="$(pass-cli item attachment download --share-id "$sid" --item-id "$iid" --attachment-id "$aid" --output "$dir/$name" 2>&1)" \
+              || { echo "FAILED: $dir/$name"; printf '%s\n' "$out" | sed 's/^/  /'; exit 1; }
+            case "$name" in *.pub) chmod 644 "$dir/$name" ;; *) chmod 600 "$dir/$name" ;; esac
+            echo "  $dir/$name"
+          done
+    done
+    echo "done — SSH keys in ~/.ssh, hosts.conf in ~/.ssh/config.d (chmod 600)."
+
 # --- upgrades --------------------------------------------------------------
 
 # Upgrade everything: Omarchy system update, then mise-managed dev tools
