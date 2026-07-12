@@ -8,6 +8,10 @@ set -euo pipefail
 
 DOTFILES="${HOME}/.dotfiles"
 
+# Omarchy's CLIs are added by interactive shell initialization, which is absent
+# under SSH commands and update hooks. Keep this script self-contained.
+export PATH="${HOME}/.local/share/omarchy/bin:${PATH}"
+
 # Update vendored submodules (tmux-fzf-url, ...)
 git -C "${DOTFILES}" submodule update --init --recursive
 
