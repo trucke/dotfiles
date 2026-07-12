@@ -11,6 +11,12 @@ mapfile -t repo_pkgs < <(grep -vE '^\s*(#|$)' "${INSTALL_DIR}/packages.repo")
 mapfile -t aur_pkgs  < <(grep -vE '^\s*(#|$)' "${INSTALL_DIR}/packages.aur")
 
 omarchy pkg add "${repo_pkgs[@]}"
+
+# Omarchy ships the repo build; opencode-bin conflicts with it and yay's
+# non-interactive install will not approve removing the old package itself.
+# Once migrated, this is a no-op because the installed package is opencode-bin.
+omarchy pkg drop opencode
+
 omarchy pkg aur add "${aur_pkgs[@]}"
 
 # NOTE: `mise install` lives in loki/sync.sh — it must run AFTER the mise config
