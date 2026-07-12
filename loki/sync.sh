@@ -57,6 +57,7 @@ stow --restow --dir="${DOTFILES}/loki"  --target="${HOME}/.config"    config
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.config"    config
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}"            zsh
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.local/bin" bin
+stow --restow --dir="${DOTFILES}/loki"  --target="${HOME}/.local/bin" bin
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.ssh"       ssh
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.pi/agent"  pi
 stow --restow --dir="${DOTFILES}/loki"  --target="${HOME}/.local/share/applications" applications

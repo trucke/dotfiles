@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+# Omarchy autostarts fcitx5 even when the repo intentionally drops the package.
+# Keep its managed autostart untouched while suppressing the missing-command error.
+exit 0
