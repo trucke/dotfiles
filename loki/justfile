@@ -60,6 +60,19 @@ ssh-keys-fetch:
     done
     echo "done — SSH keys in ~/.ssh, hosts.conf in ~/.ssh/config.d (chmod 600)."
 
+# Join the NetBird mesh with a setup key (enables+starts the service, then up)
+netbird-up key="":
+    #!/usr/bin/env bash
+    set -euo pipefail
+    command -v netbird >/dev/null 2>&1 || { echo "netbird not found — install it first"; exit 1; }
+    key="{{key}}"
+    if [ -z "$key" ]; then
+      read -rs -p "NetBird setup key: " key < /dev/tty; echo
+    fi
+    sudo systemctl enable --now netbird
+    netbird up --setup-key "$key"
+    netbird status
+
 # --- upgrades --------------------------------------------------------------
 
 # Upgrade everything: Omarchy system update, then mise-managed dev tools
