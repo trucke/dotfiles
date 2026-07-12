@@ -80,6 +80,7 @@ netbird-up key="":
     if [ -z "$key" ]; then
       read -rs -p "NetBird setup key: " key < /dev/tty; echo
     fi
+    sudo netbird service install || true   # idempotent: already-installed is fine
     sudo systemctl enable --now netbird
     netbird up --setup-key "$key"
     netbird status
