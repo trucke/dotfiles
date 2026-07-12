@@ -9,10 +9,6 @@ mapfile -t repo_pkgs < <(grep -vE '^\s*(#|$)' "${INSTALL_DIR}/packages.repo")
 mapfile -t aur_pkgs < <(grep -vE '^\s*(#|$)' "${INSTALL_DIR}/packages.aur")
 
 omarchy pkg add "${repo_pkgs[@]}"
-
-# opencode-bin conflicts with Omarchy's preinstalled opencode package.
-omarchy pkg drop opencode
-
 yay -S --noconfirm --needed "${aur_pkgs[@]}"
 
 for target in "${aur_pkgs[@]}"; do

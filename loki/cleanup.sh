@@ -14,7 +14,11 @@ rm -f "${HOME}/.config/hypr/bindings.conf"
 cp "${HOME}/.local/share/omarchy/default/hypr/plain-bindings.conf" "${HOME}/.config/hypr/bindings.conf"
 hyprctl reload >/dev/null 2>&1 || true
 
-# NOTE: package drops + npx-stub removal live in loki/sync.sh (idempotent, also
+# Fresh setup installs packages before sync.sh. Remove this one conflict now;
+# sync.sh owns the durable drop policy and re-applies it after Omarchy updates.
+omarchy-pkg-drop opencode
+
+# Other package drops + npx-stub removal live in loki/sync.sh (idempotent, also
 # re-run after every `omarchy update`). This script is fresh-provision only.
 
 ################################################################################

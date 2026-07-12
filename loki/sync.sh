@@ -26,6 +26,7 @@ omarchy-pkg-drop \
 	xournalpp \
 	pinta \
 	obs-studio \
+	opencode \
 	kdenlive \
 	chromium \
 	lazydocker \
