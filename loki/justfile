@@ -31,6 +31,17 @@ packages:
 ssh-keys:
     bash {{dotfiles}}/share/bin/ssh-keys-gen
 
+# Log pass-cli in with a Personal Access Token (prompted)
+pass-login:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    command -v pass-cli >/dev/null 2>&1 || { echo "pass-cli not found — install proton-pass-cli-bin"; exit 1; }
+    read -rs -p "Proton Pass PAT (pst_...::...): " pat < /dev/tty; echo
+    [ -n "$pat" ] || { echo "no token entered"; exit 1; }
+    pass-cli login --pat "$pat"
+    unset pat
+    pass-cli info
+
 # Download SSH keys + hosts.conf from the Proton Pass "SSH" vault into ~/.ssh
 ssh-keys-fetch:
     #!/usr/bin/env bash
@@ -79,6 +90,25 @@ netbird-up key="":
 upgrade:
     omarchy update
     mise upgrade
+
+# Update package-managed coding agents without running a full system upgrade
+upgrade-agents:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    packages=()
+    for cmd in codex claude cursor-agent opencode pi; do
+      path="$(command -v "$cmd" 2>/dev/null || true)"
+      if [ -z "$path" ]; then
+        echo "skip: $cmd not installed"
+      elif pkg="$(pacman -Qoq "$path" 2>/dev/null)"; then
+        [[ " ${packages[*]} " == *" $pkg "* ]] || packages+=("$pkg")
+      else
+        echo "skip: $cmd is not managed by pacman/yay ($path)"
+      fi
+    done
+    [ "${#packages[@]}" -gt 0 ] || { echo "no package-managed agents found"; exit 0; }
+    echo "upgrading: ${packages[*]}"
+    yay -S --needed "${packages[@]}"
 
 # --- agents ----------------------------------------------------------------
 
