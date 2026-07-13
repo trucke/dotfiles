@@ -69,6 +69,14 @@ defaults write com.apple.screensaver askForPassword -int 1
 defaults write com.apple.screensaver askForPasswordDelay -int 0
 defaults -currentHost write com.apple.screensaver idleTime -int 0
 
+# --- Dock + keyboard -------------------------------------------------------
+echo "--- Dock: 31px, auto-hide; keyboard: fast repeat, short delay"
+defaults write com.apple.dock tilesize -int 31
+defaults write com.apple.dock autohide -bool true
+defaults write NSGlobalDomain KeyRepeat -int 2
+defaults write NSGlobalDomain InitialKeyRepeat -int 15
+killall Dock >/dev/null 2>&1 || true
+
 # --- optional static IP ----------------------------------------------------
 if [[ -n "${STATIC_IP}" && -n "${ROUTER}" ]]; then
   echo "--- static IP ${STATIC_IP} on '${NET_SERVICE}'"
