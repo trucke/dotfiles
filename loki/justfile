@@ -100,13 +100,24 @@ upgrade:
 upgrade-agents:
     #!/usr/bin/env bash
     set -euo pipefail
+    configured_targets=()
+    while IFS= read -r target; do
+      configured_targets+=("$target")
+    done < <(grep -vE '^\s*(#|$)' "{{justfile_directory()}}/install/packages.aur")
     packages=()
     for cmd in codex claude cursor-agent opencode pi; do
       path="$(command -v "$cmd" 2>/dev/null || true)"
       if [ -z "$path" ]; then
         echo "skip: $cmd not installed"
       elif pkg="$(pacman -Qoq "$path" 2>/dev/null)"; then
-        [[ " ${packages[*]} " == *" $pkg "* ]] || packages+=("$pkg")
+        target="$pkg"
+        for configured_target in "${configured_targets[@]}"; do
+          if [ "${configured_target#aur/}" = "$pkg" ]; then
+            target="$configured_target"
+            break
+          fi
+        done
+        [[ " ${packages[*]} " == *" $target "* ]] || packages+=("$target")
       else
         echo "skip: $cmd is not managed by pacman/yay ($path)"
       fi
