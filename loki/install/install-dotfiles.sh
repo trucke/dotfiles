@@ -19,7 +19,6 @@ rm -rf "${HOME}/.config/nvim" \
 	"${HOME}/.config/git" \
 	"${HOME}/.config/mise" \
 	"${HOME}/.config/tmux" \
-	"${HOME}/.config/kanshi" \
 	"${HOME}/.config/kanata"
 rm -f "${HOME}/.config/starship.toml" \
 	"${HOME}/.config/opencode/opencode.json" \

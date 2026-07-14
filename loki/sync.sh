@@ -15,9 +15,16 @@ export PATH="${HOME}/.local/share/omarchy/bin:${PATH}"
 # Update vendored submodules (tmux-fzf-url, ...)
 git -C "${DOTFILES}" submodule update --init --recursive
 
+# Kanshi previously managed display profiles. Omarchy now owns laptop-display
+# toggling and recovery, so remove the obsolete service before its package.
+systemctl --user disable --now kanshi.service >/dev/null 2>&1 || true
+rm -f "${HOME}/.config/systemd/user/kanshi.service"
+systemctl --user daemon-reload
+
 # Re-drop Omarchy packages we don't want; upstream migrations may reinstall them.
 # omarchy-pkg-drop is a no-op for packages that are already absent.
 omarchy-pkg-drop \
+	kanshi \
 	typora \
 	spotify \
 	libreoffice-fresh \
