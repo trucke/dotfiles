@@ -8,6 +8,19 @@ profile docked-home-office {
     output eDP-1 disable
 }
 
+profile docked-dell-u2725qe {
+    # Match the display by EDID identity: connector names such as DP-5 can change.
+    output "Dell Inc. DELL U2725QE 6WG0G84" {
+        mode preferred
+        position 0,0
+        scale 1.5
+    }
+
+    # Keep only the external display active while docked. The mobile profile
+    # below explicitly re-enables this panel as soon as the Dell disconnects.
+    output eDP-1 disable
+}
+
 profile portable-dual {
     output eDP-1 enable mode 2880x1920@120Hz scale 2 position 240,1080
     output "Raspberry PI RPI MON156 81005586360" mode 1920x1080@60Hz scale 1 position 0,0
@@ -15,4 +28,9 @@ profile portable-dual {
 
 profile mobile {
     output eDP-1 enable mode 2880x1920@120Hz scale 2
+
+    # Retry after the hotplug transition. This avoids a historical Hyprland race
+    # where kanshi enables eDP-1 while undocking but the panel remains inactive.
+    # If the machine suspended while its lid was closed, the retry resumes on wake.
+    exec sleep 1 && hyprctl keyword monitor eDP-1,2880x1920@120,0x0,2
 }
