@@ -1,3 +1,5 @@
 .DS_Store
 lazy-lock.json
 share/config/jj/repos/
+share/pi/.env
+share/pi/.infisical.json

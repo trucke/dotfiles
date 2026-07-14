@@ -34,12 +34,12 @@ function parseDotEnv(contents: string): EnvMap {
 	return env;
 }
 
-function loadEnv(cwd: string): EnvMap {
-	// Later files override earlier files. process.env overrides all of them.
+function loadEnv(): EnvMap {
+	// Keep secret configuration global so a project cannot redirect authenticated requests.
+	// The process environment overrides local migration files.
 	const files = [
 		join(homedir(), ".pi", "agent", ".env"),
 		join(homedir(), ".pi", "agent", "extensions", ".env"),
-		join(cwd, ".env"),
 	];
 
 	const env: EnvMap = {};
@@ -51,22 +51,53 @@ function loadEnv(cwd: string): EnvMap {
 	return { ...env, ...process.env } as EnvMap;
 }
 
-function getConfig(cwd: string) {
-	const env = loadEnv(cwd);
-	const apiKey = env.FIRECRAWL_API_KEY;
-	const baseUrl = (env.FIRECRAWL_BASE_URL || DEFAULT_FIRECRAWL_BASE_URL).replace(/\/$/, "");
+function createConfigLoader(pi: ExtensionAPI) {
+	let infisicalApiKey: string | undefined;
 
-	if (!apiKey) {
-		throw new Error(
-			"Missing FIRECRAWL_API_KEY. Add it to .env, for example: FIRECRAWL_API_KEY=fc-your-key",
-		);
-	}
+	return async function getConfig(
+		signal?: AbortSignal,
+	): Promise<{ apiKey: string; baseUrl: string }> {
+		const env = loadEnv();
+		let apiKey = env.FIRECRAWL_API_KEY;
 
-	return { apiKey, baseUrl };
+		if (!apiKey) {
+			if (!infisicalApiKey) {
+				const result = await pi.exec(
+					"infisical",
+					["secrets", "get", "FIRECRAWL_API_KEY", "--plain", "--silent"],
+					{
+						cwd: join(homedir(), ".pi", "agent"),
+						signal,
+						timeout: 15_000,
+					},
+				);
+
+				if (result.code !== 0 || !result.stdout.trim()) {
+					throw new Error(
+						"Missing FIRECRAWL_API_KEY. Set it in the process environment or run " +
+							"`cd ~/.pi/agent && infisical init`, then add FIRECRAWL_API_KEY to that Infisical project.",
+					);
+				}
+
+				infisicalApiKey = result.stdout.trim();
+			}
+			apiKey = infisicalApiKey;
+		}
+
+		if (!apiKey) throw new Error("Infisical returned an empty FIRECRAWL_API_KEY.");
+
+		const baseUrl = (env.FIRECRAWL_BASE_URL || DEFAULT_FIRECRAWL_BASE_URL).replace(/\/$/, "");
+		return { apiKey, baseUrl };
+	};
 }
 
-async function firecrawl(cwd: string, path: string, body: unknown, signal?: AbortSignal) {
-	const { apiKey, baseUrl } = getConfig(cwd);
+async function firecrawl(
+	getConfig: (signal?: AbortSignal) => Promise<{ apiKey: string; baseUrl: string }>,
+	path: string,
+	body: unknown,
+	signal?: AbortSignal,
+) {
+	const { apiKey, baseUrl } = await getConfig(signal);
 
 	const response = await fetch(`${baseUrl}${path}`, {
 		method: "POST",
@@ -94,6 +125,8 @@ async function firecrawl(cwd: string, path: string, body: unknown, signal?: Abor
 }
 
 export default function firecrawlExtension(pi: ExtensionAPI) {
+	const getConfig = createConfigLoader(pi);
+
 	pi.registerTool({
 		name: "firecrawl_search",
 		label: "Firecrawl Search",
@@ -109,11 +142,11 @@ export default function firecrawlExtension(pi: ExtensionAPI) {
 				Type.Boolean({ description: "Whether to scrape result pages as markdown", default: false }),
 			),
 		}),
-		async execute(_toolCallId, params, signal, onUpdate, ctx) {
+		async execute(_toolCallId, params, signal, onUpdate, _ctx) {
 			onUpdate?.({ content: [{ type: "text", text: `Searching Firecrawl for: ${params.query}` }] });
 
 			const result = await firecrawl(
-				ctx.cwd,
+				getConfig,
 				"/search",
 				{
 					query: params.query,
@@ -142,11 +175,11 @@ export default function firecrawlExtension(pi: ExtensionAPI) {
 				Type.Array(Type.String(), { description: "Output formats, for example markdown, html, links" }),
 			),
 		}),
-		async execute(_toolCallId, params, signal, onUpdate, ctx) {
+		async execute(_toolCallId, params, signal, onUpdate, _ctx) {
 			onUpdate?.({ content: [{ type: "text", text: `Scraping with Firecrawl: ${params.url}` }] });
 
 			const result = await firecrawl(
-				ctx.cwd,
+				getConfig,
 				"/scrape",
 				{
 					url: params.url,
