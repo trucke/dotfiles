@@ -12,11 +12,11 @@ Omarchy/Hyprland), `share/` (common, stowed everywhere). There is no app to
 launch — the repo is *deployed* with stow and *operated* through per-host `just`
 recipes.
 
-The one thing that reliably bites here: **the live checkout is intentionally
-kept behind `origin/main`** because the live stow symlinks pin a specific layout.
-Editing, committing, or stowing on the live tree corrupts a running machine. So
-the harness is a **read-only doctor** plus a **safe-edit worktree helper**, both
-in this skill's `doctor.sh`.
+The live checkout is also the deployment source for active stow/config links,
+so edits there can take effect immediately. Treat it carefully, preserve
+unrelated dirty changes, and inspect its divergence from `origin/main` before
+Git operations. The harness provides a **read-only doctor** plus an optional
+**isolated worktree helper**, both in this skill's `doctor.sh`.
 
 This skill lives in the repo at `share/agents/skills/run-dotfiles/` and is
 deployed to **`~/.agents/skills/run-dotfiles/`** (read natively by codex, cursor,
@@ -49,34 +49,55 @@ failure (missing tool or a justfile that won't parse). Stow conflicts are
 ~/.agents/skills/run-dotfiles/doctor.sh --help                          # commands + exit semantics
 ```
 
-## Manage: safe edit → publish (never touch the live tree)
+## Manage: choose the workflow that matches the risk
 
-Use the worktree helper. It creates a branch off `origin/main`, so you edit the
-*current* layout, not the frozen live checkout:
+### Routine, low-risk changes — edit in place
+
+Do **not** create a dedicated worktree for every small config tweak,
+documentation correction, package-list adjustment, or closely related follow-up.
+For routine changes:
+
+1. Inspect the target file, relevant config, and `git status` first.
+2. Edit the source in `~/.dotfiles` directly, preserving unrelated dirty work.
+3. Run the narrowest relevant validation and deploy/reload only what changed.
+4. Do not commit, merge, reset, or push unless the user requested publication.
+5. If publication is requested, inspect live-branch divergence first; never
+   overwrite unrelated live changes merely to make Git history convenient.
+
+A live edit may immediately affect deployed symlinks. This is intentional for
+small, well-understood changes, but it makes scoped validation important.
+Reuse the current task checkout for related follow-ups instead of creating a
+new worktree per tweak.
+
+### Large or critical changes — use an isolated worktree
+
+Use a dedicated worktree for a substantial refactor or a critical change that
+needs user review, feedback, staged deployment, or repeated testing before it
+becomes live. The helper creates a branch from `origin/main`:
 
 ```bash
 ~/.agents/skills/run-dotfiles/doctor.sh worktree myfix
 ```
 
-It prints the exact five-step flow it set up. Verified sequence:
+Verified sequence:
 
 ```bash
-# 1. edit files in  ~/.dotfiles-worktrees/myfix
-# 2. validate (no remote compare; run inside the worktree):
+# 1. edit files in ~/.dotfiles-worktrees/myfix
+# 2. validate inside the worktree:
 ~/.agents/skills/run-dotfiles/doctor.sh validate ~/.dotfiles-worktrees/myfix
-# 3. commit
-git -C ~/.dotfiles-worktrees/myfix add -A && git -C ~/.dotfiles-worktrees/myfix commit
-# 4. publish — fast-forward the branch straight onto main:
+# 3. request/review user feedback when required
+# 4. commit and publish after approval
+git -C ~/.dotfiles-worktrees/myfix add -A
+git -C ~/.dotfiles-worktrees/myfix commit
 git -C ~/.dotfiles-worktrees/myfix push origin feature/myfix:main
-# 5. clean up (rm -rf, NOT `git worktree remove` — it fails on the submodule):
+# 5. clean up (git worktree remove fails because of the submodule):
 rm -rf ~/.dotfiles-worktrees/myfix
 git -C ~/.dotfiles worktree prune
 git -C ~/.dotfiles branch -D feature/myfix
 ```
 
-**Do not** `git checkout`/`merge` `origin/main` on the live tree, and **do not**
-update local `main`. The push in step 4 moves the remote forward without
-touching the running machine's symlinks.
+Do not update, merge, reset, or clean the live checkout as a side effect of
+publishing from an isolated worktree.
 
 ## Operate & update — per-host `just` recipes
 
@@ -117,12 +138,13 @@ skill.
 
 ## Gotchas (hard-won)
 
-- **The live checkout is deliberately behind `origin/main`.** The doctor's
-  "behind by N" warning is *normal* — live symlinks point at the current on-disk
-  layout. It converges only when the machine is reinstalled.
-- **Never edit/commit/stow on the live tree.** Always the worktree flow above.
-  Publishing is `git push origin feature/<name>:main` (fast-forward), never a
-  local-main merge.
+- **The live checkout may be behind `origin/main`.** The doctor's "behind by N"
+  warning can be normal because deployed symlinks use its current on-disk
+  content. Inspect divergence before committing or publishing; do not casually
+  merge/reset the live tree to remove the warning.
+- **Worktrees are selective, not mandatory.** Use direct live edits for routine,
+  scoped changes. Reserve isolated worktrees for large or critical work needing
+  review/testing, and reuse one worktree for related follow-ups.
 - **`git worktree remove` fails** because of the `tmux-fzf-url` submodule. Remove
   a worktree with `rm -rf <dir>` then `git worktree prune`.
 - **Claude bridge is per-skill, not a whole-dir symlink.** `~/.claude/skills/` also
