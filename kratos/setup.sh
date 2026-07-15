@@ -54,10 +54,10 @@ echo "--- enable Remote Login (SSH)"
 sudo systemsetup -setremotelogin on
 
 # --- headless-server power behavior ----------------------------------------
-# System never sleeps; display off after 5 min; wake on network; auto-restart
-# after power loss / freeze.
-echo "--- power: never sleep, display off after 5m, wake-on-LAN, auto-restart"
-sudo pmset -a sleep 0 displaysleep 5 disksleep 0
+# System and display never sleep; wake on network; auto-restart after power
+# loss / freeze. Keeping the display awake preserves the framebuffer for RustDesk.
+echo "--- power: never sleep, display always available, wake-on-LAN, auto-restart"
+sudo pmset -a sleep 0 displaysleep 0 disksleep 0
 sudo pmset -a womp 1
 sudo pmset -a autorestart 1
 sudo systemsetup -setrestartpowerfailure on >/dev/null 2>&1 || true
