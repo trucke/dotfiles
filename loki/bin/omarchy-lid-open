@@ -2,10 +2,10 @@
 
 set -euo pipefail
 
-# The Framework lid sensor can emit multi-second false-open pulses while docked.
-# Keep the panel disabled unless the kernel reports a continuously open lid.
-debounce_lock="${XDG_RUNTIME_DIR:-/tmp}/omarchy-lid-open.lock"
-exec 8>"${debounce_lock}"
+# Libinput may synthesize lid-open events after keyboard input to compensate for
+# unreliable sensors. Trust the ACPI lid state before enabling the panel.
+handler_lock="${XDG_RUNTIME_DIR:-/tmp}/omarchy-lid-open.lock"
+exec 8>"${handler_lock}"
 flock -n 8 || exit 0
 
 lid_is_open() {
@@ -20,17 +20,16 @@ lid_is_open() {
   [[ "${found}" == true ]]
 }
 
-for _ in {1..8}; do
-  sleep 1
-  if ! lid_is_open; then
-    if omarchy-hw-external-monitors; then
-      omarchy-lid-close-external
-    else
-      omarchy-hyprland-monitor-internal on
-    fi
-    exit 0
+# Allow the kernel state to settle after the switch event.
+sleep 0.5
+if ! lid_is_open; then
+  if omarchy-hw-external-monitors; then
+    omarchy-lid-close-external
+  else
+    omarchy-hyprland-monitor-internal on
   fi
-done
+  exit 0
+fi
 
 # Serialize the final state check and enable action with the close handler.
 action_lock="${XDG_RUNTIME_DIR:-/tmp}/omarchy-lid-display.lock"
