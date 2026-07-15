@@ -5,6 +5,11 @@ set -euo pipefail
 # Leave normal undocked lid handling to logind.
 omarchy-hw-external-monitors || exit 0
 
+# Prevent a delayed lid-open action from racing this monitor transition.
+lock="${XDG_RUNTIME_DIR:-/tmp}/omarchy-lid-display.lock"
+exec 9>"${lock}"
+flock -w 10 9 || exit 1
+
 monitors="$(hyprctl -j monitors all)"
 internal="$(jq -r '.[] | select(.name | test("^(eDP|LVDS|DSI)-")) | .name' <<<"${monitors}" | head -n 1)"
 external="$(jq -r '[.[] | select(.disabled == false) | select(.name | test("^(eDP|LVDS|DSI)-") | not)] | (map(select(.focused == true)) + .) | .[0].name // empty' <<<"${monitors}")"

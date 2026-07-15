@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# The Framework lid sensor can emit multi-second false-open pulses while docked.
+# Keep the panel disabled unless the kernel reports a continuously open lid.
+debounce_lock="${XDG_RUNTIME_DIR:-/tmp}/omarchy-lid-open.lock"
+exec 8>"${debounce_lock}"
+flock -n 8 || exit 0
+
+lid_is_open() {
+  local found=false state
+
+  for state in /proc/acpi/button/lid/*/state; do
+    [[ -r "${state}" ]] || continue
+    found=true
+    [[ $(<"${state}") == *open* ]] || return 1
+  done
+
+  [[ "${found}" == true ]]
+}
+
+for _ in {1..8}; do
+  sleep 1
+  if ! lid_is_open; then
+    if omarchy-hw-external-monitors; then
+      omarchy-lid-close-external
+    else
+      omarchy-hyprland-monitor-internal on
+    fi
+    exit 0
+  fi
+done
+
+# Serialize the final state check and enable action with the close handler.
+action_lock="${XDG_RUNTIME_DIR:-/tmp}/omarchy-lid-display.lock"
+exec 9>"${action_lock}"
+flock -w 10 9 || exit 1
+
+if lid_is_open; then
+  omarchy-hyprland-monitor-internal on
+elif omarchy-hw-external-monitors; then
+  # The lid closed while this handler was waiting for the action lock.
+  exec 9>&-
+  omarchy-lid-close-external
+else
+  omarchy-hyprland-monitor-internal on
+fi
