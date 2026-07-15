@@ -51,6 +51,6 @@ reconcile() {
 }
 
 reconcile || true
-while sleep 2; do
+while sleep 1; do
   reconcile || true
 done

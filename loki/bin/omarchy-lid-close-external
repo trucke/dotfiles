@@ -18,13 +18,7 @@ external="$(jq -r '[.[] | select(.disabled == false) | select(.name | test("^(eD
 [[ -n "${internal}" && -n "${external}" ]] || exit 0
 
 workspaces="$(hyprctl -j workspaces)"
-internal_active="$(jq -r --arg monitor "${internal}" '.[] | select(.name == $monitor) | .activeWorkspace.id // 0' <<<"${monitors}")"
-target_workspace="$(jq -r --arg monitor "${internal}" --argjson active "${internal_active}" '
-  [.[] | select(.monitor == $monitor)] as $workspaces |
-  ($workspaces | map(select(.id == $active and .windows > 0)) | .[0].id) //
-  ($workspaces | map(select(.windows > 0)) | sort_by(.id) | .[0].id) //
-  0
-' <<<"${workspaces}")"
+target_workspace="$(jq -r '[.[] | select(.focused == true)] | .[0].activeWorkspace.id // 0' <<<"${monitors}")"
 mapfile -t occupied_workspaces < <(jq -r --arg monitor "${internal}" '.[] | select(.monitor == $monitor and .windows > 0) | .id' <<<"${workspaces}")
 
 omarchy-hyprland-monitor-internal off
@@ -56,7 +50,7 @@ for workspace in "${occupied_workspaces[@]}"; do
   fi
 done
 
-# Do not leave the external output displaying its pre-existing empty workspace.
+# Preserve whichever workspace was focused before the display transition.
 if (( target_workspace > 0 )); then
   hyprctl dispatch focusmonitor "${external}" >/dev/null
   hyprctl dispatch workspace "${target_workspace}" >/dev/null
