@@ -16,5 +16,5 @@ alias tmux='tmux -2'
 alias pp='pnpm'
 
 alias dot='cd ${HOME}/.dotfiles'
-alias dev='cd ${HOME}/development'
+alias dev='cd ${HOME}/Projects'
 alias docs='cd ${HOME}/Documents'

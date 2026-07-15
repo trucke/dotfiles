@@ -85,7 +85,7 @@ pnpm-globals:
 # Symlink shared dotfiles into place (zsh, ~/.config, ~/.local/bin, ~/.ssh) +
 # deploy Agent Skills to ~/.agents/skills and bridge them into ~/.claude/skills
 stow:
-    mkdir -p "$HOME/.config/zed" "$HOME/.local/bin" "$HOME/.ssh" \
+    mkdir -p "$HOME/Projects" "$HOME/.config/zed" "$HOME/.local/bin" "$HOME/.ssh" \
       "$HOME/.pi/agent/extensions" "$HOME/.pi/agent/skills" "$HOME/.pi/agent/themes"
     chmod 700 "$HOME/.ssh"
     stow --restow --dir="{{dotfiles}}/share" --target="$HOME" zsh
