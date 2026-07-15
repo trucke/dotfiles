@@ -12,11 +12,13 @@ Omarchy/Hyprland), `share/` (common, stowed everywhere). There is no app to
 launch — the repo is *deployed* with stow and *operated* through per-host `just`
 recipes.
 
-The live checkout is also the deployment source for active stow/config links,
-so edits there can take effect immediately. Treat it carefully, preserve
-unrelated dirty changes, and inspect its divergence from `origin/main` before
-Git operations. The harness provides a **read-only doctor** plus an optional
-**isolated worktree helper**, both in this skill's `doctor.sh`.
+The active checkout is also the deployment source for stow/config links and
+should stay advanced to `origin/main`. After publishing from any other checkout,
+fast-forward the active checkout immediately; **never deploy by manually copying
+files out of a worktree**. Treat active files carefully, preserve unrelated dirty
+changes, and inspect divergence before Git operations. The harness provides a
+**read-only doctor** plus an optional **isolated worktree helper**, both in this
+skill's `doctor.sh`.
 
 This skill lives in the repo at `share/agents/skills/run-dotfiles/` and is
 deployed to **`~/.agents/skills/run-dotfiles/`** (read natively by codex, cursor,
@@ -57,12 +59,14 @@ Do **not** create a dedicated worktree for every small config tweak,
 documentation correction, package-list adjustment, or closely related follow-up.
 For routine changes:
 
-1. Inspect the target file, relevant config, and `git status` first.
+1. Fetch and inspect the target file, relevant config, divergence, and
+   `git status` first. If the active branch is behind, fast-forward it with
+   `git pull --ff-only` before editing when the current dirty state permits.
 2. Edit the source in `~/.dotfiles` directly, preserving unrelated dirty work.
 3. Run the narrowest relevant validation and deploy/reload only what changed.
-4. Do not commit, merge, reset, or push unless the user requested publication.
-5. If publication is requested, inspect live-branch divergence first; never
-   overwrite unrelated live changes merely to make Git history convenient.
+4. Do not commit or push unless the user requested publication.
+5. If publication is requested, commit only task files and push normally from
+   the active checkout. Never overwrite unrelated changes for a clean status.
 
 A live edit may immediately affect deployed symlinks. This is intentional for
 small, well-understood changes, but it makes scoped validation important.
@@ -90,14 +94,21 @@ Verified sequence:
 git -C ~/.dotfiles-worktrees/myfix add -A
 git -C ~/.dotfiles-worktrees/myfix commit
 git -C ~/.dotfiles-worktrees/myfix push origin feature/myfix:main
-# 5. clean up (git worktree remove fails because of the submodule):
+# 5. immediately advance the active checkout — this is deployment
+git -C ~/.dotfiles pull --ff-only
+# 6. validate/reload the active configuration as needed
+# 7. clean up (git worktree remove fails because of the submodule):
 rm -rf ~/.dotfiles-worktrees/myfix
 git -C ~/.dotfiles worktree prune
 git -C ~/.dotfiles branch -D feature/myfix
 ```
 
-Do not update, merge, reset, or clean the live checkout as a side effect of
-publishing from an isolated worktree.
+Inspect active-checkout dirty paths before the pull. Unrelated changes may remain
+in place if they do not conflict; if the fast-forward is blocked, stop and
+resolve that state explicitly. Do not copy files from the worktree as a bypass.
+Publishing does not update another host automatically: when deployment to Loki
+or Kratos is requested, connect to that host, run `git pull --ff-only` there,
+and verify the stowed result.
 
 ## Operate & update — per-host `just` recipes
 
@@ -138,10 +149,13 @@ skill.
 
 ## Gotchas (hard-won)
 
-- **The live checkout may be behind `origin/main`.** The doctor's "behind by N"
-  warning can be normal because deployed symlinks use its current on-disk
-  content. Inspect divergence before committing or publishing; do not casually
-  merge/reset the live tree to remove the warning.
+- **A behind active checkout is actionable.** After publishing elsewhere,
+  fast-forward `~/.dotfiles` with `git pull --ff-only` so Git state and deployed
+  symlinks reference the same revision. Do not leave it intentionally behind.
+- **Never manually mirror worktree files into the active checkout.** Publish,
+  fast-forward the active repo, then validate/reload. If dirty files block the
+  pull, resolve or request guidance rather than creating a split Git/filesystem
+  state.
 - **Worktrees are selective, not mandatory.** Use direct live edits for routine,
   scoped changes. Reserve isolated worktrees for large or critical work needing
   review/testing, and reuse one worktree for related follow-ups.
