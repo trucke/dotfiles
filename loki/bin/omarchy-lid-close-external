@@ -40,6 +40,14 @@ for _ in {1..30}; do
 done
 [[ "${internal_disabled}" == true ]] || exit 1
 
+# Track automatic clamshell disable separately from the manual Omarchy toggle.
+for state in /proc/acpi/button/lid/*/state; do
+  if [[ -r "${state}" && $(<"${state}") == *closed* ]]; then
+    printf 'closed\n' >"${XDG_RUNTIME_DIR:-/tmp}/omarchy-lid-clamshell"
+    break
+  fi
+done
+
 # Hyprland normally migrates these automatically. Repair only missing moves.
 for workspace in "${occupied_workspaces[@]}"; do
   current_monitor="$(hyprctl -j workspaces | jq -r --argjson id "${workspace}" '.[] | select(.id == $id) | .monitor // empty')"

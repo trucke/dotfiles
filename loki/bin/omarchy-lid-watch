@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+
+set -u
+
+runtime_dir="${XDG_RUNTIME_DIR:-/tmp}"
+clamshell_state="${runtime_dir}/omarchy-lid-clamshell"
+watch_lock="${runtime_dir}/omarchy-lid-watch.lock"
+
+# Hyprland reloads must not create duplicate polling loops.
+exec 7>"${watch_lock}"
+flock -n 7 || exit 0
+
+lid_state() {
+  local found=false state
+
+  for state in /proc/acpi/button/lid/*/state; do
+    [[ -r "${state}" ]] || continue
+    found=true
+    if [[ $(<"${state}") == *closed* ]]; then
+      printf 'closed\n'
+      return
+    fi
+  done
+
+  if [[ "${found}" == true ]]; then
+    printf 'open\n'
+  else
+    printf 'unknown\n'
+  fi
+}
+
+internal_enabled() {
+  hyprctl -j monitors all 2>/dev/null | jq -e '
+    any(.[]; (.name | test("^(eDP|LVDS|DSI)-")) and .disabled == false)
+  ' >/dev/null
+}
+
+reconcile() {
+  case "$(lid_state)" in
+  closed)
+    if omarchy-hw-external-monitors && internal_enabled; then
+      omarchy-lid-close-external >/dev/null 2>&1
+    fi
+    ;;
+  open)
+    if [[ -f "${clamshell_state}" ]]; then
+      omarchy-lid-open >/dev/null 2>&1
+    fi
+    ;;
+  esac
+}
+
+reconcile || true
+while sleep 2; do
+  reconcile || true
+done

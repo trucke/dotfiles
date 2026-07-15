@@ -4,7 +4,9 @@ set -euo pipefail
 
 # Libinput may synthesize lid-open events after keyboard input to compensate for
 # unreliable sensors. Trust the ACPI lid state before enabling the panel.
-handler_lock="${XDG_RUNTIME_DIR:-/tmp}/omarchy-lid-open.lock"
+runtime_dir="${XDG_RUNTIME_DIR:-/tmp}"
+clamshell_state="${runtime_dir}/omarchy-lid-clamshell"
+handler_lock="${runtime_dir}/omarchy-lid-open.lock"
 exec 8>"${handler_lock}"
 flock -n 8 || exit 0
 
@@ -32,12 +34,13 @@ if ! lid_is_open; then
 fi
 
 # Serialize the final state check and enable action with the close handler.
-action_lock="${XDG_RUNTIME_DIR:-/tmp}/omarchy-lid-display.lock"
+action_lock="${runtime_dir}/omarchy-lid-display.lock"
 exec 9>"${action_lock}"
 flock -w 10 9 || exit 1
 
 if lid_is_open; then
   omarchy-hyprland-monitor-internal on
+  rm -f "${clamshell_state}"
 elif omarchy-hw-external-monitors; then
   # The lid closed while this handler was waiting for the action lock.
   exec 9>&-

@@ -32,6 +32,7 @@ deploy_config "${DOTFILES}/monitors.conf" "${HYPR_CONFIG}/monitors.conf" "Monito
 deploy_config "${DOTFILES}/input.conf" "${HYPR_CONFIG}/input.conf" "Input config"
 deploy_config "${DOTFILES}/bindings.conf" "${HYPR_CONFIG}/bindings.conf" "Bindings config"
 deploy_config "${DOTFILES}/looknfeel.conf" "${HYPR_CONFIG}/looknfeel.conf" "Look-n-feel config"
+deploy_config "${DOTFILES}/autostart.conf" "${HYPR_CONFIG}/autostart.conf" "Autostart config"
 
 # Standalone configs (not sourced by hyprland.conf, loaded by their own tools)
 deploy_config "${DOTFILES}/hypridle.conf" "${HYPR_CONFIG}/hypridle.conf" "Hypridle config"
