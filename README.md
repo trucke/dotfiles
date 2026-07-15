@@ -79,17 +79,37 @@ Omarchy's `hyprland.conf` sources user overrides from `~/.config/hypr/` **after*
 its defaults; these are symlinked from `loki/config/hypr/`:
 
 ```
-input.conf   bindings.conf   looknfeel.conf
+monitors.conf   input.conf   bindings.conf   looknfeel.conf   autostart.conf
 ```
 
 | Area | Customization |
 |------|---------------|
-| Displays | kanshi profiles (docked / portable-dual / mobile) — sole authority; auto-disables the internal panel when docked |
+| Displays | Explicit Framework/Dell monitor rules plus Omarchy-compatible clamshell reconciliation and focused-workspace handoff |
 | Input | EU layout, caps:escape, vim-style HJKL focus/swap; Kanata home-row mods |
 | Keybinds | app launchers (browser, Signal, Obsidian, Proton Pass, T3Chat, mail); hyprshot screenshots |
 | Lock / idle | hyprlock + hypridle (lock at 5 min, no screensaver) |
 | Agents | opencode (repo) + pi + herdr (AUR) |
 | Branding | custom Plymouth boot logo |
+
+#### Clamshell compatibility note
+
+The local clamshell layer exists for Omarchy v3.8.3 and comprises:
+
+- `loki/bin/omarchy-lid-close-external`
+- `loki/bin/omarchy-lid-open`
+- `loki/bin/omarchy-lid-watch`
+- the lid overrides in `loki/config/hypr/bindings.conf`
+- the watcher launch in `loki/config/hypr/autostart.conf`
+
+Reassess this layer after upgrading to an Omarchy release containing the
+Quattro clamshell work (`omarchy-hw-clamshell`,
+`omarchy-hyprland-monitor-clamshell`, and the polling/locked
+`omarchy-hyprland-monitor-watch`; initially developed around upstream commit
+`aa7350ab`). Test stock behavior before removing anything: focused-workspace
+preservation on close, keyboard use while closed, reopen, connect Dell while
+already closed, and unplug recovery. As of the original Quattro review, its
+recovery work did not explicitly preserve the globally focused workspace, so
+keep the local handoff until upstream covers that behavior too.
 
 ## share — common configs
 
