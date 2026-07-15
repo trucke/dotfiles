@@ -11,3 +11,4 @@ Type=Application
 Icon=t3code
 StartupWMClass=t3code
 Categories=Development;
+MimeType=x-scheme-handler/t3code;

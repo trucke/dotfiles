@@ -72,7 +72,21 @@ stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.local/bin" bin
 stow --restow --dir="${DOTFILES}/loki"  --target="${HOME}/.local/bin" bin
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.ssh"       ssh
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.pi/agent"  pi
-stow --restow --dir="${DOTFILES}/loki"  --target="${HOME}/.local/share/applications" applications
+
+# T3Code can replace its protocol-handler desktop symlink with a regular file.
+# Remove only a conflicting target so Stow can restore the managed override.
+t3code_desktop="${HOME}/.local/share/applications/t3code.desktop"
+t3code_source="$(readlink -f "${DOTFILES}/loki/applications/t3code.desktop")"
+if [[ -e "${t3code_desktop}" || -L "${t3code_desktop}" ]]; then
+	current_source="$(readlink -f "${t3code_desktop}" 2>/dev/null || true)"
+	if [[ ! -L "${t3code_desktop}" || "${current_source}" != "${t3code_source}" ]]; then
+		rm -f "${t3code_desktop}"
+	fi
+fi
+stow --restow --dir="${DOTFILES}/loki" --target="${HOME}/.local/share/applications" applications
+if command -v update-desktop-database &>/dev/null; then
+	update-desktop-database "${HOME}/.local/share/applications"
+fi
 
 # Deploy Agent Skills to ~/.agents/skills (read natively by codex/cursor/opencode/
 # pi) and bridge each into ~/.claude/skills for Claude Code.
