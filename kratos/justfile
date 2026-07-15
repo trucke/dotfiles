@@ -50,6 +50,7 @@ bootstrap:
     just stow          # stow now exists; also deploys the mise config
     just harden
     just mise          # needs the stowed mise config
+    just repo-init     # migrate the bootstrap clone to colocated jj
     just pnpm-globals
 
 # Provision packages/tools only: brew + mise + pnpm globals
@@ -71,6 +72,18 @@ brew:
 # Install mise-managed runtimes/tools (config comes from the stowed share mise config)
 mise:
     mise install
+
+# Initialize the fresh Git bootstrap as a colocated jj repo and track main
+repo-init:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    cd "{{dotfiles}}"
+    if ! mise exec -- jj root >/dev/null 2>&1; then
+      mise exec -- jj git init --git-repo=. .
+    fi
+    if ! mise exec -- jj bookmark list --tracked main --remote origin 2>/dev/null | grep -q '^main:'; then
+      mise exec -- jj bookmark track main --remote=origin
+    fi
 
 # Install pnpm global packages (t3 — the only non-brew agent)
 pnpm-globals:

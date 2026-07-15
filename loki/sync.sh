@@ -92,9 +92,19 @@ fi
 # pi) and bridge each into ~/.claude/skills for Claude Code.
 env DOTFILES="${DOTFILES}" bash "${DOTFILES}/share/bin/link-agent-skills"
 
-# Install/refresh mise-managed dev tools (mise config was just stowed).
+# Install/refresh mise-managed dev tools (mise config was just stowed). On a
+# fresh Git bootstrap, initialize jj only after mise has installed it.
 if command -v mise &>/dev/null; then
 	mise install -y
+	if ! mise exec -- jj -R "${DOTFILES}" root &>/dev/null; then
+		(
+			cd "${DOTFILES}"
+			mise exec -- jj git init --git-repo=. .
+		)
+	fi
+	if ! mise exec -- jj -R "${DOTFILES}" bookmark list --tracked main --remote origin 2>/dev/null | grep -q '^main:'; then
+		mise exec -- jj -R "${DOTFILES}" bookmark track main --remote=origin
+	fi
 fi
 
 # Re-deploy Hyprland override files (stow-ignored; they live beside Omarchy's own).

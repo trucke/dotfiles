@@ -37,7 +37,18 @@ function parseGitStatus(output: string, cwd: string) {
     return files;
 }
 
-async function getGitChangedFiles(pi: ExtensionAPI, cwd: string) {
+async function getJjChangedFiles(pi: ExtensionAPI, cwd: string): Promise<Set<string> | undefined> {
+    const rootResult = await pi.exec("jj", ["root"], { cwd, timeout: 5000 });
+    if (rootResult.code !== 0) return undefined;
+
+    const root = rootResult.stdout.trim();
+    const result = await pi.exec("jj", ["diff", "--name-only", "-r", "@"], { cwd, timeout: 5000 });
+    if (result.code !== 0) return new Set<string>();
+
+    return new Set(result.stdout.split("\n").filter(Boolean).map((file: string) => toAbsolute(root, file)));
+}
+
+async function getGitChangedFiles(pi: ExtensionAPI, cwd: string): Promise<Set<string>> {
     const result = await pi.exec(
         "git",
         ["status", "--porcelain", "--untracked-files=all"],
@@ -48,19 +59,23 @@ async function getGitChangedFiles(pi: ExtensionAPI, cwd: string) {
     return parseGitStatus(result.stdout, cwd);
 }
 
+async function getChangedFiles(pi: ExtensionAPI, cwd: string): Promise<Set<string>> {
+    return (await getJjChangedFiles(pi, cwd)) ?? getGitChangedFiles(pi, cwd);
+}
+
 function difference(current: Set<string>, baseline: Set<string>) {
     return new Set([...current].filter((file) => !baseline.has(file)));
 }
 
 export default function(pi: ExtensionAPI) {
-    let gitBaseline = new Set<string>();
+    let baseline = new Set<string>();
     let changedFiles = new Set<string>();
     let toolTouchedFiles = new Set<string>();
 
     pi.on("agent_start", async (_event, ctx) => {
         toolTouchedFiles = new Set();
         changedFiles = new Set();
-        gitBaseline = await getGitChangedFiles(pi, ctx.cwd);
+        baseline = await getChangedFiles(pi, ctx.cwd);
     });
 
     pi.on("tool_result", (event, ctx) => {
@@ -73,8 +88,8 @@ export default function(pi: ExtensionAPI) {
     });
 
     pi.on("agent_end", async (_event, ctx) => {
-        const gitChanged = await getGitChangedFiles(pi, ctx.cwd);
-        changedFiles = new Set([...difference(gitChanged, gitBaseline), ...toolTouchedFiles]);
+        const currentChanged = await getChangedFiles(pi, ctx.cwd);
+        changedFiles = new Set([...difference(currentChanged, baseline), ...toolTouchedFiles]);
 
         if (changedFiles.size > 0) {
             ctx.ui.notify(`${changedFiles.size} changed file(s). Run /${commandName} to view/open in Zed.`, "info");
@@ -90,7 +105,7 @@ export default function(pi: ExtensionAPI) {
             if (arg === "clear") {
                 changedFiles = new Set();
                 toolTouchedFiles = new Set();
-                gitBaseline = await getGitChangedFiles(pi, ctx.cwd);
+                baseline = await getChangedFiles(pi, ctx.cwd);
                 ctx.ui.notify("Cleared changed file list", "info");
                 return;
             }

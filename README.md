@@ -26,7 +26,7 @@ console (needs a monitor once), then SSH in.
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-git clone https://github.com/trucke/dotfiles.git ~/.dotfiles   # HTTPS — no SSH key yet on a fresh box
+git clone https://github.com/trucke/dotfiles.git ~/.dotfiles   # bootstrap; setup installs + initializes jj
 ~/.dotfiles/kratos/setup.sh   # system defaults (hostname, network, power, SSH) + full provision
 ```
 
@@ -53,10 +53,10 @@ dotfiles, and Hyprland/tool customizations on top.
 **Fresh machine** — install Omarchy first, then:
 
 ```bash
-git clone https://github.com/trucke/dotfiles.git ~/.dotfiles   # HTTPS — no SSH key yet on a fresh box
+git clone https://github.com/trucke/dotfiles.git ~/.dotfiles   # bootstrap; setup installs + initializes jj
 bash ~/.dotfiles/loki/setup.sh   # (not `just` — just isn't installed until packages land)
 # after keys are registered, switch to SSH:
-git -C ~/.dotfiles remote set-url origin git@github.com:trucke/dotfiles.git
+jj -R ~/.dotfiles git remote set-url origin git@github.com:trucke/dotfiles.git
 ```
 
 **Provision vs. sync.** `setup.sh` runs once (cleanup → packages → dotfiles →
@@ -121,7 +121,41 @@ Stowed on every host:
 - `pi/` — pi-coding-agent config (`AGENTS.md`, extensions, skills, themes) → `~/.pi/agent`
 - `bin/` → `~/.local/bin`
 
-### Theming
+## Version-control workflow
+
+The repo is a **colocated Jujutsu/Git workspace**. Use jj for daily work; Git
+remains for fresh-box bootstrap, GitHub compatibility, and the
+`tmux-fzf-url` submodule.
+
+Keep one draft change at `@` directly on top of `main`:
+
+```bash
+cd ~/.dotfiles
+jj status
+jj git fetch
+jj rebase -b @ -o main
+
+# edit, review, and validate
+jj diff
+~/.agents/skills/run-dotfiles/doctor.sh validate ~/.dotfiles
+
+# publish only when intended
+jj describe -m "type(scope): description"
+jj bookmark move main --to @
+jj git push --bookmark main
+jj new main
+```
+
+There is no staging area. Use a separate jj workspace only when filesystem
+isolation matters—for example, risky SSH, shell, Hyprland, Stow, or provisioning
+changes. The live checkout is Stow's deployment source, so rebasing it can alter
+active configuration.
+
+Jujutsu does not manage Git submodules. `loki/sync.sh` intentionally retains
+`git submodule update --init --recursive`; avoid other mutating Git commands in
+the superproject.
+
+## Theming
 
 Everything is **Catppuccin Mocha**, static — no theme switching:
 
