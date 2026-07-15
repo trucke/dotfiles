@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# Leave normal undocked lid handling to logind.
+omarchy-hw-external-monitors || exit 0
+
+monitors="$(hyprctl -j monitors all)"
+internal="$(jq -r '.[] | select(.name | test("^(eDP|LVDS|DSI)-")) | .name' <<<"${monitors}" | head -n 1)"
+external="$(jq -r '[.[] | select(.disabled == false) | select(.name | test("^(eDP|LVDS|DSI)-") | not)] | (map(select(.focused == true)) + .) | .[0].name // empty' <<<"${monitors}")"
+
+# Fail safe: never disable the panel unless Hyprland has an active external output.
+[[ -n "${internal}" && -n "${external}" ]] || exit 0
+
+workspaces="$(hyprctl -j workspaces)"
+internal_active="$(jq -r --arg monitor "${internal}" '.[] | select(.name == $monitor) | .activeWorkspace.id // 0' <<<"${monitors}")"
+target_workspace="$(jq -r --arg monitor "${internal}" --argjson active "${internal_active}" '
+  [.[] | select(.monitor == $monitor)] as $workspaces |
+  ($workspaces | map(select(.id == $active and .windows > 0)) | .[0].id) //
+  ($workspaces | map(select(.windows > 0)) | sort_by(.id) | .[0].id) //
+  0
+' <<<"${workspaces}")"
+mapfile -t occupied_workspaces < <(jq -r --arg monitor "${internal}" '.[] | select(.monitor == $monitor and .windows > 0) | .id' <<<"${workspaces}")
+
+omarchy-hyprland-monitor-internal off
+
+# A config reload returns before every compositor/output transition has settled.
+internal_disabled=false
+for _ in {1..30}; do
+  if hyprctl -j monitors all | jq -e --arg monitor "${internal}" '.[] | select(.name == $monitor and .disabled == true)' >/dev/null; then
+    internal_disabled=true
+    break
+  fi
+  sleep 0.1
+done
+[[ "${internal_disabled}" == true ]] || exit 1
+
+# Hyprland normally migrates these automatically. Repair only missing moves.
+for workspace in "${occupied_workspaces[@]}"; do
+  current_monitor="$(hyprctl -j workspaces | jq -r --argjson id "${workspace}" '.[] | select(.id == $id) | .monitor // empty')"
+  if [[ "${current_monitor}" != "${external}" ]]; then
+    hyprctl dispatch moveworkspacetomonitor "${workspace}" "${external}" >/dev/null
+  fi
+done
+
+# Do not leave the external output displaying its pre-existing empty workspace.
+if (( target_workspace > 0 )); then
+  hyprctl dispatch focusmonitor "${external}" >/dev/null
+  hyprctl dispatch workspace "${target_workspace}" >/dev/null
+fi
