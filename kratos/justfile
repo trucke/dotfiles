@@ -264,6 +264,18 @@ t3-serve-restart:
     sudo launchctl kickstart -k system/com.t3code.serve
     @echo "t3 serve restarted. Mint a pairing token with: just t3-pair"
 
+# Install/refresh Herdr integrations for the coding agents managed on this host
+herdr-integrations:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    mkdir -p "$HOME/.pi/agent/extensions" "$HOME/.claude" "$HOME/.codex" \
+      "$HOME/.config/opencode" "$HOME/.cursor"
+    for integration in pi claude codex opencode cursor; do
+      echo "--- herdr integration: $integration"
+      herdr integration install "$integration"
+    done
+    herdr integration status
+
 # Gives agents a headless browser to drive/verify the web apps they build, with
 # no display attached. `claude --chrome` and computer-use both need a monitor and
 # won't run on this box; a Playwright MCP server is the headless path. Registers
