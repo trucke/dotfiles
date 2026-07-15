@@ -141,6 +141,13 @@ podman-init:
     echo "--- verifying: podman run --rm quay.io/podman/hello"
     podman run --rm quay.io/podman/hello
 
+# Start Syncthing as a login service (folder sync between the machines + NAS).
+# Fresh box: approve the macOS folder-access (TCC) prompts from a GUI session —
+# the headless service hangs on them until approved.
+syncthing-setup:
+    brew services start syncthing
+    @echo "Syncthing running. Fresh box: approve the folder-access prompts via a GUI session once."
+
 # Point Time Machine at the NAS over SMB (one-time). Prompts for the password;
 # it's stored in the system keychain (daemon-readable, so it works headless) and
 # never touches this repo. Use a URL-safe password (no @ / : in it).

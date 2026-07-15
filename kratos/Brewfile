@@ -32,6 +32,7 @@ brew "ripgrep"
 brew "rsync"
 brew "starship"
 brew "stow"
+brew "syncthing"
 brew "tmux"
 brew "tree-sitter-cli"
 brew "zstd"                 # the compress()/decompress() shell fns need the CLI (Linux gets it from base)

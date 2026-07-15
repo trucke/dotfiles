@@ -118,5 +118,6 @@ cat <<'EOF'
   5. Agents: codex; claude; cursor-agent; opencode  # /connect ; pi  # /login ; t3
   6. just t3-serve-install         # persistent t3 serve daemon (+ prints a pairing token)
   7. just playwright-mcp             # optional: Playwright MCP for agent web testing
-  8. just audit
+  8. just syncthing-setup            # Syncthing service; approve folder-access prompts via GUI once
+  9. just audit
 EOF

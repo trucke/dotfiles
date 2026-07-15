@@ -10,3 +10,12 @@ set -euo pipefail
 ################################################################################
 
 bash "${HOME}/.dotfiles/loki/install/setup-kanata.sh"
+
+################################################################################
+# Syncthing (folder sync between the machines + NAS)
+################################################################################
+# Installed by install-packages.sh. Enabling the service is all that's declarative;
+# device pairing + folder shares live in ~/.local/state/syncthing (stateful, done
+# once via the GUI/API at http://127.0.0.1:8384).
+
+systemctl --user enable --now syncthing.service
