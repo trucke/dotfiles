@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
-# Re-apply customizations after `omarchy update`.
+# Re-apply customizations and update package-managed coding agents after
+# `omarchy update`.
 
 set -euo pipefail
 
 bash "${HOME}/.dotfiles/loki/sync.sh"
+just --justfile "${HOME}/.dotfiles/loki/justfile" upgrade-agents
