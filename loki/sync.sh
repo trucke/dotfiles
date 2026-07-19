@@ -72,6 +72,7 @@ stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.local/bin" bin
 stow --restow --dir="${DOTFILES}/loki"  --target="${HOME}/.local/bin" bin
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.ssh"       ssh
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.pi/agent"  pi
+bash "${DOTFILES}/share/bin/install-pi-packages"
 
 # T3Code can replace its protocol-handler desktop symlink with a regular file.
 # Remove only a conflicting target so Stow can restore the managed override.

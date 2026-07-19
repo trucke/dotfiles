@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+package="git:github.com/trucke/pi-setup@v0.1.0"
+checkout="${HOME}/.pi/agent/git/github.com/trucke/pi-setup"
+
+command -v pi >/dev/null 2>&1 || {
+  echo "pi is required before installing Pi packages" >&2
+  exit 1
+}
+
+if pi list | grep -Fqx "  ${package}" && [[ -d "${checkout}" ]]; then
+  echo "Pi package already installed: ${package}"
+  exit 0
+fi
+
+pi install "${package}"
