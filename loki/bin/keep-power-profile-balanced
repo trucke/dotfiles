@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+readonly TARGET_PROFILE="balanced"
+
+set_balanced() {
+	local current
+	current="$(powerprofilesctl get 2>/dev/null || true)"
+
+	if [[ "${current}" != "${TARGET_PROFILE}" ]]; then
+		echo "Power profile: ${current:-unavailable} -> ${TARGET_PROFILE}"
+		powerprofilesctl set "${TARGET_PROFILE}"
+	fi
+}
+
+set_balanced
+
+# Omarchy selects performance when AC/USB-C power changes. Restore balanced
+# whenever power-profiles-daemon reports a profile change.
+gdbus monitor \
+	--system \
+	--dest net.hadess.PowerProfiles \
+	--object-path /net/hadess/PowerProfiles |
+	while IFS= read -r event; do
+		if [[ "${event}" == *"ActiveProfile"* ]]; then
+			set_balanced
+		fi
+	done

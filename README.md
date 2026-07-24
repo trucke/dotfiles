@@ -88,6 +88,7 @@ monitors.conf   input.conf   bindings.conf   looknfeel.conf   autostart.conf
 | Input | EU layout, caps:escape, vim-style HJKL focus/swap; Kanata home-row mods |
 | Keybinds | app launchers (browser, Signal, Obsidian, Proton Pass, T3Chat, mail); hyprshot screenshots |
 | Lock / idle | hyprlock + hypridle (lock at 5 min, no screensaver) |
+| Power | User service keeps `power-profiles-daemon` balanced across login and AC/USB-C events |
 | Agents | opencode (repo) + pi + herdr (AUR) |
 | Branding | custom Plymouth boot logo |
 

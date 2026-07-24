@@ -74,6 +74,12 @@ stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.ssh"       ssh
 stow --restow --dir="${DOTFILES}/share" --target="${HOME}/.pi/agent"  pi
 bash "${DOTFILES}/share/bin/install-pi-packages"
 
+# Omarchy selects performance on AC/USB-C events. Keep the quieter balanced
+# profile through a user service that restores it after each profile change.
+systemctl --user daemon-reload
+systemctl --user enable balanced-power-profile.service
+systemctl --user restart balanced-power-profile.service
+
 # T3Code can replace its protocol-handler desktop symlink with a regular file.
 # Remove only a conflicting target so Stow can restore the managed override.
 t3code_desktop="${HOME}/.local/share/applications/t3code.desktop"
