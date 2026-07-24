@@ -16,11 +16,22 @@
   "vim_mode": true,
   "agent_servers": {
     "pi-acp": { "type": "registry" },
-    "claude-acp": { "type": "registry" },
+    "claude-acp": {
+      "default_config_options": {
+        "effort": "high",
+        "model": "opus[1m]",
+      },
+      "type": "registry",
+    },
   },
   "ssh_connections": [
     {
       "host": "kratos",
+      "args": [],
+      "projects": [
+        { "paths": ["/Users/skadi/Projects/homelab"] },
+        { "paths": ["/Users/skadi/Projects/lullapix"] },
+      ],
       "nickname": "Kratos",
     },
   ],
