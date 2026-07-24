@@ -126,9 +126,9 @@ Run these on the target host:
 
 | Recipe | Purpose |
 |---|---|
-| `just sync` | Re-assert Stow, Hypr overrides, package drops, mise, and agent skills |
+| `just sync` | Re-assert Stow, Hypr overrides, mise, Pi/Claude, Herdr, and agent skills |
 | `just packages` | Converge repo and AUR packages |
-| `just upgrade` | Run `omarchy update`, then upgrade mise tools |
+| `just upgrade` | Explicitly upgrade Omarchy, mise, and coding tools |
 | `just setup` | Fresh provision |
 
 `omarchy update` invokes `loki/sync.sh`. That script retains the one intentional
@@ -146,7 +146,7 @@ superproject after migration.
 
 | Recipe | Purpose |
 |---|---|
-| `just setup` | Converge brew, mise, and pnpm tools |
+| `just setup` | Converge brew, dotfiles, mise, Pi, and Herdr integrations |
 | `just upgrade` | Upgrade packages and tools |
 | `just upgrade-macos` | Install macOS updates and restart |
 | `just audit` | Report current brew/mise state |

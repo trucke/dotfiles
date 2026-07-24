@@ -15,10 +15,15 @@
   "session": { "trust_all_worktrees": true },
   "vim_mode": true,
   "agent_servers": {
-    "cursor": { "type": "registry" },
-    "codex-acp": { "type": "registry" },
+    "pi-acp": { "type": "registry" },
     "claude-acp": { "type": "registry" },
   },
+  "ssh_connections": [
+    {
+      "host": "kratos",
+      "nickname": "Kratos",
+    },
+  ],
   "base_keymap": "Cursor",
   "buffer_font_features": {
     "calt": false,

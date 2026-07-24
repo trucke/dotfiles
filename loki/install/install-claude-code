@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+native_launcher="${HOME}/.local/bin/claude"
+if [[ ! -L "${native_launcher}" ]] || [[ "$(readlink -f "${native_launcher}" 2>/dev/null || true)" != "${HOME}/.local/share/claude/versions/"* ]]; then
+	curl -fsSL https://claude.ai/install.sh | bash -s latest
+fi
+
+settings="${HOME}/.claude/settings.json"
+mkdir -p "$(dirname "${settings}")"
+tmp="$(mktemp "${settings}.XXXXXX")"
+if [[ -s "${settings}" ]]; then
+	jq '.env = ((.env // {}) + {DISABLE_AUTOUPDATER: "1"})' "${settings}" >"${tmp}"
+else
+	jq -n '{env: {DISABLE_AUTOUPDATER: "1"}}' >"${tmp}"
+fi
+mv "${tmp}" "${settings}"
+
+echo "Claude Code ready: native latest channel, background updates disabled"

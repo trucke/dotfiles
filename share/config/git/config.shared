@@ -56,6 +56,3 @@
 [delta]
     navigate = true
     dark = true
-
-[include]
-    path = config.local

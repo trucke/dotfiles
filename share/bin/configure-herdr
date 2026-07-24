@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+command -v herdr >/dev/null 2>&1 || {
+	echo "herdr is required before configuring integrations" >&2
+	exit 1
+}
+
+mkdir -p "${HOME}/.pi/agent/extensions" "${HOME}/.claude"
+
+for integration in codex cursor opencode; do
+	herdr integration uninstall "${integration}" >/dev/null 2>&1 || true
+done
+
+for integration in pi claude; do
+	echo "--- herdr integration: ${integration}"
+	herdr integration install "${integration}"
+done
+
+herdr integration status
+
+# A server reads config at startup; reload an already-running one in place.
+herdr server reload-config >/dev/null 2>&1 || true

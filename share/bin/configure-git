@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+DOTFILES="${DOTFILES:-${HOME}/.dotfiles}"
+XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-${HOME}/.config}"
+source_dir="${DOTFILES}/share/config/git"
+target_dir="${XDG_CONFIG_HOME}/git"
+shared_config="${source_dir}/config.shared"
+
+[[ -f "${shared_config}" ]] || {
+	echo "Missing shared Git config: ${shared_config}" >&2
+	exit 1
+}
+
+# Older deployments folded the whole Git config directory into the dotfiles
+# source. Unfold it so the top-level config can hold writable, host-local state
+# while Stow continues to manage config.shared, helpers, and ignore.
+remove_legacy_source=false
+if [[ -L "${target_dir}" ]]; then
+	current_source="$(readlink -f "${target_dir}")"
+	expected_source="$(readlink -f "${source_dir}")"
+	[[ "${current_source}" == "${expected_source}" ]] || {
+		echo "Refusing to replace Git config symlink owned by: ${current_source}" >&2
+		exit 1
+	}
+	remove_legacy_source=true
+	rm "${target_dir}"
+fi
+
+mkdir -p "${target_dir}"
+local_config="${target_dir}/config"
+if [[ -L "${local_config}" ]]; then
+	old_link="$(readlink "${local_config}")"
+	[[ "${old_link}" == *'.dotfiles/share/config/git/config' ]] || {
+		echo "Refusing to replace Git config symlink owned by: ${old_link}" >&2
+		exit 1
+	}
+	remove_legacy_source=true
+	rm "${local_config}"
+fi
+touch "${local_config}"
+chmod 600 "${local_config}"
+
+# Preserve the previous optional host override file when the old deployment
+# folded ~/.config/git directly into the repository source.
+source_local="${source_dir}/config.local"
+target_local="${target_dir}/config.local"
+if [[ -f "${source_local}" && "${source_local}" != "${target_local}" ]]; then
+	if [[ -e "${target_local}" ]]; then
+		cmp -s "${source_local}" "${target_local}" || {
+			echo "Both source and target Git config.local files exist and differ" >&2
+			exit 1
+		}
+		rm "${source_local}"
+	else
+		mv "${source_local}" "${target_local}"
+		chmod 600 "${target_local}"
+	fi
+fi
+
+git config --file "${local_config}" --unset-all include.path '^config\.shared$' 2>/dev/null || true
+git config --file "${local_config}" --unset-all include.path '^config\.local$' 2>/dev/null || true
+tmp="$(mktemp "${local_config}.XXXXXX")"
+printf '[include]\n\tpath = config.shared\n[include]\n\tpath = config.local\n\n' >"${tmp}"
+cat "${local_config}" >>"${tmp}"
+mv "${tmp}" "${local_config}"
+chmod 600 "${local_config}"
+
+# CodeRabbit writes its generated machine ID through `git config --global`.
+# Migrate any ID captured by the formerly shared top-level config into this
+# writable host-local config without printing it.
+for candidate in "${shared_config}" "${source_dir}/config"; do
+	[[ -f "${candidate}" ]] || continue
+	machine_id="$(git config --file "${candidate}" --get coderabbit.machineId 2>/dev/null || true)"
+	[[ -n "${machine_id}" ]] || continue
+	git config --file "${local_config}" coderabbit.machineId "${machine_id}"
+	git config --file "${candidate}" --remove-section coderabbit 2>/dev/null || true
+done
+
+if [[ "${remove_legacy_source}" == true ]]; then
+	rm -f "${source_dir}/config"
+fi
+
+echo "Git config ready: writable host config includes config.shared"

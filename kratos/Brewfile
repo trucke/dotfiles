@@ -17,7 +17,6 @@ brew "jq"
 brew "just"
 brew "mise"
 brew "mole"
-brew "mosh"
 brew "neovim"
 brew "netbirdio/tap/netbird", trusted: true
 brew "ollama"
@@ -37,13 +36,9 @@ brew "tmux"
 brew "tree-sitter-cli"
 brew "zstd"                 # the compress()/decompress() shell fns need the CLI (Linux gets it from base)
 
-# --- agents (brew-managed) --------------------------------------------------
-# t3 is the only non-brew agent; it's a pnpm global (see justfile `pnpm-globals`).
-cask "codex"
+# --- coding tools -----------------------------------------------------------
+# Pi is installed directly with pnpm; Claude Code stays on its official cask.
 cask "claude-code@latest"
-cask "cursor-cli", postinstall: "xattr -dr com.apple.quarantine /opt/homebrew/Caskroom/cursor-cli"
-brew "pi-coding-agent"
-brew "anomalyco/tap/opencode", trusted: true
 cask "coderabbit"  # AI code review CLI
 # ---------------------------------------------------------------------------
 
@@ -55,4 +50,3 @@ cask "proton-pass"
 cask "raycast"
 cask "rustdesk"
 cask "shapr3d"
-cask "zed"

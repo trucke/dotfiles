@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 #
 # link-agent-skills — deploy the repo's Agent Skills to the shared, vendor-neutral
-# ~/.agents/skills/ (read natively by codex, cursor, opencode, pi, and other
-# Agent-Skills-compatible agents) and bridge each into ~/.claude/skills/ so Claude
+# ~/.agents/skills/ (read natively by Pi and other Agent-Skills-compatible
+# tools) and bridge each into ~/.claude/skills/ so Claude
 # Code — which only reads its own dir — sees them too.
 #
 # Idempotent. Called from the host provisioners (kratos `just stow`, loki sync.sh)

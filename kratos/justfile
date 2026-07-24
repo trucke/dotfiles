@@ -4,11 +4,10 @@
 #   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 #   brew install just && just bootstrap
 #
-# Brewfile is the source of truth for everything brew-managed
-# (CLIs, casks, infra, and the codex/claude/cursor/opencode/pi agents).
-# Language runtimes + dev tools come from the shared mise config
-# (../share/config/mise/config.toml, stowed to ~/.config/mise).
-# t3 is the only non-brew agent (pnpm global).
+# Brewfile is the source of truth for brew-managed infrastructure and apps,
+# including Claude Code, Herdr, and CodeRabbit. Pi is installed directly from its
+# upstream npm package with pnpm. Runtimes and dev tools come from the shared
+# mise config (../share/config/mise/config.toml, stowed to ~/.config/mise).
 
 brewfile := "Brewfile"
 dotfiles := parent_directory(justfile_directory())
@@ -46,15 +45,21 @@ bootstrap:
     if [ "$(uname -m)" = "arm64" ] && [ ! -f /Library/Apple/usr/libexec/oah/libRosettaRuntime ]; then
       sudo softwareupdate --install-rosetta --agree-to-license || true
     fi
-    just brew          # Brewfile first — installs stow + mise before they're used
-    just stow          # stow now exists; also deploys the mise config
-    just harden
-    just mise          # needs the stowed mise config
-    just repo-init     # migrate the bootstrap clone to colocated jj
-    just pnpm-globals
+    {{just_executable()}} --justfile "{{justfile()}}" brew
+    {{just_executable()}} --justfile "{{justfile()}}" stow
+    {{just_executable()}} --justfile "{{justfile()}}" harden
+    {{just_executable()}} --justfile "{{justfile()}}" mise
+    {{just_executable()}} --justfile "{{justfile()}}" pi
+    {{just_executable()}} --justfile "{{justfile()}}" herdr-integrations
+    {{just_executable()}} --justfile "{{justfile()}}" repo-init
 
-# Provision packages/tools only: brew + mise + pnpm globals
-setup: brew mise pnpm-globals
+# Converge packages, dotfiles, runtimes, Pi, and Herdr integrations
+setup:
+    {{just_executable()}} --justfile "{{justfile()}}" brew
+    {{just_executable()}} --justfile "{{justfile()}}" stow
+    {{just_executable()}} --justfile "{{justfile()}}" mise
+    {{just_executable()}} --justfile "{{justfile()}}" pi
+    {{just_executable()}} --justfile "{{justfile()}}" herdr-integrations
 
 # Converge Homebrew to the Brewfile (additive; removes nothing).
 # Trust the third-party taps wholesale — recent Homebrew refuses to load formulae
@@ -63,7 +68,7 @@ setup: brew mise pnpm-globals
 brew:
     #!/usr/bin/env bash
     set -euo pipefail
-    for tap in infisical/get-cli netbirdio/tap anomalyco/tap; do
+    for tap in infisical/get-cli netbirdio/tap; do
       brew tap "$tap" >/dev/null 2>&1 || true
       brew trust "$tap" || true          # POSITIONAL — there is NO `--tap` flag (that silently no-op'd)
     done
@@ -85,28 +90,23 @@ repo-init:
       mise exec -- jj bookmark track main --remote=origin
     fi
 
-# Install pnpm global packages (t3 — the only non-brew agent)
-pnpm-globals:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    # XDG_DATA_HOME is exported justfile-wide (pins pnpm's global bin to XDG). Just
-    # prepend that bin dir so `pnpm add -g` finds it on PATH (this shell doesn't
-    # source share/shell/path).
-    export PATH="$XDG_DATA_HOME/pnpm/bin:$PATH"
-    mise exec -- pnpm add -g t3
+# Install Pi directly from its upstream npm package through pnpm
+pi:
+    DOTFILES="{{dotfiles}}" bash "{{dotfiles}}/share/bin/install-pi"
 
 # Symlink shared dotfiles into place (zsh, ~/.config, ~/.local/bin, ~/.ssh) +
 # deploy Agent Skills to ~/.agents/skills and bridge them into ~/.claude/skills
 stow:
-    mkdir -p "$HOME/Projects" "$HOME/.config/zed" "$HOME/.local/bin" "$HOME/.ssh" \
+    mkdir -p "$HOME/Projects" "$HOME/.config/herdr" "$HOME/.local/bin" "$HOME/.ssh" \
       "$HOME/.pi/agent/extensions" "$HOME/.pi/agent/skills" "$HOME/.pi/agent/themes"
     chmod 700 "$HOME/.ssh"
+    DOTFILES="{{dotfiles}}" bash "{{dotfiles}}/share/bin/migrate-stow-layout"
+    DOTFILES="{{dotfiles}}" bash "{{dotfiles}}/share/bin/configure-git"
     stow --restow --dir="{{dotfiles}}/share" --target="$HOME" zsh
     stow --restow --dir="{{dotfiles}}/share" --target="$HOME/.config" config
     stow --restow --dir="{{dotfiles}}/share" --target="$HOME/.local/bin" bin
     stow --restow --dir="{{dotfiles}}/share" --target="$HOME/.ssh" ssh
     stow --restow --dir="{{dotfiles}}/share" --target="$HOME/.pi/agent" pi
-    bash "{{dotfiles}}/share/bin/install-pi-packages"
     DOTFILES="{{dotfiles}}" bash "{{dotfiles}}/share/bin/link-agent-skills"
 
 # Apply macOS security hardening (headless-appropriate)
@@ -241,59 +241,31 @@ ssh-keys-fetch:
     done
     echo "done — SSH keys in ~/.ssh, hosts.conf in ~/.ssh/config.d (chmod 600)."
 
-# Install + start the t3 serve LaunchDaemon: runs `t3 serve` persistently, bound
-# to the NetBird IP, with auto-restart + start-on-boot. Needs netbird up + t3.
-t3-serve-install:
-    #!/usr/bin/env bash
-    set -euo pipefail
-    label="com.t3code.serve"
-    plist="/Library/LaunchDaemons/${label}.plist"
-    sed -e "s|__HOME__|${HOME}|g" -e "s|__USER__|$(id -un)|g" "{{justfile_directory()}}/services/${label}.plist" | sudo tee "$plist" >/dev/null
-    sudo chown root:wheel "$plist" && sudo chmod 644 "$plist"
-    sudo launchctl bootout system "$plist" 2>/dev/null || true
-    sudo launchctl bootstrap system "$plist"
-    echo "Installed. Logs: ${HOME}/Library/Logs/t3-serve.log ; status: sudo launchctl print system/${label}"
-    # print a ready-to-use pairing token/URL (no restart needed)
-    {{just_executable()}} --justfile "{{justfile()}}" t3-pair
-
-# Stop + remove the t3 serve LaunchDaemon
-t3-serve-uninstall:
-    -sudo launchctl bootout system /Library/LaunchDaemons/com.t3code.serve.plist
-    sudo rm -f /Library/LaunchDaemons/com.t3code.serve.plist
-    @echo "t3 serve daemon removed."
-
-# `t3 auth pairing create` writes to the running server's auth control plane, so
-# the live t3 serve honors the token with NO daemon restart. Pair the loki client
-# with the printed pairUrl. Default TTL 15m — override e.g. `just t3-pair 1h`.
-
-# Mint a fresh client pairing token + URL on demand (no daemon restart)
-t3-pair ttl="15m":
-    #!/usr/bin/env bash
-    set -euo pipefail
-    export PATH="${XDG_DATA_HOME}/pnpm/bin:${PATH}"   # find the pnpm-global t3
-    t3 auth pairing create --ttl "{{ttl}}" --base-url http://kratos.netbird.cloud:3773 --log-level warn
-
-# Restart the t3 serve daemon (rarely needed). For a pairing token, use t3-pair.
-t3-serve-restart:
-    sudo launchctl kickstart -k system/com.t3code.serve
-    @echo "t3 serve restarted. Mint a pairing token with: just t3-pair"
-
-# Install/refresh Herdr integrations for the coding agents managed on this host
+# Install/refresh only the Pi and Claude Code Herdr integrations
 herdr-integrations:
+    DOTFILES="{{dotfiles}}" bash "{{dotfiles}}/share/bin/configure-herdr"
+
+# One-time removal after the replacement Pi install and Herdr setup are verified.
+[confirm("Stop T3 and remove the retired Kratos coding tools?")]
+retire-legacy-tools:
     #!/usr/bin/env bash
     set -euo pipefail
-    mkdir -p "$HOME/.pi/agent/extensions" "$HOME/.claude" "$HOME/.codex" \
-      "$HOME/.config/opencode" "$HOME/.cursor"
-    for integration in pi claude codex opencode cursor; do
-      echo "--- herdr integration: $integration"
-      herdr integration install "$integration"
+    sudo launchctl bootout system /Library/LaunchDaemons/com.t3code.serve.plist 2>/dev/null || true
+    sudo rm -f /Library/LaunchDaemons/com.t3code.serve.plist
+    pkill -f '[t]3 serve' 2>/dev/null || true
+    mise exec -- pnpm remove -g t3 || true
+    for cask in codex cursor-cli zed; do
+      brew uninstall --cask "$cask" 2>/dev/null || true
     done
-    herdr integration status
+    for formula in mosh opencode pi-coding-agent; do
+      brew uninstall "$formula" 2>/dev/null || true
+    done
+    brew untap anomalyco/tap 2>/dev/null || true
+    DOTFILES="{{dotfiles}}" bash "{{dotfiles}}/share/bin/configure-herdr"
 
 # Gives agents a headless browser to drive/verify the web apps they build, with
 # no display attached. `claude --chrome` and computer-use both need a monitor and
-# won't run on this box; a Playwright MCP server is the headless path. Registers
-# with Claude Code; other agents: share/mcp/README.md.
+# won't run on this box; a Playwright MCP server is the headless Claude path.
 
 # Install Playwright MCP + headless Chromium and register it with Claude Code
 playwright-mcp:
@@ -313,13 +285,13 @@ playwright-mcp:
     claude mcp add playwright -s user -- "${gbin}/playwright-mcp" --headless --browser chromium --isolated
     echo
     echo "Done. Verify:  claude mcp list"
-    echo "Agents drive a served app at http://localhost:<port>, assert the DOM,"
-    echo "and screenshot — no display needed. Other agents: share/mcp/README.md"
+    echo "Claude can drive a served app at http://localhost:<port>, assert the DOM,"
+    echo "and screenshot — no display needed."
 
 # --- upgrades --------------------------------------------------------------
 
-# Upgrade everything (packages only; does NOT touch macOS — see upgrade-macos)
-upgrade: upgrade-brew upgrade-mise upgrade-t3
+# Upgrade everything explicitly (packages only; macOS is a separate recipe)
+upgrade: upgrade-brew upgrade-mise upgrade-pi
 
 # Upgrade all Homebrew packages (formulae + casks; --greedy bumps self-updaters)
 upgrade-brew:
@@ -331,14 +303,15 @@ upgrade-brew:
 upgrade-mise:
     mise upgrade
 
-# Update the T3 CLI (pnpm global)
-upgrade-t3:
-    pnpm add -g t3@latest
+# Update the upstream-managed Pi installation
+upgrade-pi:
+    pi update
 
-# Update the coding agents only (brew agents + t3)
-upgrade-agents: upgrade-t3
-    brew upgrade --cask --greedy codex claude-code@latest cursor-cli
-    brew upgrade pi-coding-agent anomalyco/tap/opencode
+# Update only the coding workflow tools
+upgrade-agents:
+    pi update
+    brew upgrade --cask --greedy claude-code@latest coderabbit
+    brew upgrade herdr
 
 # Upgrade macOS system software (point releases + security). RESTARTS the box;
 # it returns on its own (pmset autorestart). Major jumps: upgrade-macos-major.

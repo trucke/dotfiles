@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+DOTFILES="${DOTFILES:-${HOME}/.dotfiles}"
+export XDG_DATA_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}"
+export PATH="${XDG_DATA_HOME}/mise/shims:${XDG_DATA_HOME}/pnpm/bin:${PATH}"
+
+command -v mise >/dev/null 2>&1 || {
+	echo "mise is required before installing Pi" >&2
+	exit 1
+}
+
+package='@earendil-works/pi-coding-agent'
+global_bin="$(mise exec -- pnpm bin -g)"
+expected_pi="${global_bin}/pi"
+if [[ ! -x "${expected_pi}" ]]; then
+	mise exec -- pnpm add -g --ignore-scripts "${package}"
+fi
+
+actual_pi="$(command -v pi 2>/dev/null || true)"
+if [[ -z "${actual_pi}" || "$(readlink -f "${actual_pi}")" != "$(readlink -f "${expected_pi}")" ]]; then
+	echo "Pi does not resolve to the pnpm installation at ${expected_pi}" >&2
+	exit 1
+fi
+
+bash "${DOTFILES}/share/bin/install-pi-packages"
+
+settings="${HOME}/.pi/agent/settings.json"
+mkdir -p "$(dirname "${settings}")"
+tmp="$(mktemp "${settings}.XXXXXX")"
+if [[ -s "${settings}" ]]; then
+	jq '.defaultThinkingLevel = "high"' "${settings}" >"${tmp}"
+else
+	jq -n '{defaultThinkingLevel: "high"}' >"${tmp}"
+fi
+mv "${tmp}" "${settings}"
+
+echo "Pi ready: upstream pnpm install, high default reasoning"

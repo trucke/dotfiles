@@ -38,18 +38,8 @@ Registering with an **absolute** path avoids PATH surprises when the agent spawn
 the server. (User scope is written to `~/.claude.json`, which also holds other
 state — always register via the CLI, never hand-overwrite that file.)
 
-**Other agents** (codex, cursor, opencode, pi) each have their own MCP config
-file and schema — **check the agent's current docs**, they drift. The server to
-add is always the same command + args as above. Most accept the standard
-`mcpServers` shape straight from `playwright.json`; e.g. Cursor's
-`~/.cursor/mcp.json` and project `.mcp.json` files use exactly that shape. Codex
-uses TOML (`~/.codex/config.toml`):
-
-```toml
-[mcp_servers.playwright]
-command = "playwright-mcp"
-args = ["--headless", "--browser", "chromium", "--isolated"]
-```
+**Pi** intentionally has no built-in MCP client. Keep this server registered
+only with Claude Code unless a reviewed Pi extension explicitly adds MCP support.
 
 ### Requirements / gotchas
 

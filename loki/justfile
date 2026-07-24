@@ -89,48 +89,33 @@ netbird-up key="":
     netbird up --setup-key "$key"
     netbird status
 
+# Remove superseded package-managed harness installs after `just sync` has
+# installed upstream Pi and native Claude Code. OpenCode stays as an experiment.
+[confirm("Remove the retired Loki agent packages after upstream replacements are verified?")]
+retire-legacy-tools:
+    omarchy pkg drop openai-codex-bin t3code-bin pi-coding-agent claude-code
+
 # --- upgrades --------------------------------------------------------------
 
-# Upgrade everything: Omarchy system update, then mise-managed dev tools
+# Upgrade everything explicitly: Omarchy, mise tools, then coding tools
 upgrade:
     omarchy update
     mise upgrade
+    {{just_executable()}} --justfile "{{justfile()}}" upgrade-agents
 
-# Update package-managed coding agents without running a full system upgrade
+# Update the upstream-managed harnesses and package-managed supporting tools
 upgrade-agents:
     #!/usr/bin/env bash
     set -euo pipefail
-    configured_targets=()
-    while IFS= read -r target; do
-      configured_targets+=("$target")
-    done < <(grep -vE '^\s*(#|$)' "{{justfile_directory()}}/install/packages.aur")
-    packages=()
-    for cmd in codex claude cursor-agent opencode pi; do
-      path="$(command -v "$cmd" 2>/dev/null || true)"
-      if [ -z "$path" ]; then
-        echo "skip: $cmd not installed"
-      elif pkg="$(pacman -Qoq "$path" 2>/dev/null)"; then
-        target="$pkg"
-        for configured_target in "${configured_targets[@]}"; do
-          if [ "${configured_target#aur/}" = "$pkg" ]; then
-            target="$configured_target"
-            break
-          fi
-        done
-        [[ " ${packages[*]} " == *" $target "* ]] || packages+=("$target")
-      else
-        echo "skip: $cmd is not managed by pacman/yay ($path)"
-      fi
-    done
-    [ "${#packages[@]}" -gt 0 ] || { echo "no package-managed agents found"; exit 0; }
-    echo "upgrading: ${packages[*]}"
-    yay -S --needed --noconfirm "${packages[@]}"
+    pi update
+    claude update
+    yay -S --needed --noconfirm coderabbit herdr-bin aur/opencode-bin
 
 # --- agents ----------------------------------------------------------------
 
 # Playwright ships its own headless Chromium (~/.cache/ms-playwright), independent
-# of the system chromium package. Mirrors kratos; other agents: share/mcp/README.md.
-# Install Playwright MCP + headless Chromium so local agents can test web apps.
+# of the system chromium package. Mirrors Kratos for Claude Code browser testing.
+# Install Playwright MCP + headless Chromium so Claude can test web apps.
 playwright-mcp:
     #!/usr/bin/env bash
     set -euo pipefail

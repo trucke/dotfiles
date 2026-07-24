@@ -16,12 +16,10 @@ rm -rf "${HOME}/.config/nvim" \
 	"${HOME}/.local/share/nvim/" \
 	"${HOME}/.cache/nvim/" \
 	"${HOME}/.config/ghostty" \
-	"${HOME}/.config/git" \
 	"${HOME}/.config/mise" \
 	"${HOME}/.config/tmux" \
 	"${HOME}/.config/kanata"
 rm -f "${HOME}/.config/starship.toml" \
-	"${HOME}/.config/opencode/opencode.json" \
 	"${HOME}/.config/zed/settings.json" \
 	"${HOME}/.config/zed/keymap.json"
 

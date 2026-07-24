@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-${HOME}/.config}"
+
+# Herdr previously owned this regular file directly. Preserve it once before
+# Stow replaces the active path with the repository-managed configuration.
+herdr_config="${XDG_CONFIG_HOME}/herdr/config.toml"
+herdr_backup="${XDG_CONFIG_HOME}/herdr/config.toml.pre-dotfiles"
+if [[ -f "${herdr_config}" && ! -L "${herdr_config}" ]]; then
+	if [[ -e "${herdr_backup}" ]]; then
+		cmp -s "${herdr_config}" "${herdr_backup}" || {
+			echo "Herdr config and existing migration backup differ: ${herdr_backup}" >&2
+			exit 1
+		}
+		rm "${herdr_config}"
+	else
+		mv "${herdr_config}" "${herdr_backup}"
+	fi
+	echo "Preserved previous Herdr config: ${herdr_backup}"
+fi
+
+remove_old_link() {
+	local target="$1" old_source="$2"
+	[[ -L "${target}" ]] || return 0
+	if [[ "$(readlink "${target}")" == *"${old_source}"* ]]; then
+		rm "${target}"
+	fi
+}
+
+# Zed moved from shared config to Loki-only config. OpenCode no longer has
+# managed config; its Loki package is intentionally left to its own defaults.
+remove_old_link "${XDG_CONFIG_HOME}/zed/settings.json" '.dotfiles/share/config/zed/'
+remove_old_link "${XDG_CONFIG_HOME}/zed/keymap.json" '.dotfiles/share/config/zed/'
+remove_old_link "${XDG_CONFIG_HOME}/zed" '.dotfiles/share/config/zed'
+
+remove_old_link "${XDG_CONFIG_HOME}/opencode" '.dotfiles/share/config/opencode'
+for relative in \
+	AGENTS.md \
+	opencode.json \
+	agent/audit.md \
+	agent/commit.md \
+	commands/commit.md \
+	commands/deep-review.md \
+	commands/doc-create.md \
+	commands/doc-update.md \
+	commands/learn.md \
+	commands/lookup-table.md \
+	commands/status-audit.md; do
+	remove_old_link "${XDG_CONFIG_HOME}/opencode/${relative}" '.dotfiles/share/config/opencode/'
+done
+
+rmdir "${XDG_CONFIG_HOME}/opencode/agent" "${XDG_CONFIG_HOME}/opencode/commands" \
+	"${XDG_CONFIG_HOME}/opencode" 2>/dev/null || true

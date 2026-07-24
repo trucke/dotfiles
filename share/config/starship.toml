@@ -40,7 +40,7 @@ vimcmd_symbol = "[❮](bold blue)"
 
 [username]
 # Always show user@host (local + remote) so the box is unmistakable, even in
-# tmux/mosh where SSH_* env vars don't propagate. root shows in red.
+# persistent Herdr/tmux sessions where SSH_* may not propagate. root shows in red.
 show_always = true
 format = "[$user]($style)"
 style_user = "bold peach"

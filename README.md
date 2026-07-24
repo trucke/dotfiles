@@ -1,134 +1,177 @@
 # .dotfiles
 
 Personal dotfiles managed with [GNU Stow](https://www.gnu.org/software/stow/),
-organized **by host**:
+organized by host:
 
 ```
 .dotfiles/
-├── kratos/         # Mac mini — headless dev/agent box (macOS)
-├── loki/           # Framework 13 laptop (Arch + Hyprland via Omarchy)
-├── share/          # Cross-host configs, stowed on every machine
-└── tmux-fzf-url/   # submodule
+├── kratos/         # Mac mini — headless remote dev box (macOS)
+├── loki/           # Framework 13 daily driver (Arch + Omarchy)
+├── share/          # Cross-host configuration
+└── tmux-fzf-url/   # tmux fallback plugin (submodule)
 ```
 
-Host directories are named after each machine's hostname (God of War theme).
-Each host has a `just` front door; `share/` holds everything common.
+## Development workflow
 
-## kratos — Mac mini (dev/agent box)
+Kratos is the default for substantive coding. Loki is the daily-driver UI and
+handles offline work, quick fixes, dotfiles, and tasks that do not need Kratos.
+Repositories are independent clones; Git/Jujutsu is the synchronization boundary.
+Agent sessions remain on the host and checkout where they started.
 
-Homebrew-driven, orchestrated through `just`. `kratos/Brewfile` is the source of
-truth for every brew package, cask, and agent (codex/claude/cursor/opencode/pi);
-`t3` is the only non-brew agent (pnpm global). Runtimes and dev tools come from
-the shared `share/config/mise/config.toml`.
+| Layer | Primary | Fallback / complement |
+|---|---|---|
+| Coding harness | Pi with the OpenAI Codex provider | Claude Code |
+| Persistent terminal | Herdr | tmux (not nested inside Herdr) |
+| Editor | Neovim in terminals | Zed GUI on Loki |
+| Remote transport | NetBird + SSH | — |
+| Review | CodeRabbit | Pi / Claude |
 
-**Fresh machine** — create the `skadi` admin user + enable Remote Login at the
-console (needs a monitor once), then SSH in.
+From Loki:
+
+```bash
+herdr                 # local persistent herd
+hk                    # native Herdr remote attach to Kratos
+ssh kratos            # ordinary remote shell; also the iPad path
+```
+
+Each host uses one default Herdr session with workspaces/tabs per project. Use one
+writing agent per checkout. Parallel agents require deliberately separate
+worktrees or clones.
+
+Zed runs only on Loki. Its Remote Projects connection uses the `kratos` SSH alias;
+remote language servers, tasks, terminals, debugger, Pi ACP, and Claude ACP run
+with the Kratos checkout. Development services stay bound to remote localhost and
+use SSH local forwarding. Add forwards per project rather than exposing ports on
+the mesh.
+
+## kratos — Mac mini
+
+Homebrew manages infrastructure, applications, Herdr, Claude Code, and CodeRabbit.
+Pi is installed directly from its upstream npm package with pnpm after mise has
+installed Node and pnpm:
+
+```bash
+pnpm add -g --ignore-scripts @earendil-works/pi-coding-agent
+pi update
+```
+
+**Fresh machine:** create the `skadi` admin user and enable Remote Login at the
+console, then SSH in:
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-git clone https://github.com/trucke/dotfiles.git ~/.dotfiles   # bootstrap; setup installs + initializes jj
-~/.dotfiles/kratos/setup.sh   # system defaults (hostname, network, power, SSH) + full provision
+git clone https://github.com/trucke/dotfiles.git ~/.dotfiles
+~/.dotfiles/kratos/setup.sh
 ```
 
-`setup.sh` prints the remaining interactive steps (NetBird join, `just
-podman-init`, `just t3-serve-install`, agent auth). On an
-already-configured box, `just bootstrap` provisions without the system tweaks.
+`setup.sh` configures hostname, networking, power, SSH, packages, dotfiles, and
+hardening. It prints the remaining interactive steps for keys, NetBird, Podman,
+agent authentication, optional Playwright MCP, and Syncthing.
 
-**Day-to-day** (`just` from `~/.dotfiles/kratos`):
+Day-to-day from `~/.dotfiles/kratos`:
 
 ```bash
-just setup            # converge brew + mise + pnpm agent (t3)
-just upgrade          # upgrade all packages (brew + mise + t3)
-just upgrade-macos    # macOS point/security update (restarts; returns on its own)
+just setup            # converge brew, dotfiles, mise, Pi, and Herdr integrations
+just upgrade          # explicit package, mise, and Pi updates
+just upgrade-agents   # explicit Pi, Claude, Herdr, and CodeRabbit updates
+just upgrade-macos    # macOS update and restart
 just audit            # current brew/mise state
-just cleanup-preview  # what convergence would remove (dry-run)
+just cleanup-preview  # show unmanaged brew packages
 ```
 
-## loki — Framework 13 (Omarchy/Hyprland)
+Kratos keeps its existing RustDesk/full-GUI escape hatch, but Zed desktop, Mosh,
+Codex CLI, Cursor CLI, OpenCode, and T3Code are not provisioned. On an existing
+host, run `just setup`, verify Pi/Claude/Herdr, then run the confirmed one-time
+`just retire-legacy-tools` recipe.
 
-Layered on top of [Omarchy](https://omarchy.org): Omarchy owns the OS lifecycle
-(`omarchy update`, `omarchy pkg`, `omarchy theme`) and this repo adds packages,
-dotfiles, and Hyprland/tool customizations on top.
+## loki — Framework 13
 
-**Fresh machine** — install Omarchy first, then:
+Loki layers this repository on top of [Omarchy](https://omarchy.org/). Omarchy
+owns the OS lifecycle; the repository adds packages, dotfiles, and Hyprland/tool
+customizations.
+
+**Fresh machine:** install Omarchy first, then:
 
 ```bash
-git clone https://github.com/trucke/dotfiles.git ~/.dotfiles   # bootstrap; setup installs + initializes jj
-bash ~/.dotfiles/loki/setup.sh   # (not `just` — just isn't installed until packages land)
-# after keys are registered, switch to SSH:
+git clone https://github.com/trucke/dotfiles.git ~/.dotfiles
+bash ~/.dotfiles/loki/setup.sh
 jj -R ~/.dotfiles git remote set-url origin git@github.com:trucke/dotfiles.git
 ```
 
-**Provision vs. sync.** `setup.sh` runs once (cleanup → packages → dotfiles →
-services → config). `sync.sh` is the idempotent "re-assert my customizations"
-path — stow dotfiles, Hyprland overrides, package drops, `mise install`, boot
-logo. Both `setup.sh` and Omarchy's `post-update` hook call it, so **every
-`omarchy update` re-applies everything automatically**.
+`setup.sh` runs cleanup, package installation, dotfile sync, services, and system
+configuration. `sync.sh` is the idempotent convergence path and runs after each
+`omarchy update` through the post-update hook.
 
-**Day-to-day** (`just` from `~/.dotfiles/loki`):
+Day-to-day from `~/.dotfiles/loki`:
 
 ```bash
-just sync       # redeploy after editing dotfiles (stow + hypr + drops + mise)
-just packages   # converge repo + AUR packages after editing the lists
-just upgrade    # omarchy update, then mise upgrade
+just sync             # reassert dotfiles, tools, services, and Hypr overrides
+just packages         # converge repo/AUR package lists
+just upgrade          # explicit Omarchy, mise, and coding-tool updates
+just upgrade-agents   # explicit Pi, Claude, Herdr, OpenCode, CodeRabbit updates
 ```
+
+Pi uses the same upstream pnpm installation as Kratos. Claude Code uses
+Anthropic's native Linux installer with background updates disabled through the
+documented `DISABLE_AUTOUPDATER=1` setting; `claude update` remains explicit.
+`opencode-bin` stays installed without managed config, completion, or Herdr
+integration for occasional experiments. On an existing host, run `just sync`,
+verify the upstream Pi and native Claude installs, then run the confirmed
+one-time `just retire-legacy-tools` recipe.
 
 ### Omarchy customization layer
 
-Omarchy's `hyprland.conf` sources user overrides from `~/.config/hypr/` **after**
-its defaults; these are symlinked from `loki/config/hypr/`:
+Omarchy's `hyprland.conf` sources overrides from `~/.config/hypr/` after its
+defaults. The repository deploys:
 
 ```
 monitors.conf   input.conf   bindings.conf   looknfeel.conf   autostart.conf
 ```
 
 | Area | Customization |
-|------|---------------|
-| Displays | Explicit Framework/Dell monitor rules plus Omarchy-compatible clamshell reconciliation and focused-workspace handoff |
-| Input | EU layout, caps:escape, vim-style HJKL focus/swap; Kanata home-row mods |
-| Keybinds | app launchers (browser, Signal, Obsidian, Proton Pass, T3Chat, mail); hyprshot screenshots |
-| Lock / idle | hyprlock + hypridle (lock at 5 min, no screensaver) |
-| Power | User service keeps `power-profiles-daemon` balanced across login and AC/USB-C events |
-| Agents | opencode (repo) + pi + herdr (AUR) |
-| Branding | custom Plymouth boot logo |
+|---|---|
+| Displays | Framework/Dell rules plus clamshell reconciliation and focused-workspace handoff |
+| Input | EU layout, caps:escape, vim-style HJKL focus/swap, Kanata home-row mods |
+| Keybinds | Browser, Signal, Obsidian, Proton Pass, mail, and screenshots |
+| Lock / idle | hyprlock + hypridle (lock at 5 minutes) |
+| Power | User service keeps `power-profiles-daemon` balanced |
+| Coding | Pi, Claude Code, Herdr, Zed, and experimental OpenCode |
+| Branding | Custom Plymouth boot logo |
 
-#### Clamshell compatibility note
+#### Clamshell compatibility
 
-The local clamshell layer exists for Omarchy v3.8.3 and comprises:
+The local clamshell layer exists for Omarchy v3.8.3:
 
 - `loki/bin/omarchy-lid-close-external`
 - `loki/bin/omarchy-lid-open`
 - `loki/bin/omarchy-lid-watch`
-- the lid overrides in `loki/config/hypr/bindings.conf`
-- the watcher launch in `loki/config/hypr/autostart.conf`
+- lid overrides in `loki/config/hypr/bindings.conf`
+- watcher launch in `loki/config/hypr/autostart.conf`
 
-Reassess this layer after upgrading to an Omarchy release containing the
-Quattro clamshell work (`omarchy-hw-clamshell`,
-`omarchy-hyprland-monitor-clamshell`, and the polling/locked
-`omarchy-hyprland-monitor-watch`; initially developed around upstream commit
-`aa7350ab`). Test stock behavior before removing anything: focused-workspace
-preservation on close, keyboard use while closed, reopen, connect Dell while
-already closed, and unplug recovery. As of the original Quattro review, its
-recovery work did not explicitly preserve the globally focused workspace, so
-keep the local handoff until upstream covers that behavior too.
+Reassess it after an Omarchy release containing the Quattro clamshell work. Test
+focused-workspace preservation, closed-lid keyboard use, reopen, connecting the
+Dell while closed, and unplug recovery before removing it.
 
-## share — common configs
+## Shared configuration
 
-Stowed on every host:
+`share/` deploys:
 
-- `zsh` — bundles `.zshenv` (environment + PATH) and `.zshrc` (interactive setup)
-- `shell/` — zsh fragments (`env`, `aliases`, `functions`, `init`)
-- `config/` — nvim, git, jj, mise, tmux, ghostty, starship, zed, opencode, ripgrep
-- `pi/` — pi-coding-agent config (`AGENTS.md`, extensions, skills, themes) → `~/.pi/agent`
-- `bin/` → `~/.local/bin`
+- zsh and common shell fragments
+- Git/Jujutsu, mise, Neovim, tmux, Ghostty, Starship, and ripgrep
+- Herdr configuration and Pi/Claude integration convergence
+- Pi context, extensions, skills, themes, and the pinned `pi-setup` package
+- vendor-neutral Agent Skills bridged into Claude Code
+- shared utilities under `~/.local/bin`
+
+Git uses a writable host-local `~/.config/git/config` that includes the tracked
+`~/.config/git/config.shared` followed by optional host overrides in
+`~/.config/git/config.local`. This keeps generated settings such as CodeRabbit's
+machine ID local while preserving shared Git defaults.
 
 ## Version-control workflow
 
-The repo is a **colocated Jujutsu/Git workspace**. Use jj for daily work; Git
-remains for fresh-box bootstrap, GitHub compatibility, and the
-`tmux-fzf-url` submodule.
-
-Keep one draft change at `@` directly on top of `main`:
+The repository is a colocated Jujutsu/Git workspace. Use jj for daily work; Git
+remains for bootstrap, GitHub compatibility, and the tmux submodule.
 
 ```bash
 cd ~/.dotfiles
@@ -136,7 +179,7 @@ jj status
 jj git fetch
 jj rebase -b @ -o main
 
-# edit, review, and validate
+# edit and validate
 jj diff
 ~/.agents/skills/run-dotfiles/doctor.sh validate ~/.dotfiles
 
@@ -147,22 +190,12 @@ jj git push --bookmark main
 jj new main
 ```
 
-There is no staging area. Use a separate jj workspace only when filesystem
-isolation matters—for example, risky SSH, shell, Hyprland, Stow, or provisioning
-changes. The live checkout is Stow's deployment source, so rebasing it can alter
-active configuration.
-
-Jujutsu does not manage Git submodules. `loki/sync.sh` intentionally retains
-`git submodule update --init --recursive`; avoid other mutating Git commands in
-the superproject.
+The active checkout is Stow's live deployment source. Use an isolated jj
+workspace for risky SSH, shell, Hyprland, Stow, or provisioning changes.
 
 ## Theming
 
-Everything is **Catppuccin Mocha**, static — no theme switching:
+Everything uses static Catppuccin Mocha:
 
-- **loki (Hyprland)** follows Omarchy's active theme; set once with `omarchy theme set "Catppuccin"`.
-- **Shared CLIs** — ghostty, tmux, starship, neovim, zed — pin Catppuccin Mocha directly.
-
----
-
-*This README was written with AI assistance.*
+- Omarchy follows its active Catppuccin theme.
+- Ghostty, tmux, Starship, Neovim, and Zed pin their matching theme.

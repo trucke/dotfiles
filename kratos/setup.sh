@@ -115,9 +115,8 @@ cat <<'EOF'
        just ssh-keys-fetch      # pulls keys + hosts.conf into ~/.ssh
   3. just netbird-up <setup-key>   # join the mesh (headless; disconnect the display after)
   4. just podman-init              # official Podman + machine (ends with a hello smoke test)
-  5. Agents: codex; claude; cursor-agent; opencode  # /connect ; pi  # /login ; t3
-  6. just t3-serve-install         # persistent t3 serve daemon (+ prints a pairing token)
-  7. just playwright-mcp             # optional: Playwright MCP for agent web testing
-  8. just syncthing-setup            # Syncthing service; approve folder-access prompts via GUI once
-  9. just audit
+  5. Harness auth: pi  # /login ; claude  # /login
+  6. just playwright-mcp           # optional: headless browser testing for Claude
+  7. just syncthing-setup          # Syncthing service; approve folder-access prompts via GUI once
+  8. just audit
 EOF

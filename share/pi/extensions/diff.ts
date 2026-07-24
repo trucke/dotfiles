@@ -1,5 +1,6 @@
+import { hostname } from "node:os";
 import path from "node:path";
-import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
 const commandName = "diff";
 
@@ -67,6 +68,11 @@ function difference(current: Set<string>, baseline: Set<string>) {
     return new Set([...current].filter((file) => !baseline.has(file)));
 }
 
+function localZedCommand() {
+    if (hostname().split(".")[0] !== "loki") return undefined;
+    return process.platform === "linux" ? "zeditor" : "zed";
+}
+
 export default function(pi: ExtensionAPI) {
     let baseline = new Set<string>();
     let changedFiles = new Set<string>();
@@ -92,12 +98,12 @@ export default function(pi: ExtensionAPI) {
         changedFiles = new Set([...difference(currentChanged, baseline), ...toolTouchedFiles]);
 
         if (changedFiles.size > 0) {
-            ctx.ui.notify(`${changedFiles.size} changed file(s). Run /${commandName} to view/open in Zed.`, "info");
+            ctx.ui.notify(`${changedFiles.size} changed file(s). Run /${commandName} to view them.`, "info");
         }
     });
 
     pi.registerCommand(commandName, {
-        description: "Show files changed by the last agent run and open one in Zed",
+        description: "Show files changed by the last agent run",
         handler: async (args, ctx) => {
             await ctx.waitForIdle();
 
@@ -127,14 +133,20 @@ export default function(pi: ExtensionAPI) {
             }
 
             const labels = files.map((file) => toRelative(ctx.cwd, file));
-            const selected = await ctx.ui.select("Open changed file in Zed", labels);
+            const zedCommand = localZedCommand();
+            const selected = await ctx.ui.select(zedCommand ? "Open changed file in Zed" : "Select changed file", labels);
             if (!selected) return;
 
             const selectedIndex = labels.indexOf(selected);
             const file = files[selectedIndex];
             if (!file) return;
 
-            const result = await pi.exec("zed", ["-e", file], { cwd: ctx.cwd, timeout: 5000 });
+            if (!zedCommand) {
+                ctx.ui.notify(`Changed file: ${selected}\nOpen it from the active Zed remote project.`, "info");
+                return;
+            }
+
+            const result = await pi.exec(zedCommand, ["-e", file], { cwd: ctx.cwd, timeout: 5000 });
             if (result.code === 0) {
                 ctx.ui.notify(`Opened ${selected} in Zed`, "info");
             } else {
