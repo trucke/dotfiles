@@ -93,7 +93,7 @@ netbird-up key="":
 # installed upstream Pi and native Claude Code. OpenCode stays as an experiment.
 [confirm("Remove the retired Loki agent packages after upstream replacements are verified?")]
 retire-legacy-tools:
-    omarchy pkg drop openai-codex-bin t3code-bin pi-coding-agent claude-code
+    omarchy pkg drop openai-codex-bin t3code-bin t3code-nightly-bin pi-coding-agent claude-code
 
 # --- upgrades --------------------------------------------------------------
 
