@@ -14,7 +14,16 @@ command -v mise >/dev/null 2>&1 || {
 package='@earendil-works/pi-coding-agent'
 global_bin="$(mise exec -- pnpm bin -g)"
 expected_pi="${global_bin}/pi"
-if [[ ! -x "${expected_pi}" ]]; then
+package_installed=false
+if mise exec -- pnpm list -g --depth 0 --json |
+	jq -e --arg package "${package}" 'any(.[]; (.dependencies // {}) | has($package))' >/dev/null; then
+	package_installed=true
+fi
+
+if [[ "${package_installed}" != true || ! -x "${expected_pi}" ]]; then
+	# An old Omarchy npx stub used the same path; remove it only when pnpm does
+	# not already own the package.
+	[[ "${package_installed}" == true ]] || rm -f "${expected_pi}"
 	mise exec -- pnpm add -g --ignore-scripts "${package}"
 fi
 

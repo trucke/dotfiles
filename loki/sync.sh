@@ -56,9 +56,9 @@ omarchy-pkg-drop \
 	whois \
 	zoxide
 
-# Remove Omarchy's npx-installed agent stubs. Pi is installed upstream through
-# pnpm, OpenCode remains an AUR experiment, and the retired harnesses stay absent.
-rm -f "${HOME}/.local/bin/"{codex,gemini,copilot,ghui,opencode,playwright-cli,pi}
+# Remove Omarchy's npx-installed agent stubs. install-pi replaces the old Pi
+# stub only when pnpm does not already own the upstream package.
+rm -f "${HOME}/.local/bin/"{codex,gemini,copilot,ghui,opencode,playwright-cli}
 
 # Remove only obsolete Stow-owned links from the old shared Zed/OpenCode layout.
 env DOTFILES="${DOTFILES}" bash "${DOTFILES}/share/bin/migrate-stow-layout"
