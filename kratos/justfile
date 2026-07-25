@@ -325,10 +325,18 @@ upgrade-agents:
 unquarantine:
     #!/usr/bin/env bash
     set -euo pipefail
-    for p in "$(brew --prefix)/bin" "$(brew --prefix)/Caskroom" /Applications; do
+    # Brew paths are user-owned, so no sudo — this stays runnable over SSH.
+    for p in "$(brew --prefix)/bin" "$(brew --prefix)/Caskroom"; do
       [ -e "$p" ] || continue
-      sudo xattr -rd com.apple.quarantine "$p" 2>/dev/null || true
+      xattr -rd com.apple.quarantine "$p" 2>/dev/null || true
     done
+    # GUI casks in /Applications: App Store apps in there refuse without root,
+    # so only attempt it when sudo needs no password (never blocks headless).
+    if sudo -n true 2>/dev/null; then
+      sudo xattr -rd com.apple.quarantine /Applications 2>/dev/null || true
+    else
+      echo "skipped /Applications (needs sudo); rerun interactively if a cask app still prompts"
+    fi
     echo "quarantine attribute cleared"
 
 # Upgrade macOS system software (point releases + security). RESTARTS the box;
