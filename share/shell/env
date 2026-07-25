@@ -12,6 +12,7 @@ export HOMEBREW_NO_ANALYTICS=1
 export HOMEBREW_NO_ENV_HINTS=1
 export HOMEBREW_DOWNLOAD_CONCURRENCY=1 # serial downloads: concurrent renderer garbles the terminal (Homebrew 5.0+)
 export HOMEBREW_BUNDLE_JOBS=1          # serial `brew bundle` installs (separate concurrency from downloads)
+export HOMEBREW_CASK_OPTS="--no-quarantine" # skip the com.apple.quarantine xattr: the "downloaded from the Internet" GUI prompt on first launch blocks headless upgrades
 export SHELL_SESSIONS_DISABLE=1
 
 export LESSHISTFILE="-" # disable less history file

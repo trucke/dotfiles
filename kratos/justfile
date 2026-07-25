@@ -19,6 +19,12 @@ dotfiles := parent_directory(justfile_directory())
 export HOMEBREW_DOWNLOAD_CONCURRENCY := "1"
 export HOMEBREW_BUNDLE_JOBS := "1"
 
+# Casks land without com.apple.quarantine. Otherwise the first launch of a
+# freshly upgraded binary (claude-code, coderabbit) raises the GUI "downloaded
+# from the Internet" dialog, which nobody is there to click over SSH — the CLI
+# just hangs or dies. Exported here too so recipes don't depend on the zsh env.
+export HOMEBREW_CASK_OPTS := "--no-quarantine"
+
 # Pin pnpm's global bin dir to XDG on macOS too (else it defaults to ~/Library/
 # pnpm): with XDG_DATA_HOME set, pnpm uses $XDG_DATA_HOME/pnpm/bin everywhere.
 # Exported to every recipe shell, so the bootstrap (which never sources the zsh
@@ -312,6 +318,18 @@ upgrade-agents:
     pi update
     brew upgrade --cask --greedy claude-code@latest coderabbit
     brew upgrade herdr
+
+# Strip com.apple.quarantine from brew-installed binaries. HOMEBREW_CASK_OPTS
+# prevents the xattr on new installs; this clears it off anything installed
+# before that, which would otherwise still raise the GUI dialog on first launch.
+unquarantine:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    for p in "$(brew --prefix)/bin" "$(brew --prefix)/Caskroom" /Applications; do
+      [ -e "$p" ] || continue
+      sudo xattr -rd com.apple.quarantine "$p" 2>/dev/null || true
+    done
+    echo "quarantine attribute cleared"
 
 # Upgrade macOS system software (point releases + security). RESTARTS the box;
 # it returns on its own (pmset autorestart). Major jumps: upgrade-macos-major.
