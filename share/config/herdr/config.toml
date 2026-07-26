@@ -2,13 +2,20 @@ onboarding = false
 
 [keys]
 prefix = "ctrl+space"
+previous_workspace = "prefix+("
+next_workspace = "prefix+)"
+switch_workspace = "alt+1..9"
 navigate_workspace_up = ["up", "k"]
 navigate_workspace_down = ["down", "j"]
 navigate_pane_up = "ctrl+k"
 navigate_pane_down = "ctrl+j"
 
 [ui]
-show_agent_labels_on_pane_borders = true
+show_agent_labels_on_pane_borders = false
 
+agent_panel_sort = "priority"
 [ui.toast]
 delivery = "terminal"
+
+[ui.sound]
+enabled = false

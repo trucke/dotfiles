@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-package="git:github.com/trucke/pi-setup@v0.1.5"
+package="git:github.com/trucke/pi-setup@v0.1.6"
 checkout="${HOME}/.pi/agent/git/github.com/trucke/pi-setup"
 
 command -v pi >/dev/null 2>&1 || {
