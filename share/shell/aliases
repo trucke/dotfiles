@@ -14,6 +14,8 @@ alias cat='bat -pp'
 alias grep='rg'
 alias tmux='tmux -2'
 alias pp='pnpm'
+alias nbk='netbird up --profile kns'
+alias nbr='netbird up --profile rv'
 [[ "$(hostname -s)" == "loki" ]] && alias hk='herdr --remote kratos'
 
 alias dot='cd ${HOME}/.dotfiles'

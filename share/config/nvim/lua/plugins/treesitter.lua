@@ -24,7 +24,6 @@ local parsers = {
 	"sql",
 	"ssh_config",
 	"svelte",
-	"tmux",
 	"toml",
 	"typescript",
 	"vim",
