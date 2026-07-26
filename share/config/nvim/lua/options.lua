@@ -8,7 +8,9 @@ vim.g.trouble_lualine = true
 vim.g.markdown_recommended_style = 0
 vim.g.snacks_animate = false
 
-vim.schedule(function() vim.opt.clipboard = vim.env.SSH_TTY and "" or "unnamedplus" end)
+vim.schedule(function()
+	vim.opt.clipboard = (vim.env.HERDR_ENV or vim.env.SSH_TTY) and "" or "unnamedplus"
+end)
 -- enable auto save/write
 vim.o.autowrite = true
 vim.o.backup = false

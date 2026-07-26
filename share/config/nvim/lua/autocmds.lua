@@ -2,14 +2,26 @@ local function augroup(name)
 	return vim.api.nvim_create_augroup("ktd_" .. name, { clear = true })
 end
 
--- highlight on yank
 vim.api.nvim_create_autocmd("TextYankPost", {
-	desc = "Highlight when yanking (copying) text",
+	desc = "Highlight yanked text",
 	group = augroup("highlight_yank"),
 	callback = function()
 		vim.hl.on_yank()
 	end,
 })
+
+if vim.env.HERDR_ENV then
+	local copy_to_herdr_client = require("vim.ui.clipboard.osc52").copy("+")
+	vim.api.nvim_create_autocmd("TextYankPost", {
+		desc = "Copy yanks to the Herdr client clipboard",
+		group = augroup("herdr_clipboard"),
+		callback = function()
+			if vim.v.event.operator == "y" then
+				copy_to_herdr_client(vim.v.event.regcontents)
+			end
+		end,
+	})
+end
 
 -- close some filetypes with <q>
 vim.api.nvim_create_autocmd("FileType", {
