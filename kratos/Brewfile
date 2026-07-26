@@ -34,6 +34,7 @@ brew "stow"
 brew "syncthing"
 brew "tmux"
 brew "tree-sitter-cli"
+brew "typst"
 brew "zstd"                 # the compress()/decompress() shell fns need the CLI (Linux gets it from base)
 
 # --- coding tools -----------------------------------------------------------
