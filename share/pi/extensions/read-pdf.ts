@@ -160,7 +160,10 @@ export default function readPdfExtension(pi: ExtensionAPI) {
 			let cleanupDir: string | undefined;
 
 			try {
-				onUpdate?.({ content: [{ type: "text", text: `Preparing PDF: ${params.path}` }] });
+				onUpdate?.({
+					content: [{ type: "text", text: `Preparing PDF: ${params.path}` }],
+					details: {},
+				});
 
 				let file: string;
 				if (isUrl(params.path)) {
@@ -187,7 +190,10 @@ export default function readPdfExtension(pi: ExtensionAPI) {
 					if (range && pageCount && range.to > pageCount) {
 						throw new Error(`Requested ${rangeLabel(range)}, but PDF has ${pageCount} pages.`);
 					}
-					onUpdate?.({ content: [{ type: "text", text: `Extracting ${rangeLabel(range)}...` }] });
+					onUpdate?.({
+						content: [{ type: "text", text: `Extracting ${rangeLabel(range)}...` }],
+						details: {},
+					});
 					const text = await extractRange(file, range, layout, signal);
 					sections.push(`## ${rangeLabel(range)}\n\n${text.trim() || "[No extractable text found.]"}`);
 				}
