@@ -7,9 +7,9 @@ Include ~/.ssh/config.d/*.conf
 Host github.com
     User git
     IdentityFile ~/.ssh/github
-    IdentitiesOnly yes
 
 Host *
     AddKeysToAgent yes
     ServerAliveInterval 30
     ServerAliveCountMax 6
+    IdentitiesOnly yes
